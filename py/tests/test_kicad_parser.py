@@ -134,8 +134,8 @@ class TestStringMethods(unittest.TestCase):
     def test_toListFinal(self):
         s = read_file()
         parser = KiCadParser(s)
-        parser.toList()
-        l = parser.listToSexp()
+        root = parser.toList()
+        l = parser.listToSexp(root)
         # print("\r\n".join(l))
 
 

@@ -12,9 +12,9 @@ layout_json_filename = (
 
 pcb_name = "../keyboards/atari-a8/kicad/atari-keyboard.kicad_pcb"
 key_sch_name = "../keyboards/atari-a8/kicad/keyboard.kicad_sch"
-openscad_file = "../../keycaps/keyboard-position.scad"
-jlc_bom_file = "../gerbers/jcl_bom.csv"
-jlc_cpl_file = "../gerbers/jcl_cpl.csv"
+openscad_file = "../keyboards/atari-a8/keycaps/keyboard-position.scad"
+jlc_bom_file = "../keyboards/atari-a8/kicad/gerbers/jcl_bom.csv"
+jlc_cpl_file = "../keyboards/atari-a8/kicad/gerbers/jcl_cpl.csv"
 
 
 STARTING_INDEX = 201
@@ -204,16 +204,9 @@ def get_layout() -> list:
     return keys
 
 
-#    bbox = BoundingBox();
-
-#    print( bbox.x1)
-
-
 def run_it() -> None:
 
     layout = get_layout()
-
-    # print (layout)
 
     pcb_sexp = read_sexp(pcb_name)
     pcb_parser = KiCadParser(pcb_sexp)
@@ -267,20 +260,19 @@ def run_it() -> None:
             pcb, "D" + item.designator, item.diode_x, item.diode_y, -90
         )
 
-        if item.designator == "232":
-            print(tool.getSymbolPropertyAsFloat(schematic, "H" + item.designator, "PCB_X", 0))
-            print(tool.getSymbolPropertyAsFloat(schematic, "H" + item.designator, "PCB_Y", 0))
-
-
         hx = (
             item.boundingBox.x1
             + 0.0
-            + tool.getSymbolPropertyAsFloat(schematic, "H" + item.designator, "PCB_X", 0)
+            + tool.getSymbolPropertyAsFloat(
+                schematic, "H" + item.designator, "PCB_X", 0
+            )
         )
         hy = (
             item.boundingBox.y1
             + 1.5
-            + tool.getSymbolPropertyAsFloat(schematic, "H" + item.designator, "PCB_Y", 0)
+            + tool.getSymbolPropertyAsFloat(
+                schematic, "H" + item.designator, "PCB_Y", 0
+            )
         )
         tool.setHiddenFootprintTextByReference(
             pcb, "H" + item.designator, "reference", True
@@ -305,136 +297,137 @@ def run_it() -> None:
         f.write(out)
 
 
-# def calcPnP():
-#     layout = get_layout()
+def calcPnP():
+    layout = get_layout()
 
-#     # print (layout)
+    pcb_sexp = read_sexp(pcb_name)
+    pcb_parser = KiCadParser(pcb_sexp)
+    pcb = pcb_parser.toList()
 
-#     pcb_sexp = read_sexp(pcb_name)
-#     pcb_parser = SParser(pcb_sexp)
-#     pcb_parser.toArray()
+    tool = KicadTool()
 
-#     for item in layout:
+    for item in layout:
 
-#         if item.designator == None:
-#             print("skipping " + item.label)
-#             continue
-#         else:
-#             print("Searching for " + item.label + " " + item.designator)
+        if item.designator == "":
+            print("skipping " + item.label)
+            continue
+        else:
+            print("Searching for " + item.label + " " + item.designator)
 
-#         diode = pcb_parser.findFootprintByReference("D" + item.designator)
-#         print(diode)
-
-
-# def makeOpnscad():
-#     layout = get_layout()
-#     out = []
-
-#     for item in layout:
-
-#         if item.designator == None:
-#             print("skipping " + item.label)
-#             continue
-#         else:
-#             print("Searching for " + item.label + " " + item.designator)
-
-#             oo = [
-#                 str(item.l_x),
-#                 str(item.l_y),
-#                 str(item.key_x),
-#                 str(item.key_y),
-#             ]
-
-#             out.append("KEY_" + item.label + " = [" + ", ".join(oo) + "];")
-
-#     # print(out)
-#     out = "\r\n".join(out)
-
-#     with open(openscad_file, "w") as f:
-#         f.write(out)
+        diode = tool.findFootprintByReference(pcb, "D" + item.designator)
+        # print(diode)
 
 
-# def makeJlcPcb():
-#     def q(s):
-#         return str(s)
+def makeOpenScad():
+    layout = get_layout()
+    out = []
 
-#     pcb_sexp = read_sexp(pcb_name)
-#     pcb_parser = SParser(pcb_sexp)
-#     pcb_parser.toArray()
+    for item in layout:
 
-#     diodesRefs = []
-#     prints = pcb_parser.findObjectsByNoun("footprint", 1)
-#     for p in prints:
-#         # print(p)
+        if item.designator == "":
+            print("skipping " + item.label)
+            continue
+        else:
+            print("Searching for " + item.label + " " + item.designator)
 
-#         o = pcb_parser.findObjectsByNoun("fp_text", float("inf"), p)
-#         filtered = filter(
-#             lambda fp: (fp[1] == "reference") and (fp[2].startswith('"D')), o
-#         )
-#         lf = list(filtered)
-#         if len(lf) == 1:
-#             ref = list(lf)[0][2]
-#             ref = ref.replace('"', "")
-#             diodesRefs.append(ref)
+            oo = [
+                str(item.l_x),
+                str(item.l_y),
+                str(item.key_x),
+                str(item.key_y),
+            ]
 
-#     diodesRefs.sort()
+            out.append("KEY_" + item.label + " = [" + ", ".join(oo) + "];")
 
-#     layout = get_layout()
-#     bom_headers = ["Comment", "Designator", "Footprint", "LCSC Part #"]
-#     cpl_headers = [
-#         "Designator",
-#         "Val",
-#         "Package",
-#         "Mid X",
-#         "Mid Y",
-#         "Rotation",
-#         "Layer",
-#     ]
+    out = "\r\n".join(out)
 
-#     bom_refs = []
-#     cpl_rows = []
+    with open(openscad_file, "w") as f:
+        f.write(out)
 
-#     for dRef in diodesRefs:
-#         bom_refs.append(dRef)
 
-#         at = pcb_parser.findAtByReference(dRef)
-#         at.append("0")  # If there is no rotation
+def makeJlcPcb():
+    def q(s):
+        return str(s)
 
-#         x = float(at[1])
-#         y = float(at[2])
-#         r = float(at[3])
+    layout = get_layout()
 
-#         cpl_row = [
-#             q(dRef),
-#             q("1N4148W"),
-#             q("SOD-123"),
-#             q(str(x) + "mm"),
-#             q(str(-y) + "mm"),  # The y coordinate system is inverted, of course.
-#             q(r + 180),
-#             q("top"),
-#         ]
+    pcb_sexp = read_sexp(pcb_name)
+    pcb_parser = KiCadParser(pcb_sexp)
+    pcb = pcb_parser.toList()
 
-#         cpl_rows.append(cpl_row)
+    tool = KicadTool()
 
-#     bom_row = ["1N4148W", ",".join(bom_refs), "SOD-123", "C176288"]
+    diodesRefs = []
+    prints = tool.findObjectsByNoun(pcb, "footprint", 1)
+    for p in prints:
+        # print(p)
 
-#     with open(jlc_bom_file, "w", encoding="UTF8") as f:
-#         writer = csv.writer(f)
+        o = tool.findObjectsByNoun(p, "fp_text", float("inf"))
+        filtered = filter(
+            lambda fp: (fp[1] == "reference") and (fp[2].startswith('"D')), o
+        )
+        lf = list(filtered)
+        if len(lf) == 1:
+            ref = list(lf)[0][2]
+            ref = ref.replace('"', "")
+            diodesRefs.append(ref)
 
-#         # write the header
-#         writer.writerow(bom_headers)
+    diodesRefs.sort()
 
-#         # write the data
-#         writer.writerow(bom_row)
+    bom_headers = ["Comment", "Designator", "Footprint", "LCSC Part #"]
+    cpl_headers = [
+        "Designator",
+        "Val",
+        "Package",
+        "Mid X",
+        "Mid Y",
+        "Rotation",
+        "Layer",
+    ]
 
-#     with open(jlc_cpl_file, "w", encoding="UTF8") as f:
-#         writer = csv.writer(f)
+    bom_refs = []
+    cpl_rows = []
 
-#         # write the header
-#         writer.writerow(cpl_headers)
+    for dRef in diodesRefs:
+        bom_refs.append(dRef)
 
-#         # write the data
-#         writer.writerows(cpl_rows)
+        at = tool.findAtByReference(pcb, dRef)
+
+        x = float(at[1])
+        y = float(at[2])
+        r = float(at[3])
+
+        cpl_row = [
+            q(dRef),
+            q("1N4148W"),
+            q("SOD-123"),
+            q(str(x) + "mm"),
+            q(str(-y) + "mm"),  # The y coordinate system is inverted, of course.
+            q(r + 180),
+            q("top"),
+        ]
+
+        cpl_rows.append(cpl_row)
+
+    bom_row = ["1N4148W", ",".join(bom_refs), "SOD-123", "C176288"]
+
+    with open(jlc_bom_file, "w", encoding="UTF8") as f:
+        writer = csv.writer(f)
+
+        # write the header
+        writer.writerow(bom_headers)
+
+        # write the data
+        writer.writerow(bom_row)
+
+    with open(jlc_cpl_file, "w", encoding="UTF8") as f:
+        writer = csv.writer(f)
+
+        # write the header
+        writer.writerow(cpl_headers)
+
+        # write the data
+        writer.writerows(cpl_rows)
 
 
 # def setModels():
@@ -472,7 +465,7 @@ def run_it() -> None:
 
 if __name__ == "__main__":
     run_it()
-    # calcPnP()
-    # makeOpnscad()
-    # makeJlcPcb()
+    calcPnP()
+    makeOpenScad()
+    makeJlcPcb()
     # setModels()

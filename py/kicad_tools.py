@@ -184,7 +184,7 @@ class KicadTool:
 
     def getSymbolProperty(self, root: list, ref: str, prop: str, default: str):
         symbol = self.findSymbolByReference(root, ref)
-    
+
         o = self.findObjectsByNoun(symbol, "property", INF)
 
         filtered = filter(lambda fp: (fp[1] == qString(prop)), o)

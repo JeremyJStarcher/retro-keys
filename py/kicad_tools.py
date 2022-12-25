@@ -97,10 +97,10 @@ class KicadTool:
         if len(objs) > 1:
             raise Exception(f"Found too many {noun}")
         if len(objs) == 0:
-            raise Exception(f"Found zero {noun}")
+            raise Exception(f"Found zero {noun}" + noun)
         return objs[0]
 
-    def findFootprintByReference(self, root: list, ref: str) -> list | None:
+    def findFootprintByReference(self, root: list, ref: str) -> list:
         prints = self.findObjectsByNoun(root, "footprint", 1)
 
         for p in prints:
@@ -115,51 +115,57 @@ class KicadTool:
             if len(lst) > 0:
                 return p
 
-        return None
+        return []
 
-    # def _getTextObjByType(self, ref, type):
-    #     p = self.findFootprintByReference(ref)
+    def _getTextObjByType(self, root: list, ref: str, type: str) -> list:
+        p = self.findFootprintByReference(root, ref)
 
-    #     o = self.findObjectsByNoun("fp_text", INF, p)
-    #     filtered = filter(lambda fp: (fp[1] == type), o)
-    #     obj = list(filtered)[0]
-    #     return obj
+        assert p is not None
 
-    # def setHiddenFootprintTextByReference(self, ref, type, hidden):
-    #     obj = self._getTextObjByType(ref, type)
+        o = self.findObjectsByNoun(p, "fp_text", INF)
+        filtered = filter(lambda fp: (fp[1] == type), o)
+        obj = list(filtered)[0]
+        return obj
 
-    #     # If it is already there, remove it.
-    #     if "hide" in obj:
-    #         obj.remove("hide")
+    def setHiddenFootprintTextByReference(
+        self, root: list, ref: str, type: str, hidden: bool
+    ):
+        obj = self._getTextObjByType(root, ref, type)
 
-    #     if hidden:
-    #         obj.append("hide")
+        # If it is already there, remove it.
+        if "hide" in obj:
+            obj.remove("hide")
 
-    # def moveTextToLayer(self, ref, type, layer):
-    #     obj = self._getTextObjByType(ref, type)
+        if hidden:
+            obj.append("hide")
 
-    #     o = self.findObjectsByNoun("layer", INF, obj)
+    def moveTextToLayer(self, root: list, ref: str, type: str, layer: Layer):
+        obj = self._getTextObjByType(root, ref, type)
 
-    #     lst = list(o)
-    #     lst[0][1] = layer
+        o = self.findObjectsByNoun(obj, "layer", INF)
 
-    # def copyToBackSilkscreen(self, ref, type):
-    #     p = self.findFootprintByReference(ref)
-    #     obj = self._getTextObjByType(ref, type)
-    #     nn = copy.deepcopy(obj)
+        lst = list(o)
+        lst[0][1] = layer
 
-    #     layerObject = self.findObjectsByNoun("layer", INF, nn)
+    def copyToBackSilkscreen(self, root: list, ref: str, type: str):
+        p = self.findFootprintByReference(root, ref)
+        assert p is not None
 
-    #     lst = list(layerObject)
-    #     lst[0][1] = Layer.B_Silkscreen
-    #     nn[1] = "user"
+        obj = self._getTextObjByType(root, ref, type)
+        nn = copy.deepcopy(obj)
 
-    #     effectsObject = self.findObjectsByNoun("effects", INF, nn)
+        layerObject = self.findObjectsByNoun(nn, "layer", INF)
 
-    #     effectsList = list(effectsObject)
-    #     effectsList[0].append(["justify", "mirror"])
+        lst = list(layerObject)
+        lst[0][1] = Layer.B_Silkscreen
+        nn[1] = "user"
 
-    #     p.append(nn)
+        effectsObject = self.findObjectsByNoun(nn, "effects", INF)
+
+        effectsList = list(effectsObject)
+        effectsList[0].append(["justify", "mirror"])
+
+        p.append(nn)
 
     def findSymbolByReference(self, root: list, ref: str):
         prints = self.findObjectsByNoun(root, "symbol", 1)
@@ -178,7 +184,7 @@ class KicadTool:
 
     def getSymbolProperty(self, root: list, ref: str, prop: str, default: str):
         symbol = self.findSymbolByReference(root, ref)
-
+    
         o = self.findObjectsByNoun(symbol, "property", INF)
 
         filtered = filter(lambda fp: (fp[1] == qString(prop)), o)
@@ -196,6 +202,7 @@ class KicadTool:
     def findAtByReference(self, root: list, ref: str) -> list:
         footprint = self.findFootprintByReference(root, ref)
         assert footprint is not None
+
         o = self.findObjectByNoun(footprint, "at", 1)
 
         # There are optional parameters.
@@ -206,7 +213,9 @@ class KicadTool:
 
         return o
 
-    def setObjectLocation(self, root, ref, x, y, rot=0):
+    def setObjectLocation(
+        self, root: list, ref: str, x: float, y: float, rot: float = 0
+    ):
         footprint = self.findFootprintByReference(root, ref)
 
         cat = self.findAtByReference(root, ref)
@@ -215,7 +224,7 @@ class KicadTool:
         # If the object is already rotated, then un-rotate it
         if current_rot != 0:
             cat[3] = float(cat[3]) - current_rot
-            self.setObjectLocation(ref, root, x, y, -current_rot)
+            self.setObjectLocation(root, ref, x, y, -current_rot)
 
         all_ats = self.findObjectsByNoun(footprint, "at", INF)
         for at1 in all_ats:
@@ -246,20 +255,19 @@ class KicadTool:
             at.append(y)
             at.append(rot)
 
-    # def addBoundingBox(self, box, width, layer):
-    #     box = [
-    #         "gr_rect",
-    #         ["start", box.x1, box.y1],
-    #         ["end", box.x2, box.y2],
-    #         ["layer", layer],
-    #         ["width", width],
-    #         ["fill", "none"],
-    #     ]
+    def addBoundingBox(self, root: list, box: BoundingBox, width: float, layer: Layer):
+        _box = [
+            "gr_rect",
+            ["start", box.x1, box.y1],
+            ["end", box.x2, box.y2],
+            ["layer", layer],
+            ["width", width],
+            ["fill", "none"],
+        ]
 
-    #     self.arr.append(box)
-    #     # print(self.arr)
+        root.append(_box)
 
-    def getBoundingBoxOfLayerLines(self, root, layerName):
+    def getBoundingBoxOfLayerLines(self, root: list, layerName: Layer):
         lines = []
 
         g_lines = self.findObjectsByNoun(root, "fp_line", float("inf"))
@@ -289,56 +297,56 @@ class KicadTool:
 
         return box
 
-    # def drawKeepoutZone(self, reference):
-    #     def pointsInCircum(r, n=100):
-    #         pi = math.pi
+    def drawKeepoutZone(self, root: list, reference: str):
+        def pointsInCircum(r, n=100):
+            pi = math.pi
 
-    #         return [
-    #             (math.cos(2 * pi / n * x) * r, math.sin(2 * pi / n * x) * r)
-    #             for x in range(0, n + 1)
-    #         ]
+            return [
+                (math.cos(2 * pi / n * x) * r, math.sin(2 * pi / n * x) * r)
+                for x in range(0, n + 1)
+            ]
 
-    #     o = [
-    #         "zone",
-    #         ["net", "0"],
-    #         ["net_name", '""'],
-    #         ["layers", "F&B.Cu"],
-    #         ["tstamp", "4b23aa4c-b704-4f99-b8ee-66b834c9f1a2"],
-    #         ["name", '"FOOBAR"'],
-    #         ["hatch", "full", "0.508"],
-    #         ["connect_pads", ["clearance", "0"]],
-    #         ["min_thickness", "0.254"],
-    #         [
-    #             "keepout",
-    #             ["tracks", "not_allowed"],
-    #             ["vias", "not_allowed"],
-    #             ["pads", "not_allowed"],
-    #             ["copperpour", "allowed"],
-    #             ["footprints", "allowed"],
-    #         ],
-    #         ["fill", ["thermal_gap", "0.508"], ["thermal_bridge_width", "0.508"]],
-    #         [
-    #             "polygon",
-    #             [
-    #                 "pts",
-    #                 # ["xy", "367.386", "203.216"],
-    #             ],
-    #         ],
-    #     ]
+        o = [
+            "zone",
+            ["net", "0"],
+            ["net_name", '""'],
+            ["layers", "F&B.Cu"],
+            ["tstamp", "4b23aa4c-b704-4f99-b8ee-66b834c9f1a2"],
+            ["name", '"FOOBAR"'],
+            ["hatch", "full", "0.508"],
+            ["connect_pads", ["clearance", "0"]],
+            ["min_thickness", "0.254"],
+            [
+                "keepout",
+                ["tracks", "not_allowed"],
+                ["vias", "not_allowed"],
+                ["pads", "not_allowed"],
+                ["copperpour", "allowed"],
+                ["footprints", "allowed"],
+            ],
+            ["fill", ["thermal_gap", "0.508"], ["thermal_bridge_width", "0.508"]],
+            [
+                "polygon",
+                [
+                    "pts",
+                    # ["xy", "367.386", "203.216"],
+                ],
+            ],
+        ]
 
-    #     slot = self.findObjectsByNoun("pts", float("inf"), o)
+        slot = self.findObjectsByNoun(o, "pts", float("inf"))
 
-    #     at = self.findAtByReference(reference)
+        at = self.findAtByReference(root, reference)
 
-    #     nx = float(at[1])
-    #     ny = float(at[2])
+        nx = float(at[1])
+        ny = float(at[2])
 
-    #     pts = pointsInCircum(3, 30)
-    #     for r in pts:
-    #         rr = ["xy", r[0] + nx, r[1] + ny]
-    #         slot[0].append(rr)
+        pts = pointsInCircum(3, 30)
+        for r in pts:
+            rr = ["xy", r[0] + nx, r[1] + ny]
+            slot[0].append(rr)
 
-    #     self.arr.append(o)
+        root.append(o)
 
     def removeNouns(self, parent, noun):
         while True:

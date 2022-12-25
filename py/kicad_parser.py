@@ -100,12 +100,12 @@ class KiCadParser:
             else:
                 print(indent + e)
 
-    def listToSexp(self):
-        def listToSexpInner(zlist: list, depth=0, out: list = []):
+    def listToSexp(self, root: list):
+        def listToSexpInner(root: list, depth=0, out: list = []):
 
             indent = " " * 2 * depth
 
-            for e in zlist:
+            for e in root:
                 if isinstance(e, list):
                     out.append(indent + "(")
                     listToSexpInner(e, depth + 1, out)
@@ -118,4 +118,4 @@ class KiCadParser:
                     out.append(indent + e)
             return out
 
-        return listToSexpInner([self.arr], 0, [])
+        return listToSexpInner([root], 0, [])

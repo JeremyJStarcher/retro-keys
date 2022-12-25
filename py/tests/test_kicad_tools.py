@@ -4,6 +4,7 @@ from kicad_tools import KicadTool
 from kicad_tools import Layer
 from kicad_parser import KiCadParser
 
+
 def read_file():
     data_file = open("sample_pcb", "r")
     data = data_file.read()
@@ -62,7 +63,7 @@ class TestStringMethods(unittest.TestCase):
         pcb_tool = KicadTool()
 
         l = pcb_tool.findFootprintByReference(pcb, "THIS_DOES_NOT_EXIST")
-        self.assertTrue(l == None)
+        self.assertTrue(len(l) == 0)
 
     def test_findAtGoodReference(self):
         pcb = self.parseFile()

@@ -1,0 +1,6 @@
+(fp_lib_table
+  (lib (name "promicro")(type "KiCad")(uri "${KIPRJMOD}/../../kicad-lib/ProMicroKiCad/promicro.pretty")(options "")(descr ""))
+  (lib (name "teensy")(type "KiCad")(uri "${KIPRJMOD}/../../kicad-lib/teensy.pretty")(options "")(descr ""))
+  (lib (name "diode")(type "KiCad")(uri "${KIPRJMOD}/../../kicad-lib/diode.pretty")(options "")(descr ""))
+  (lib (name "retro-kbd")(type "KiCad")(uri "${KIPRJMOD}/../../kicad-lib/retro-kbd.pretty")(options "")(descr ""))
+)

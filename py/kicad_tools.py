@@ -356,22 +356,22 @@ class KicadTool:
 
             parent.remove(nouns[0])
 
-    # def addSwitchModel(self, parent):
-    #     o = [
-    #         "model",
-    #         '"${KIPRJMOD}/3d/mx/asm_mx_asm_PCB.stp"',
-    #         ["offset", ["xyz", "-2.1", "-4.5", "4"]],
-    #         ["scale", ["xyz", "1", "1", "1"]],
-    #         ["rotate", ["xyz", "-180", "0", "90"]],
-    #     ]
-    #     parent.append(o)
+    def addSwitchModel(self, parent: list):
+        o = [
+            "model",
+            '"${KIPRJMOD}/../../kicad-lib/3d-models/cherry-mx-switches/asm_mx_asm_PCB.stp"',
+            ["offset", ["xyz", "-2.1", "-4.5", "4"]],
+            ["scale", ["xyz", "1", "1", "1"]],
+            ["rotate", ["xyz", "-180", "0", "90"]],
+        ]
+        parent.append(o)
 
-    # def addKeycapModel(self, parent, url):
-    #     o = [
-    #         "model",
-    #         f'"{url}"',
-    #         ["offset", ["xyz", "-2.2", "-4.9", "10"]],
-    #         ["scale", ["xyz", "0.4", "0.4", "0.4"]],
-    #         ["rotate", ["xyz", "0", "0", "0"]],
-    #     ]
-    #     parent.append(o)
+    def addKeycapModel(self, parent: list, url: str):
+        o = [
+            "model",
+            f'"{url}"',
+            ["offset", ["xyz", "-2.2", "-4.9", "10"]],
+            ["scale", ["xyz", "0.4", "0.4", "0.4"]],
+            ["rotate", ["xyz", "0", "0", "0"]],
+        ]
+        parent.append(o)

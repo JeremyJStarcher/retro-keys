@@ -430,37 +430,37 @@ def makeJlcPcb():
         writer.writerows(cpl_rows)
 
 
-# def setModels():
-#     layout = get_layout()
+def setModels():
+    layout = get_layout()
 
-#     # print (layout)
+    pcb_sexp = read_sexp(pcb_name)
+    pcb_parser = KiCadParser(pcb_sexp)
+    pcb = pcb_parser.toList()
 
-#     pcb_sexp = read_sexp(pcb_name)
-#     pcb_parser = SParser(pcb_sexp)
-#     pcb_parser.toArray()
+    tool = KicadTool()
 
-#     for item in layout:
-#         if item.designator == None:
-#             print("skipping " + item.label)
-#             continue
-#         else:
-#             print("Searching for " + item.label + " " + item.designator)
+    for item in layout:
+        if item.designator == "":
+            print("skipping " + item.label)
+            continue
+        else:
+            print("Searching for " + item.label + " " + item.designator)
 
-#         footprint = pcb_parser.findFootprintByReference("SW" + item.designator)
-#         pcb_parser.removeNouns(footprint, "model")
-#         pcb_parser.addSwitchModel(footprint)
+        footprint = tool.findFootprintByReference(pcb, "SW" + item.designator)
+        tool.removeNouns(footprint, "model")
+        tool.addSwitchModel(footprint)
 
-#         url = f"../keycaps/vrml/key_{item.label.lower()}_cap.wrl"
-#         pcb_parser.addKeycapModel(footprint, url)
+        url = f"../keycaps/vrml/key_{item.label.lower()}_cap.wrl"
+        tool.addKeycapModel(footprint, url)
 
-#         url = f"../keycaps/vrml/key_{item.label.lower()}_insert.wrl"
-#         pcb_parser.addKeycapModel(footprint, url)
+        url = f"../keycaps/vrml/key_{item.label.lower()}_insert.wrl"
+        tool.addKeycapModel(footprint, url)
 
-#     l = pcb_parser.arrayToSexp()
-#     out = "\r\n".join(l)
+    l = pcb_parser.listToSexp(pcb)
+    out = "\r\n".join(l)
 
-#     with open(pcb_name, "w") as f:
-#         f.write(out)
+    with open(pcb_name, "w") as f:
+        f.write(out)
 
 
 if __name__ == "__main__":
@@ -468,4 +468,4 @@ if __name__ == "__main__":
     calcPnP()
     makeOpenScad()
     makeJlcPcb()
-    # setModels()
+    setModels()

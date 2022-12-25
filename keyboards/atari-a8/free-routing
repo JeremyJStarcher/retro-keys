@@ -1,0 +1,18 @@
+#!/bin/sh
+
+CWD=`pwd`
+
+java -jar ~/bin/./layout/opt/layout/bin/freeRouting.jar \
+-dl -de ./kicad/router.dsn -do ./kicad/router.ses
+
+#cd ../../bin/FreeRoutingNew/deploy/
+# ./run.sh \
+#-dl -de ${CWD}/kicad/router.dsn -do ${CWD}/kicad/router.ses
+
+
+#cd ../../bin/
+# java -jar freerouting-1.6.2.jar \
+#-dl -de ${CWD}/kicad/router.dsn -do ${CWD}/kicad/router.ses
+
+#cd ../../bin/
+#java -jar freerouting-1.6.2.jar 

@@ -3,6 +3,15 @@ import pymeshlab
 import sys
 
 
+"""
+This code is in the regular `py` directory so that it can access any installed
+libraries of the environment.
+
+Trying to load this as a module for something entirely outside of this directory
+structure proved to be problematic so it can be run as a stand alone program.
+"""
+
+
 def stl_to_wrl(src: str, dest: str, color: pymeshlab.Color):
     ms = pymeshlab.MeshSet()
     ms.load_new_mesh(src)
@@ -24,6 +33,11 @@ if __name__ == "__main__":
         print("stl_to_wrl is not to be called directly.")
         print("This is used by the keycap generators to convert")
         print("stl files to wrl to use as KiCad 3d models")
+
+        print("")
+        print(f"python {sys.argv[0]} src dest red green blue alpha")
+        print("")
+        print("Absolute path names for `src` and `dest` recommend")
     else:
         src = sys.argv[1]
         dest = sys.argv[2]

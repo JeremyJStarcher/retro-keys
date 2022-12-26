@@ -269,22 +269,23 @@ class ProcessKeyboard:
                 item.boundingBox.x1
                 + 0.0
                 + tool.getSymbolPropertyAsFloat(
-                    schematic, "H" + item.designator, "PCB_X", 0
+                    schematic, "SW" + item.designator, "PCB_X", 0
                 )
             )
             hy = (
                 item.boundingBox.y1
                 + 1.5
                 + tool.getSymbolPropertyAsFloat(
-                    schematic, "H" + item.designator, "PCB_Y", 0
+                    schematic, "SW" + item.designator, "PCB_Y", 0
                 )
             )
-            tool.setHiddenFootprintTextByReference(
-                pcb, "H" + item.designator, "reference", True
-            )
+            # tool.setHiddenFootprintTextByReference(
+            #     pcb, "H" + item.designator, "reference", True
+            # )
 
-            tool.setObjectLocation(pcb, "H" + item.designator, hx, hy, 0)
-            tool.drawKeepoutZone(pcb, "H" + item.designator)
+            # tool.setObjectLocation(pcb, "H" + item.designator, hx, hy, 0)
+            tool.drawKeepoutZone(pcb, hx, hy, 3)
+            tool.drawCircle(pcb, Layer.Edge_Cuts, hx, hy, 2.2)
 
         bbox.addBorder(self.config.pcb_border)
         tool.addBoundingBox(pcb, bbox, 0.3, Layer.Edge_Cuts)

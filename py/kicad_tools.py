@@ -297,7 +297,19 @@ class KicadTool:
 
         return box
 
-    def drawKeepoutZone(self, root: list, reference: str):
+    def drawCircle(self, root: list, layer: Layer, x: float, y: float, r: float):
+        o = [
+            "gr_circle",
+            ["center", x, y],
+            ["end", x, y - r],
+            ["layer", layer],
+            ["width", "0.2"],
+            ["fill", "none"],
+        ]
+
+        root.append(o)
+
+    def drawKeepoutZone(self, root: list, nx: float, ny: float, r: float):
         def pointsInCircum(r, n=100):
             pi = math.pi
 
@@ -334,16 +346,11 @@ class KicadTool:
             ],
         ]
 
-        slot = self.findObjectsByNoun(o, "pts", float("inf"))
+        slot = self.findObjectsByNoun(o, "pts", INF)
 
-        at = self.findAtByReference(root, reference)
-
-        nx = float(at[1])
-        ny = float(at[2])
-
-        pts = pointsInCircum(3, 30)
-        for r in pts:
-            rr = ["xy", r[0] + nx, r[1] + ny]
+        pts = pointsInCircum(r, 30)
+        for point in pts:
+            rr = ["xy", point[0] + nx, point[1] + ny]
             slot[0].append(rr)
 
         root.append(o)

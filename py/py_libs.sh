@@ -4,3 +4,4 @@ source .venv/bin/activate
 pip install mypy
 pip install black
 pip install pytest
+pip install pymeshlab

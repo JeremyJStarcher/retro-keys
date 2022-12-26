@@ -356,10 +356,10 @@ class KicadTool:
 
             parent.remove(nouns[0])
 
-    def addSwitchModel(self, parent: list):
+    def addSwitchModel(self, parent: list, path: str):
         o = [
             "model",
-            '"${KIPRJMOD}/../../kicad-lib/3d-models/cherry-mx-switches/asm_mx_asm_PCB.stp"',
+            '"${KIPRJMOD}/' + path + 'cherry-mx-switches/asm_mx_asm_PCB.stp"',
             ["offset", ["xyz", "-2.1", "-4.5", "4"]],
             ["scale", ["xyz", "1", "1", "1"]],
             ["rotate", ["xyz", "-180", "0", "90"]],

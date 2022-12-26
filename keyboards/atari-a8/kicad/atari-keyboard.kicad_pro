@@ -401,7 +401,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "atari-keyboard.net",
-      "specctra_dsn": "atari-keyboard.dsn",
+      "specctra_dsn": "router.dsn",
       "step": "",
       "vrml": "atari-keyboard.wrl"
     },

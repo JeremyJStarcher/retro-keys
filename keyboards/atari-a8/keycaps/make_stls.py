@@ -85,8 +85,8 @@ def make_vrml():
 
       exe = "python ../../../py/stl_to_wrl.py"
 
-      cmd1 = f'{exe} {stl1Name} {wrl1Name} 0 0 0 127'
-      cmd2 = f'{exe} {stl2Name} {wrl2Name} 255 255 255 127'
+      cmd1 = f'{exe} {stl1Name} {wrl1Name} 0 0 0 0'
+      cmd2 = f'{exe} {stl2Name} {wrl2Name} 255 255 255 0'
 
       process1 = Popen(cmd1, shell=True)
       process2 = Popen(cmd2, shell=True)

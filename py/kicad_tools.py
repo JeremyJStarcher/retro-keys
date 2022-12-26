@@ -356,6 +356,17 @@ class KicadTool:
 
             parent.remove(nouns[0])
 
+    def addSD123Model(self, parent: list, path: str):
+        o = [
+            "model",
+            '"${KIPRJMOD}/' + path + 'SOD-diodes/SOD-123.step"',
+            ["offset", ["xyz", "0", "0", "0"]],
+            ["scale", ["xyz", "1", "1", "1"]],
+            ["rotate", ["xyz", "0", "0", "0"]],
+        ]
+        parent.append(o)
+
+
     def addSwitchModel(self, parent: list, path: str):
         o = [
             "model",

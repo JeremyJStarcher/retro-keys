@@ -447,17 +447,21 @@ class ProcessKeyboard:
             else:
                 print("Searching for " + item.label + " " + item.designator)
 
-            footprint = tool.findFootprintByReference(pcb, "SW" + item.designator)
-            tool.removeNouns(footprint, "model")
-            tool.addSwitchModel(footprint, self.config.kicad_3dmodel_path)
+            diodeFootprint = tool.findFootprintByReference(pcb, "D" + item.designator)
+            tool.removeNouns(diodeFootprint, "model")
+            tool.addSD123Model(diodeFootprint, self.config.kicad_3dmodel_path)
+
+            switchFootprint = tool.findFootprintByReference(pcb, "SW" + item.designator)
+            tool.removeNouns(switchFootprint, "model")
+            tool.addSwitchModel(switchFootprint, self.config.kicad_3dmodel_path)
 
             url = (
                 f"{self.config.kicad_keycap_vrml_path}key_{item.label.lower()}_cap.wrl"
             )
-            tool.addKeycapModel(footprint, url)
+            tool.addKeycapModel(switchFootprint, url)
 
             url = f"{self.config.kicad_keycap_vrml_path}key_{item.label.lower()}_insert.wrl"
-            tool.addKeycapModel(footprint, url)
+            tool.addKeycapModel(switchFootprint, url)
 
         l = pcb_parser.listToSexp(pcb)
         out = "\r\n".join(l)

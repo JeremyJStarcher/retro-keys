@@ -237,7 +237,7 @@
       (net 71 "Net-(D227-Pad2)") (pinfunction "A") (pintype "passive") (tstamp d27cbf50-b48c-46c1-b90f-509fecd1b79a))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 71 "Net-(D227-Pad2)") (pinfunction "A") (pintype "passive") (tstamp dd834fe1-eb42-43ea-b512-1b11a7bba361))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -312,7 +312,7 @@
       (net 93 "Net-(D249-Pad2)") (pinfunction "A") (pintype "passive") (tstamp e13d2269-5d93-4458-8737-2e9f11bf243d))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "F.Cu")
       (net 93 "Net-(D249-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f28f36cf-7814-45d6-af87-7d5871c41160))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -612,7 +612,7 @@
       (net 91 "Net-(D247-Pad2)") (pinfunction "A") (pintype "passive") (tstamp db943050-643b-4b42-a8af-0bbf7119b553))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "B.Cu")
       (net 91 "Net-(D247-Pad2)") (pinfunction "A") (pintype "passive") (tstamp e3e2c43b-8657-4601-8c8c-76dd3dd632e3))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -687,7 +687,7 @@
       (net 73 "Net-(D229-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f0036ed1-fc22-4e88-b812-d9508887bb73))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 73 "Net-(D229-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f4d2926a-a724-43e7-816d-9fa4c8dc68d5))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -736,7 +736,7 @@
       (net 88 "Net-(D244-Pad2)") (pinfunction "A") (pintype "passive") (tstamp cd0a6ef4-525d-455b-89d6-f4e97d5adfbb))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 88 "Net-(D244-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f0e22b20-1d26-461f-bce9-008289761b10))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -838,7 +838,7 @@
       (net 111 "Net-(D267-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 9c731223-653a-4982-93b7-bd43e5f56a21))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "F.Cu")
       (net 111 "Net-(D267-Pad2)") (pinfunction "A") (pintype "passive") (tstamp c2e4f45b-fb5a-44ab-8fb4-142210161a82))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -913,7 +913,7 @@
       (net 74 "Net-(D230-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f2115894-b60b-4217-94fe-19ae6de918f9))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 74 "Net-(D230-Pad2)") (pinfunction "A") (pintype "passive") (tstamp fbba1a03-1a7e-465f-a588-fa2afb1ae099))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -1549,7 +1549,7 @@
       (net 53 "Net-(D209-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 8a6986e9-d68d-44c6-9bd5-953864ed7401))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "B.Cu")
       (net 53 "Net-(D209-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 8de0ebec-cc5a-498d-89db-6578695cc065))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -1857,7 +1857,7 @@
       (net 97 "Net-(D253-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 829c4fdb-e0b8-47fc-bd3a-f3c0d21ab969))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "F.Cu")
       (net 97 "Net-(D253-Pad2)") (pinfunction "A") (pintype "passive") (tstamp a1b8a3ca-b1ae-491c-9ccd-9debbc064ea9))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -1906,7 +1906,7 @@
       (net 89 "Net-(D245-Pad2)") (pinfunction "A") (pintype "passive") (tstamp d72615a9-d919-4123-aa5b-17436b3d5984))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "F.Cu")
       (net 89 "Net-(D245-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f1fa434c-5cec-4608-ba2d-3ce497c6c303))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -2100,7 +2100,7 @@
       (net 75 "Net-(D231-Pad2)") (pinfunction "A") (pintype "passive") (tstamp a14c8e03-e26e-471a-aae6-0939982edb7c))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 75 "Net-(D231-Pad2)") (pinfunction "A") (pintype "passive") (tstamp a6d798c3-ba15-4026-880b-1ecd3c6b2902))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -2149,7 +2149,7 @@
       (net 62 "Net-(D218-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 6cc0330f-015f-41d9-b1c1-56d1d500a8ce))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 62 "Net-(D218-Pad2)") (pinfunction "A") (pintype "passive") (tstamp fdfe1225-826a-4a8f-b0d0-7277a3bb6a7f))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -2289,7 +2289,7 @@
       (net 95 "Net-(D251-Pad2)") (pinfunction "A") (pintype "passive") (tstamp c89fb03e-4e79-41ce-a70d-bb9fc354d3da))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 95 "Net-(D251-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f6da095d-3881-446e-9e1a-cec37193dd56))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -2680,7 +2680,7 @@
       (net 12 "C3") (pinfunction "A") (pintype "passive") (tstamp b2c24178-b267-40c7-82e6-ed7a4341d350))
     (pad "2" smd rect locked (at -1.4 0 270) (size 1.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 12 "C3") (pinfunction "A") (pintype "passive") (tstamp da05dde9-b327-44b7-b31a-a06328569169))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -2911,7 +2911,7 @@
       (net 94 "Net-(D250-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 90dc06b4-c03e-489c-9fd2-1c56638696d4))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 94 "Net-(D250-Pad2)") (pinfunction "A") (pintype "passive") (tstamp cbe58a21-c693-441d-b6be-60bc3fae932e))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -3090,7 +3090,7 @@
       (net 58 "Net-(D214-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 8bd6d265-91c5-4405-8ff8-6d8aeccd6ccf))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 58 "Net-(D214-Pad2)") (pinfunction "A") (pintype "passive") (tstamp adf639d9-2bd8-4e7e-b6c8-2dca8081256c))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -3139,7 +3139,7 @@
       (net 14 "C1") (pinfunction "A") (pintype "passive") (tstamp a059c983-6bee-4b35-8c59-dbdb4b6910aa))
     (pad "2" smd rect locked (at -1.4 0 270) (size 1.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 14 "C1") (pinfunction "A") (pintype "passive") (tstamp cc7f4864-3167-43a7-8df5-3e866254ea6d))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -3214,7 +3214,7 @@
       (net 72 "Net-(D228-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 95533c30-2e55-4c6c-a87d-9d6a82746681))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "B.Cu")
       (net 72 "Net-(D228-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 9668cdde-af8d-40af-84c1-759a1a423052))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -3263,7 +3263,7 @@
       (net 61 "Net-(D217-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 9aa3c13e-c7f6-4bc5-8881-a2ec5de0f1a3))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 61 "Net-(D217-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 9c3d3ce2-149b-45e2-9bcc-8b1fc152b2c6))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -3364,7 +3364,7 @@
       (net 77 "Net-(D233-Pad2)") (pinfunction "A") (pintype "passive") (tstamp bc0f2278-7bba-4d49-9f78-13d08d67c63b))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 77 "Net-(D233-Pad2)") (pinfunction "A") (pintype "passive") (tstamp ec2fde82-73aa-437b-94bd-44c4a1710167))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -3413,7 +3413,7 @@
       (net 85 "Net-(D241-Pad2)") (pinfunction "A") (pintype "passive") (tstamp aca1cf99-429b-4f88-8413-26c4f2d40ee0))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 85 "Net-(D241-Pad2)") (pinfunction "A") (pintype "passive") (tstamp be32322d-23c4-4de9-a914-36b42003143e))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -3488,7 +3488,7 @@
       (net 69 "Net-(D225-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 3a5745bf-63f6-4f80-b7f4-5dc696faafed))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 69 "Net-(D225-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f3b6cd69-1bd0-40b1-aa03-b7dfef3bd1fb))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -3563,7 +3563,7 @@
       (net 106 "Net-(D262-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 8e1cfdaa-f750-4997-8e90-f5c0d64a5dba))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "B.Cu")
       (net 106 "Net-(D262-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f8ab59a0-18d8-4d9c-a614-cd1c8003222a))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -3677,7 +3677,7 @@
       (net 104 "Net-(D260-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 86adbf2f-8887-4b66-9952-bee3015d27a0))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "B.Cu")
       (net 104 "Net-(D260-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 9c3b9026-0a90-4ab7-bb7f-4392220d0375))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -4057,7 +4057,7 @@
       (net 14 "C1") (pinfunction "A") (pintype "passive") (tstamp ee53b337-8f68-4a2f-94b3-7107a9730acb))
     (pad "2" smd rect locked (at -2.5 0 270) (size 2.9 0.5) (layers "B.Cu")
       (net 14 "C1") (pinfunction "A") (pintype "passive") (tstamp f9b1823b-a8b2-415b-8af6-416fa1ae3e51))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -4197,7 +4197,7 @@
       (net 80 "Net-(D236-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 5eaa6776-8c24-4d80-90c6-b6d004be4edd))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "F.Cu")
       (net 80 "Net-(D236-Pad2)") (pinfunction "A") (pintype "passive") (tstamp fb80d1a3-69b0-4778-aa4b-9d4d66868380))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -4402,7 +4402,7 @@
       (net 50 "Net-(D206-Pad2)") (pinfunction "A") (pintype "passive") (tstamp e7a48594-cdfa-4703-a2f3-a49171d944b5))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 50 "Net-(D206-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f414ce80-e50e-446a-a386-0fa3f7930842))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -4451,7 +4451,7 @@
       (net 90 "Net-(D246-Pad2)") (pinfunction "A") (pintype "passive") (tstamp cb14e156-614a-4b53-a0c5-2071b79c7862))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 90 "Net-(D246-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f4514b08-6110-449b-957b-50924228550a))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -4721,7 +4721,7 @@
       (net 98 "Net-(D254-Pad2)") (pinfunction "A") (pintype "passive") (tstamp d6061234-f254-4b66-b22c-ff91abe522cd))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 98 "Net-(D254-Pad2)") (pinfunction "A") (pintype "passive") (tstamp d937ec81-3589-49d7-9c6d-a0738dc63ab3))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -4770,7 +4770,7 @@
       (net 52 "Net-(D208-Pad2)") (pinfunction "A") (pintype "passive") (tstamp bb4de03a-10db-4384-978c-97c545cd466a))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 52 "Net-(D208-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f4599cdf-d4a1-4b8c-b81e-3a3131e75959))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -4819,7 +4819,7 @@
       (net 102 "Net-(D258-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 574b0de8-b1ba-4ca8-9e6a-ce63337374cf))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 102 "Net-(D258-Pad2)") (pinfunction "A") (pintype "passive") (tstamp ac4a24e7-ff55-489f-bb5a-67a40c99198e))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -4958,7 +4958,7 @@
       (net 13 "C2") (pinfunction "A") (pintype "passive") (tstamp b5ea2309-3603-495e-9914-58ed79fd6472))
     (pad "2" smd rect locked (at -1.4 0 270) (size 1.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 13 "C2") (pinfunction "A") (pintype "passive") (tstamp d6e51413-f3d0-4898-8ab0-1f42ca721892))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -5007,7 +5007,7 @@
       (net 109 "Net-(D265-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 7924b78a-1464-417e-84a3-18456cc7a0ac))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 109 "Net-(D265-Pad2)") (pinfunction "A") (pintype "passive") (tstamp bb9d4836-250a-4f8c-868d-85bf1ca71f00))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -5277,7 +5277,7 @@
       (net 113 "Net-(D269-Pad2)") (pinfunction "A") (pintype "passive") (tstamp c4bab734-e90a-4254-8fa3-fe7f8f96c3d2))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 113 "Net-(D269-Pad2)") (pinfunction "A") (pintype "passive") (tstamp dec74be0-e116-4a9d-92b0-b76aaf86112e))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -5391,7 +5391,7 @@
       (net 78 "Net-(D234-Pad2)") (pinfunction "A") (pintype "passive") (tstamp e268a1d9-d933-4a63-b78a-0587f7bc5471))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 78 "Net-(D234-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f76b0ef2-39c0-4055-85c5-2f6ff363359c))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -5440,7 +5440,7 @@
       (net 107 "Net-(D263-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 78e7b81a-dd2f-4f81-8ea5-7141200bc0e1))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 107 "Net-(D263-Pad2)") (pinfunction "A") (pintype "passive") (tstamp ba161ebf-9cc3-476f-af8b-d232e295073b))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -5554,7 +5554,7 @@
       (net 76 "Net-(D232-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 6ee0133f-b7ed-4f4d-b490-20aeaf5e76cd))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "F.Cu")
       (net 76 "Net-(D232-Pad2)") (pinfunction "A") (pintype "passive") (tstamp ed4d7f3c-bf24-4649-99c4-c2800dea2b75))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -5603,7 +5603,7 @@
       (net 108 "Net-(D264-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 8905f263-931f-45b3-96ed-6334c7a8d42b))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 108 "Net-(D264-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 9f9bf3ed-3a7d-42da-a04e-208e183bbc4c))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -6154,7 +6154,7 @@
       (net 49 "Net-(D205-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 9c5e94fa-cfec-46c7-aa8a-6ac162a53066))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 49 "Net-(D205-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f7b1460b-81e5-4222-ac63-b87a8579c71f))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -6203,7 +6203,7 @@
       (net 51 "Net-(D207-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 4ddf4dd6-45e5-413e-9935-cafa720e39d8))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "F.Cu")
       (net 51 "Net-(D207-Pad2)") (pinfunction "A") (pintype "passive") (tstamp ef942dd0-5696-4d5e-962c-9a4b5e2bc5e5))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -6252,7 +6252,7 @@
       (net 54 "Net-(D210-Pad2)") (pinfunction "A") (pintype "passive") (tstamp a8c1a8d2-5104-47be-a404-a2e435134c70))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 54 "Net-(D210-Pad2)") (pinfunction "A") (pintype "passive") (tstamp dd6d0e9b-0e12-40f9-9458-fb06bfcc54fb))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -6301,7 +6301,7 @@
       (net 12 "C3") (pinfunction "A") (pintype "passive") (tstamp ac4fda03-f346-47e9-ba6f-59e02e04cfdc))
     (pad "2" smd rect locked (at -1.4 0 270) (size 1.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 12 "C3") (pinfunction "A") (pintype "passive") (tstamp d761ca62-af85-44e0-89ad-c547501d3d75))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -6545,7 +6545,7 @@
       (net 13 "C2") (pinfunction "A") (pintype "passive") (tstamp 672782fe-d8d5-436b-ba69-b2584f1d5cf1))
     (pad "2" smd rect locked (at -1.4 0 270) (size 1.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 13 "C2") (pinfunction "A") (pintype "passive") (tstamp f143bef0-a997-430f-808e-b3ba9b58a2d7))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -6620,7 +6620,7 @@
       (net 112 "Net-(D268-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 95888943-ed1e-408f-ba4b-8d9c2a7cc478))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "F.Cu")
       (net 112 "Net-(D268-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 963c21fd-e307-429e-9425-44132371d658))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -6669,7 +6669,7 @@
       (net 48 "Net-(D204-Pad2)") (pinfunction "A") (pintype "passive") (tstamp b3de7db0-5947-4fdc-8d4e-436f773e5a55))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "B.Cu")
       (net 48 "Net-(D204-Pad2)") (pinfunction "A") (pintype "passive") (tstamp d0aa8892-bc54-4a92-a3e8-64cf004d52ee))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -7082,7 +7082,7 @@
       (net 47 "Net-(D203-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 92f8cfdf-41f0-45c4-9222-94cfb6adfefc))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 47 "Net-(D203-Pad2)") (pinfunction "A") (pintype "passive") (tstamp d54ba5b2-c274-4933-8a2b-7d46f5003baa))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -7222,7 +7222,7 @@
       (net 11 "C4") (pinfunction "A") (pintype "passive") (tstamp 89001674-754a-44de-a7e0-5cb233ade1d2))
     (pad "2" smd rect locked (at -1.4 0 270) (size 1.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 11 "C4") (pinfunction "A") (pintype "passive") (tstamp c4c87b44-68d4-4fb9-8565-92066f9102a9))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -7362,7 +7362,7 @@
       (net 65 "Net-(D221-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 6622942b-6671-4dbd-83dd-981bd09cf83b))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 65 "Net-(D221-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 8c9d4a39-0cff-4eba-9b33-51de4c2cc481))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -7411,7 +7411,7 @@
       (net 56 "Net-(D212-Pad2)") (pinfunction "A") (pintype "passive") (tstamp db7453e5-7d16-487e-a292-0e82585fd699))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 56 "Net-(D212-Pad2)") (pinfunction "A") (pintype "passive") (tstamp fb2c8aec-f331-468e-ab1c-bf0e06c88855))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -7525,7 +7525,7 @@
       (net 67 "Net-(D223-Pad2)") (pinfunction "A") (pintype "passive") (tstamp c39fe21e-8ae7-4b8c-9d0a-7c72349907f3))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 67 "Net-(D223-Pad2)") (pinfunction "A") (pintype "passive") (tstamp fc097440-a2d5-430a-9260-6f4ac0afc530))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -7574,7 +7574,7 @@
       (net 110 "Net-(D266-Pad2)") (pinfunction "A") (pintype "passive") (tstamp d2dd3572-8822-468d-bfb5-141c4cd20022))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "F.Cu")
       (net 110 "Net-(D266-Pad2)") (pinfunction "A") (pintype "passive") (tstamp db08d255-2950-4890-9cbf-16b94b0789b8))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -7922,7 +7922,7 @@
       (net 81 "Net-(D237-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 54a9b1d1-b904-47ac-b2f0-3f5a0401a4a0))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 81 "Net-(D237-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 8bcb4788-57f2-4d44-8cc5-6f79ecf9ce77))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -8128,7 +8128,7 @@
       (net 57 "Net-(D213-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 73654bfc-90c9-4858-a5a2-369e290aceeb))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 57 "Net-(D213-Pad2)") (pinfunction "A") (pintype "passive") (tstamp dc2c9b67-b2b5-4314-82ec-62053a7cbe25))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -8294,7 +8294,7 @@
       (net 60 "Net-(D216-Pad2)") (pinfunction "A") (pintype "passive") (tstamp d325591d-e8d0-445e-bdb2-f566d0c9933f))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "B.Cu")
       (net 60 "Net-(D216-Pad2)") (pinfunction "A") (pintype "passive") (tstamp d64c9caf-049b-4105-bc76-aab39ba01214))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -8408,7 +8408,7 @@
       (net 86 "Net-(D242-Pad2)") (pinfunction "A") (pintype "passive") (tstamp ab44a882-0d41-4b60-bc39-7d35c62022ba))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "F.Cu")
       (net 86 "Net-(D242-Pad2)") (pinfunction "A") (pintype "passive") (tstamp d166067d-0fe4-43ab-9498-3bcff98a71e1))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -8457,7 +8457,7 @@
       (net 10 "C5") (pinfunction "A") (pintype "passive") (tstamp 8dbbbec1-3f27-4395-b643-49a71777e417))
     (pad "2" smd rect locked (at -1.4 0 270) (size 1.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 10 "C5") (pinfunction "A") (pintype "passive") (tstamp a4143a9a-ed26-4d8d-a926-dae9ca924602))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -8506,7 +8506,7 @@
       (net 87 "Net-(D243-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 828e926a-086d-423a-a0ef-d0c103aa18bb))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 87 "Net-(D243-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f9b61e00-54a0-4efb-857a-917056819988))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -8620,7 +8620,7 @@
       (net 63 "Net-(D219-Pad2)") (pinfunction "A") (pintype "passive") (tstamp a0aa9cd3-939e-430e-bd72-7c3908b5c1e7))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 63 "Net-(D219-Pad2)") (pinfunction "A") (pintype "passive") (tstamp eedea28e-6758-4868-919b-a753e6267e21))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -8734,7 +8734,7 @@
       (net 114 "Net-(D270-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 9a06780e-98cb-4605-a552-f9d01d9be784))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 114 "Net-(D270-Pad2)") (pinfunction "A") (pintype "passive") (tstamp adef2417-f9ed-4a16-a57d-ef0b8a7cfb72))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -8895,7 +8895,7 @@
       (net 82 "Net-(D238-Pad2)") (pinfunction "A") (pintype "passive") (tstamp cc576268-e8b0-4360-bcb1-03708ab9701c))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "B.Cu")
       (net 82 "Net-(D238-Pad2)") (pinfunction "A") (pintype "passive") (tstamp ef33dbf0-c7d7-4902-9407-0ed3a774bc30))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -8970,7 +8970,7 @@
       (net 96 "Net-(D252-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 6b308aac-d36e-4f0d-af1b-6df4905b859f))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 96 "Net-(D252-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 7432df93-7251-4c11-95a8-52926e5822cd))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -9045,7 +9045,7 @@
       (net 101 "Net-(D257-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f88e3267-06c2-4ce4-a7d3-b76d2abc0312))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "F.Cu")
       (net 101 "Net-(D257-Pad2)") (pinfunction "A") (pintype "passive") (tstamp fc4b95c0-efa9-4c79-8ad7-562ea6d9aff4))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -9120,7 +9120,7 @@
       (net 105 "Net-(D261-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 5ad26eec-e109-47b5-a97e-62c577a0aa5f))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 105 "Net-(D261-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 81e7a33f-4c71-4a40-a615-c249dc3077d7))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -9351,7 +9351,7 @@
       (net 10 "C5") (pinfunction "A") (pintype "passive") (tstamp a82b0aa1-fad8-4def-9020-5e8b23fe794e))
     (pad "2" thru_hole circle locked (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 10 "C5") (pinfunction "A") (pintype "passive") (tstamp ef6a6905-1e28-48ee-8fc3-0f00fa302b84))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -9426,7 +9426,7 @@
       (net 103 "Net-(D259-Pad2)") (pinfunction "A") (pintype "passive") (tstamp b437575e-aa91-47a5-b6d6-873390213b43))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "F.Cu")
       (net 103 "Net-(D259-Pad2)") (pinfunction "A") (pintype "passive") (tstamp e6938b35-683c-4a32-89fa-fda2915e5273))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -9501,7 +9501,7 @@
       (net 83 "Net-(D239-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 88b8bc52-096b-4e92-a68e-d32ddb7e1382))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "B.Cu")
       (net 83 "Net-(D239-Pad2)") (pinfunction "A") (pintype "passive") (tstamp c0439d9f-26a3-4bb1-b074-c82e4d2bf0b9))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -9957,7 +9957,7 @@
       (net 79 "Net-(D235-Pad2)") (pinfunction "A") (pintype "passive") (tstamp df673caa-f9fe-41d1-9ac8-81bea60bc9b3))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 79 "Net-(D235-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f0f53099-b53d-4046-8e9d-7625bc7012d8))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -10006,7 +10006,7 @@
       (net 55 "Net-(D211-Pad2)") (pinfunction "A") (pintype "passive") (tstamp a7056dc2-e5c0-4c04-b5f9-406a723df712))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 55 "Net-(D211-Pad2)") (pinfunction "A") (pintype "passive") (tstamp d87d8f1f-2628-44e1-b8b8-25a018ade053))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -10055,7 +10055,7 @@
       (net 70 "Net-(D226-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 4d4c659b-a411-401f-9a34-34a418c4db10))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "B.Cu")
       (net 70 "Net-(D226-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 9e496df5-c2f6-480a-a2d7-cd3993c8dc20))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -10169,7 +10169,7 @@
       (net 100 "Net-(D256-Pad2)") (pinfunction "A") (pintype "passive") (tstamp d218e9f5-e412-425c-908c-9005d4c1a70b))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 100 "Net-(D256-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f55e09a3-7aed-49e0-b28d-9f8f4c16f3a7))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -10336,7 +10336,7 @@
       (net 99 "Net-(D255-Pad2)") (pinfunction "A") (pintype "passive") (tstamp dae9b689-144b-490e-866c-a192be491367))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 99 "Net-(D255-Pad2)") (pinfunction "A") (pintype "passive") (tstamp e0c4531f-35d8-489f-99cc-bf66d60a9cdc))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -10385,7 +10385,7 @@
       (net 66 "Net-(D222-Pad2)") (pinfunction "A") (pintype "passive") (tstamp c19413a5-5dbc-4c62-9a5d-8e351a236cf8))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 66 "Net-(D222-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f71e11ea-2a43-431a-a554-ab182ed93975))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -10460,7 +10460,7 @@
       (net 92 "Net-(D248-Pad2)") (pinfunction "A") (pintype "passive") (tstamp ecb49c2f-3e95-492e-b5d8-f835a1054363))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "F.Cu")
       (net 92 "Net-(D248-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f1a6d248-4e05-4e8f-9902-72ddcb7a878f))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -10574,7 +10574,7 @@
       (net 46 "Net-(D202-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 45797cca-814e-4f08-93f6-e2a6d4e04aed))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask")
       (net 46 "Net-(D202-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 970d0b5e-d0f7-4a6f-bf30-f48c44198bbf))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -10844,7 +10844,7 @@
       (net 45 "Net-(D201-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 80642739-e552-427f-a533-dd043235f948))
     (pad "2" smd rect (at -1.4 0 270) (size 1.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 45 "Net-(D201-Pad2)") (pinfunction "A") (pintype "passive") (tstamp ae6120a9-39c7-42b3-99f1-dd2a74c0425d))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -10958,7 +10958,7 @@
       (net 11 "C4") (pinfunction "A") (pintype "passive") (tstamp 99224c5e-892a-4def-acbf-cbbd5cee00c7))
     (pad "2" thru_hole circle locked (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 11 "C4") (pinfunction "A") (pintype "passive") (tstamp e39962e9-1fa7-4f31-ae8b-1d30577d3915))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -11007,7 +11007,7 @@
       (net 68 "Net-(D224-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 2b238a6b-2968-4170-a652-c135867fd99a))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 68 "Net-(D224-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 691f75c8-d992-44c5-99d2-ec7dbda54167))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -11212,7 +11212,7 @@
       (net 59 "Net-(D215-Pad2)") (pinfunction "A") (pintype "passive") (tstamp c8489f47-b075-4fec-9404-d32c292e630e))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "B.Cu")
       (net 59 "Net-(D215-Pad2)") (pinfunction "A") (pintype "passive") (tstamp def3f0aa-c365-4ee4-ae49-9259b6336b60))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -11261,7 +11261,7 @@
       (net 64 "Net-(D220-Pad2)") (pinfunction "A") (pintype "passive") (tstamp 5e188980-874b-41a0-864b-87b889aafa7f))
     (pad "2" smd rect (at -2.5 0 270) (size 2.9 0.5) (layers "B.Cu")
       (net 64 "Net-(D220-Pad2)") (pinfunction "A") (pintype "passive") (tstamp f64d6065-eee8-43af-9218-c30080b43ece))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -11466,7 +11466,7 @@
       (net 84 "Net-(D240-Pad2)") (pinfunction "A") (pintype "passive") (tstamp ab9109da-57a2-41b6-8b38-aab7071b42d5))
     (pad "2" thru_hole circle (at -3.9 0 270) (size 1.6 1.6) (drill 1) (layers *.Cu *.Mask "F.SilkS")
       (net 84 "Net-(D240-Pad2)") (pinfunction "A") (pintype "passive") (tstamp be6ce3d5-8fe6-4a19-a8d3-60ca7999219e))
-    (model "${KICAD6_3DMODEL_DIR}/Diodes_SMD.3dshapes/D_SOD-123.step"
+    (model "${KIPRJMOD}/../../kicad-lib/3d-models/SOD-diodes/SOD-123.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))

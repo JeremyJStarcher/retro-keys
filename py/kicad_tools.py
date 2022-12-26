@@ -366,7 +366,6 @@ class KicadTool:
         ]
         parent.append(o)
 
-
     def addSwitchModel(self, parent: list, path: str):
         o = [
             "model",

@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name "kebio")(type "Legacy")(uri "/home/jjs/Projects/retro-keys/keyboards/kicad-lib/keebio/keebio-components/keebio.lib")(options "")(descr ""))
+)

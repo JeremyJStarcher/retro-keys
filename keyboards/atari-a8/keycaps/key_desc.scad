@@ -1,6 +1,6 @@
 
 
-include <./KeyV2/includes.scad>
+include <../../openscad//KeyV2/includes.scad>
 include <atarikeys.scad>
 use <key_include.scad>
 include <keyboard-position.scad>

@@ -30,6 +30,7 @@ class ProcessConfiguration:
     diode_offset_x = 6.5
     diode_offset_y = 5.52
 
+
 class KeyInfo:
     # Logoical position, based on key units
     l_x: float = 0
@@ -450,7 +451,9 @@ class ProcessKeyboard:
             tool.removeNouns(footprint, "model")
             tool.addSwitchModel(footprint, self.config.kicad_3dmodel_path)
 
-            url = f"{self.config.kicad_keycap_vrml_path}key_{item.label.lower()}_cap.wrl"
+            url = (
+                f"{self.config.kicad_keycap_vrml_path}key_{item.label.lower()}_cap.wrl"
+            )
             tool.addKeycapModel(footprint, url)
 
             url = f"{self.config.kicad_keycap_vrml_path}key_{item.label.lower()}_insert.wrl"
@@ -482,9 +485,8 @@ if __name__ == "__main__":
     config.matrix_starting_index = 201
 
     # Paths relative to the KiCad project
-    config.    kicad_3dmodel_path = "../../kicad-lib/3d-models/"
-    config. kicad_keycap_vrml_path = "../keycaps/vrml/"
-
+    config.kicad_3dmodel_path = "../../kicad-lib/3d-models/"
+    config.kicad_keycap_vrml_path = "../keycaps/vrml/"
 
     process = ProcessKeyboard(config)
 

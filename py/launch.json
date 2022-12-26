@@ -6,7 +6,7 @@
             "type": "python",
             "request": "launch",
             "module": "my_code.main",
-            "env": {"PYTHONPATH": "${workspaceFolder}/./"}
+            "env": {"PYTHONPATH": "${workspaceFolder}/./:${workspaceFolder}/./libs/"}
         }
     ]
 }

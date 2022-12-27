@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import shutil
 import os
 from subprocess import Popen
@@ -169,5 +171,5 @@ key_list = [
 ]
 
 if __name__ == '__main__':
-   make_all_stls()
+   # make_all_stls()
    make_vrml()

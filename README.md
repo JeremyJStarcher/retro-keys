@@ -31,7 +31,7 @@ access privately installed libraries.
 
 This package must be installed globally.
 
-   pip install venv
+    pip install venv
 
 ### Step 2 - Create the virtual environment (only needs done once after clone)
 
@@ -74,7 +74,5 @@ regenerated when working on that keyboard.
 
 ### Working with an existing keyboard
 
-Yet to be documented.  This workflow is being cleaned up.
-
-
-
+Yet to be documented.  This workflow is still somewhat reliant on a QMK script
+outside the `retro-keys` project directory structure.

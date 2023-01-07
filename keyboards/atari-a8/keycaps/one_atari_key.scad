@@ -1,13 +1,13 @@
 use <key_desc.scad>
 
-keymode = 4;
+keymode = "1";
 
 $part_mode = keymode;
 
-  key = "key_o";
-  print_one();
+key = "key_z";
+print_one();
 
-//   prepKey() key_o();
+ //  prepKey() key_o();
 //   prepKey() key_i();
 //   prepKey() key_comma();
 

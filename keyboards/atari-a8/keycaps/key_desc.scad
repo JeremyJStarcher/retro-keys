@@ -529,6 +529,7 @@ module key_space() {
 
     tu(KEY_SPACE)
     u(6.25) stabilized(mm=50)
+    preKey()
     key();
 }
 

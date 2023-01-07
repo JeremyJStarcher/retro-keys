@@ -1,8 +1,9 @@
 
-print_target = "fdm"; // "fdm"; // "resin"
+
+print_target = "resin"; // "fdm"; // "resin"
 
 // How far to rotate the keys when they are generated
-atari_rotation = print_target == "fdm" ? 0 : 45;
+atari_rotation = print_target == "fdm" ? 0 : -45;
 
 // how far below the "zero line" to start making the supports.
 sink = -9;
@@ -18,7 +19,7 @@ full_size = 5;
 // Font size of words written on a key
 long_size = 4;
 // Font size if there are multiple lines on a key.
-half_size = 5; // 4.5;
+half_size = print_target == "fdm" ? 5 : 4;
 grid_key_size = 4;
 arrow_size = 6;
 
@@ -30,11 +31,9 @@ $keytop_thickness = 2;
 
 // Supports for the stem, as it often comes off during printing. Reccommended for most machines
 // $stem_support_type = "tines"; // [tines, brim, disabled]
+// $stem_support_type = "brim"; //  "disable"; // "disable"; // "tines"
 
-$stem_support_type = "brim"; //  "disable"; // "disable"; // "tines"
 $inset_legend_depth = 1.5;
 // $clearance_check = true;
 
-// $font = "Liberation Mono:style=Bold";
-$font = "Liberation Sans:style=Bold";
 

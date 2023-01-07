@@ -10,20 +10,15 @@ class StlMode(Enum):
     KEY_CAP = 1
     INSET = 2
 
-
 STL_DIR="stls"
 VRML_DIR="vrml"
 
 
 def buildFileName(dir, key_name, extension, mode):
-   tmode = -1
    if mode == StlMode.KEY_CAP:
       tail = "cap"
-      tmode = 1
    else:
       tail = "insert"
-      tmode = 2
-
 
    rr =f"{dir}/{key_name}_{tail}.{extension}" 
 
@@ -167,9 +162,9 @@ key_list = [
    "key_x",
    "key_y",
    "key_z",
-   "layout"
+   "layout",
 ]
 
 if __name__ == '__main__':
-   # make_all_stls()
+   make_all_stls()
    make_vrml()

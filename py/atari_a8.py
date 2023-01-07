@@ -4,7 +4,8 @@ from process_keyboard import ProcessKeyboard
 if __name__ == "__main__":
     config = ProcessConfiguration()
     config.qmk_layout_filename = (
-        "/home/jjs/Projects/qmk/qmk_firmware_a8/keyboards/atari_a8/info.json"
+        # "/home/jjs/Projects/qmk/qmk_firmware_a8/keyboards/atari_a8/info.json"
+        "../keyboards/atari-a8/qmkinfo.json"
     )
 
     config.pcb_filename = "../keyboards/atari-a8/kicad/atari-keyboard.kicad_pcb"

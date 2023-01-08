@@ -57,7 +57,7 @@ module preKey(size, w2, h2)
             translate([ offset, a, sink ]) 
             cube([ rr2 + thick, supportThicknes, 0.25 ]);
         }
-        foot(offset, a);
+        // foot(offset, a);
     }
 
     module supportWidth(a, offset)
@@ -74,7 +74,7 @@ module preKey(size, w2, h2)
             cube([ supportThicknes, rr2 + thick, tt ]);
         }
 
-        foot(a, offset);
+       // foot(a, offset);
     }
 
     module supportWidth2(a, offset)

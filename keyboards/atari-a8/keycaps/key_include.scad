@@ -1,12 +1,12 @@
 
 
-print_target = "resin"; // "fdm"; // "resin"
+print_target = "fdm"; // "fdm"; // "resin"
 
 // How far to rotate the keys when they are generated
 atari_rotation = print_target == "fdm" ? 0 : -45;
 
 // how far below the "zero line" to start making the supports.
-sink = -9;
+sink = -15;
 // Diamater of supports at one end
 support_r1 = 0.5;
 // Diamater of supports at other end

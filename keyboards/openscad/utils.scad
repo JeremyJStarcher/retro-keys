@@ -1,3 +1,5 @@
+CASE_CORNER_R = 5;
+
 module centerChildren()
 {
     translate([ BOARD_X1, BOARD_Y1, 0 ]) children();
@@ -27,13 +29,14 @@ module bottomCase(blen2, bwidth2, offset, height)
 
     hull() mirror4()
     {
-        translate([ -blen / 2, -bwidth / 2, 0 ]) cylinder(h = height, r = 10);
+        translate([ -blen / 2, -bwidth / 2, 0 ]) cylinder(h = height, r = CASE_CORNER_R);
     }
 }
 
 module mountingHoles(blen, bwidth, offset, height)
 {
-    mirror4() translate([ -blen / 2 + offset, -bwidth / 2 + offset, 0 ]) cylinder(h = height * 10, r = 10);
+    mirror4() translate([ -blen / 2 + offset, -bwidth / 2 + offset, 0 ])
+        cylinder(h = height * 10, r = MOUNTING_HOLE_D / 2);
 }
 
 module mountingStandoffs(blen, bwidth, offset, d, height)
@@ -92,15 +95,20 @@ module keyBoundingBoxes()
     }
 }
 
+module centerCubeXy(wid, len, height)
+{
+    translate([ -wid / 2, -len / 2, BASE_THICKNESS ]) cube([ wid, len, height ]);
+}
+
 module body()
 {
     difference()
     {
-        bottomCase(BOARD_LEN, BOARD_WID, MOUNTING_HOLE_OFFSET, CASE_HEIGTH);
-        translate([ 0, 0, -CASE_HEIGTH ]) resize([ BOARD_LEN + 1, BOARD_WID + 1, CASE_HEIGTH * 3 ]) centerChildren()
-            caseBoundBox();
+        CASE_BORDER = 2;
+        bottomCase(BOARD_LEN, BOARD_WID, 0, CASE_HEIGTH);
+        translate([ 0, 0, -BASE_THICKNESS ]) centerCubeXy(BOARD_LEN + CASE_BORDER, BOARD_WID + CASE_BORDER, CASE_HEIGTH * 3);
     }
-    translate([ 0, 0, BASE_THICKNESS ]) centerChildren() caseBoundBox();
+    translate([ 0, 0, -0.00 ]) centerChildren() caseBoundBox();
 
     translate([ 0, 0, BASE_THICKNESS ]) centerChildren()
     {

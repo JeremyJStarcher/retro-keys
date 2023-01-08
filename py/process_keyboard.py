@@ -1,6 +1,7 @@
 import json
 import csv
 import os
+from typing import List
 from kicad_parser import KiCadParser
 from kicad_tools import KicadTool
 from kicad_tools import Layer
@@ -9,6 +10,9 @@ from kicad_tools import BoundingBox
 STANDOFF_HOLE_INNER_DIAMETER = 2.2
 STANDOFF_HOLE_OUTER_DIAMETER = 4
 STANDOFF_HOLE_HEIGHT = 3
+CASE_HEIGTH = 10
+MOUNTING_HOLE_OFFSET = 5
+MOUNTING_HOLE_D = 3.2
 
 
 class ProcessConfiguration:
@@ -272,18 +276,14 @@ class ProcessKeyboard:
             )
 
             hx, hy = self.get_standoff_location(schematic, tool, item)
-            # tool.setHiddenFootprintTextByReference(
-            #     pcb, "H" + item.designator, "reference", True
-            # )
 
-            # tool.setObjectLocation(pcb, "H" + item.designator, hx, hy, 0)
             tool.drawKeepoutZone(pcb, hx, hy, 3)
             tool.drawCircle(pcb, Layer.Edge_Cuts, hx, hy, STANDOFF_HOLE_INNER_DIAMETER)
 
         bbox.addBorder(self.config.pcb_border)
         tool.addBoundingBox(pcb, bbox, 0.3, Layer.Edge_Cuts)
 
-        bbox.addBorder(-5)
+        bbox.addBorder(-MOUNTING_HOLE_OFFSET)
         tool.setObjectLocation(pcb, "H101", bbox.x1, bbox.y1, 0)
         tool.setObjectLocation(pcb, "H102", bbox.x1, bbox.y2, 0)
         tool.setObjectLocation(pcb, "H103", bbox.x2, bbox.y1, 0)
@@ -491,6 +491,9 @@ class ProcessKeyboard:
             ]);"
             return s
 
+        def BboxToOpenScadItem(label: str, bbox: BoundingBox) -> str:
+            return "[" + f'"{label}", {bbox.x1}, {bbox.y1}, {bbox.x2}, {bbox.y2}' + "]"
+
         layout = self.get_layout()
 
         pcb_sexp = self.read_sexp(self.config.pcb_filename)
@@ -503,9 +506,9 @@ class ProcessKeyboard:
 
         tool = KicadTool()
 
-        code = []
-        standoffLocations = []
-        bboxes = []
+        code: List[str] = []
+        standoffLocations: List[List[float]] = []
+        bboxes: List[str] = []
 
         bbox = BoundingBox(-1, -1, -1, -1)
 
@@ -534,31 +537,38 @@ class ProcessKeyboard:
             hx, hy = self.get_standoff_location(schematic, tool, item)
 
             standoffLocations.append([hx, hy])
-            bboxes.append(bboxToPolygon(item.boundingBox))
+            bboxes.append(BboxToOpenScadItem(item.label, item.boundingBox))
 
             bbox.update_xy(item.boundingBox.x1, item.boundingBox.y1)
             bbox.update_xy(item.boundingBox.x2, item.boundingBox.y2)
 
         bbox.addBorder(self.config.pcb_border)
 
-        # Add a little border so we know all the boxes overlap.
-        # item.boundingBox.addBorder(1)
+        len = abs(bbox.x2 - bbox.x1)
+        wid = abs(bbox.y2 - bbox.y1)
+        xorg = -bbox.x1 - len / 2
+        yorg = -bbox.y1 - wid / 2
 
-        # tool.setObjectLocation(pcb, "H101", bbox.x1, bbox.y1, 0)
-        # tool.setObjectLocation(pcb, "H102", bbox.x1, bbox.y2, 0)
-        # tool.setObjectLocation(pcb, "H103", bbox.x2, bbox.y1, 0)
-        # tool.setObjectLocation(pcb, "H104", bbox.x2, bbox.y2, 0)
-
-        code.append("use <../../openscad/utils.scad>;")
+        code.append("include <../../openscad/utils.scad>;")
 
         code.append("BASE_THICKNESS = 3;")
+
+        code.append(f"BOARD_X1 = {xorg};")
+        code.append(f"BOARD_Y1 = {yorg};")
+        code.append(f"BOARD_X2 = {xorg + len};")
+        code.append(f"BOARD_Y2 = {yorg + wid};")
+        code.append(f"BOARD_LEN = {len};")
+        code.append(f"BOARD_WID = {wid};")
+        code.append(f"CASE_HEIGTH = {CASE_HEIGTH};")
 
         code.append(f"STANDOFF_HOLE_INNER_DIAMETER = {STANDOFF_HOLE_INNER_DIAMETER};")
         code.append(f"STANDOFF_HOLE_OUTER_DIAMETER = {STANDOFF_HOLE_OUTER_DIAMETER};")
         code.append(f"STANDOFF_HOLE_HEIGHT = {STANDOFF_HOLE_HEIGHT};")
+        code.append(f"MOUNTING_HOLE_D = {MOUNTING_HOLE_D};")
+        code.append(f"MOUNTING_HOLE_OFFSET = {MOUNTING_HOLE_OFFSET};")
 
         code.append("module caseBoundBox() {")
-        code.append("linear_extrude(BASE_THICKNESS)")
+        code.append('color("white") linear_extrude(BASE_THICKNESS)')
         code.append(bboxToPolygon(bbox))
         code.append("}")
 
@@ -571,27 +581,12 @@ class ProcessKeyboard:
 
         code.append("}")
 
-        code.append("module keyBoundingBoxes() {")
+        code.append("keyBoundingBoxes = [")
         for bb in bboxes:
-            code.append('color("blue") linear_extrude(BASE_THICKNESS+.25)')
-            code.append(bb)
-        code.append("}")
+            code.append(bb + ",")
+        code.append("];")
 
-        #            tool.drawCircle(pcb, Layer.Edge_Cuts, hx, hy, STANDOFF_HOLE_INNER_DIAMETER)
-
-        code.append("")
-
-        len = abs(bbox.x2 - bbox.x1)
-        wid = abs(bbox.y2 - bbox.y1)
-        xorg = -bbox.x1 - len / 2
-        yorg = -bbox.y1 - wid / 2
-
-        code.append(f"translate([{xorg},{yorg},0])" + "{")
-
-        code.append("caseBoundBox();")
-        code.append("standOffs();")
-        code.append("keyBoundingBoxes();")
-        code.append("}")
+        code.append("main();")
 
         out = os.linesep.join(code)
 

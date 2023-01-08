@@ -56,6 +56,18 @@ module line(x1, y1, x2, y2)
     }
 }
 
+module standOffs()
+{
+    for (standoff = keyStandoffs)
+    {
+        x = standoff[0];
+        y = standoff[1];
+
+        translate([ x, y, BASE_THICKNESS ]) color("black")
+            tube(STANDOFF_HOLE_OUTER_DIAMETER, STANDOFF_HOLE_INNER_DIAMETER, STANDOFF_HOLE_HEIGHT);
+    }
+}
+
 module keyBoundingBoxes()
 {
     for (box = keyBoundingBoxes)
@@ -65,12 +77,18 @@ module keyBoundingBoxes()
         x2 = box[3];
         y2 = box[4];
 
-        translate([ 0, 0, BASE_THICKNESS ]) color("blue") {
+        translate([ 0, 0, BASE_THICKNESS ]) color("blue")
+        {
             line(x1, y1, x2, y1);
             line(x1, y2, x2, y2);
             line(x1, y1, x1, y2);
             line(x2, y1, x2, y2);
         }
+
+        cx = (x1 + x2) / 2;
+        cy = (y1 + y2) / 2;
+        color("green") translate(v = [ cx, cy, BASE_THICKNESS ]) linear_extrude(height = 1)
+            text(box[0], valign = "center", halign = "center", size = 3);
     }
 }
 
@@ -79,11 +97,10 @@ module body()
     difference()
     {
         bottomCase(BOARD_LEN, BOARD_WID, MOUNTING_HOLE_OFFSET, CASE_HEIGTH);
-          translate([ 0, 0, -CASE_HEIGTH ]) resize([ BOARD_LEN + 1, BOARD_WID + 1, CASE_HEIGTH *3 ]) centerChildren()
+        translate([ 0, 0, -CASE_HEIGTH ]) resize([ BOARD_LEN + 1, BOARD_WID + 1, CASE_HEIGTH * 3 ]) centerChildren()
             caseBoundBox();
-}
-        translate([ 0, 0, BASE_THICKNESS ])  centerChildren()
-            caseBoundBox();
+    }
+    translate([ 0, 0, BASE_THICKNESS ]) centerChildren() caseBoundBox();
 
     translate([ 0, 0, BASE_THICKNESS ]) centerChildren()
     {

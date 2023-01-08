@@ -530,11 +530,19 @@ class ProcessKeyboard:
 
             assert item.boundingBox is not None
 
-            # OpenSCAD flips the y-asix
+            # OpenSCAD flips the y-axis
             item.boundingBox.y1 = -item.boundingBox.y1
             item.boundingBox.y2 = -item.boundingBox.y2
 
-            hx, hy = self.get_standoff_location(schematic, tool, item)
+            hx, rhy = self.get_standoff_location(schematic, tool, item)
+
+            # Handle the flipped y axis
+            hy = rhy - (
+                tool.getSymbolPropertyAsFloat(
+                    schematic, "SW" + item.designator, "PCB_Y", 0
+                )
+                * 2
+            )
 
             standoffLocations.append([hx, hy])
             bboxes.append(BboxToOpenScadItem(item.label, item.boundingBox))
@@ -572,14 +580,10 @@ class ProcessKeyboard:
         code.append(bboxToPolygon(bbox))
         code.append("}")
 
-        code.append("module standOffs() {")
+        code.append("keyStandoffs = [")
         for x, y in standoffLocations:
-            code.append(f"translate([{x},{y},BASE_THICKNESS])")
-            code.append(
-                "tube(STANDOFF_HOLE_OUTER_DIAMETER, STANDOFF_HOLE_INNER_DIAMETER, STANDOFF_HOLE_HEIGHT);"
-            )
-
-        code.append("}")
+            code.append(f"[{x},{y}],")
+        code.append("];")
 
         code.append("keyBoundingBoxes = [")
         for bb in bboxes:

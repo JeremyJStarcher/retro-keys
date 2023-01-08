@@ -1,15 +1,21 @@
 import json
 import csv
+import os
 from kicad_parser import KiCadParser
 from kicad_tools import KicadTool
 from kicad_tools import Layer
 from kicad_tools import BoundingBox
+
+STANDOFF_HOLE_INNER_DIAMETER = 2.2
+STANDOFF_HOLE_OUTER_DIAMETER = 4
+STANDOFF_HOLE_HEIGHT = 3
 
 
 class ProcessConfiguration:
     # These paths are relative to the 'py' directory
     qmk_layout_filename: str
     pcb_filename: str
+    case_filename: str
     keyboard_sch_sheet_filename_name: str
     openscad_position_filename: str
     jlc_bom_filename: str
@@ -265,27 +271,14 @@ class ProcessKeyboard:
                 pcb, "D" + item.designator, item.diode_x, item.diode_y, -90
             )
 
-            hx = (
-                item.boundingBox.x1
-                + 0.0
-                + tool.getSymbolPropertyAsFloat(
-                    schematic, "SW" + item.designator, "PCB_X", 0
-                )
-            )
-            hy = (
-                item.boundingBox.y1
-                + 1.5
-                + tool.getSymbolPropertyAsFloat(
-                    schematic, "SW" + item.designator, "PCB_Y", 0
-                )
-            )
+            hx, hy = self.get_standoff_location(schematic, tool, item)
             # tool.setHiddenFootprintTextByReference(
             #     pcb, "H" + item.designator, "reference", True
             # )
 
             # tool.setObjectLocation(pcb, "H" + item.designator, hx, hy, 0)
             tool.drawKeepoutZone(pcb, hx, hy, 3)
-            tool.drawCircle(pcb, Layer.Edge_Cuts, hx, hy, 2.2)
+            tool.drawCircle(pcb, Layer.Edge_Cuts, hx, hy, STANDOFF_HOLE_INNER_DIAMETER)
 
         bbox.addBorder(self.config.pcb_border)
         tool.addBoundingBox(pcb, bbox, 0.3, Layer.Edge_Cuts)
@@ -301,6 +294,24 @@ class ProcessKeyboard:
 
         with open(self.config.pcb_filename, "w") as f:
             f.write(out)
+
+    def get_standoff_location(self, schematic, tool, item):
+        hx = (
+            item.boundingBox.x1
+            + 0.0
+            + tool.getSymbolPropertyAsFloat(
+                schematic, "SW" + item.designator, "PCB_X", 0
+            )
+        )
+        hy = (
+            item.boundingBox.y1
+            + 1.5
+            + tool.getSymbolPropertyAsFloat(
+                schematic, "SW" + item.designator, "PCB_Y", 0
+            )
+        )
+
+        return hx, hy
 
     def calcPnP(self):
         layout = self.get_layout()
@@ -468,6 +479,123 @@ class ProcessKeyboard:
         out = "\r\n".join(l)
 
         with open(self.config.pcb_filename, "w") as f:
+            f.write(out)
+
+    def generateOpenscadCase(self) -> None:
+        def bboxToPolygon(bbox: BoundingBox) -> str:
+            s = f" polygon(points=[ \
+                [{bbox.x1},{bbox.y1}],\
+                [{bbox.x1},{bbox.y2}],\
+                [{bbox.x2},{bbox.y2}],\
+                [{bbox.x2},{bbox.y1}]\
+            ]);"
+            return s
+
+        layout = self.get_layout()
+
+        pcb_sexp = self.read_sexp(self.config.pcb_filename)
+        pcb_parser = KiCadParser(pcb_sexp)
+        pcb = pcb_parser.toList()
+
+        key_sch_sexp = self.read_sexp(self.config.keyboard_sch_sheet_filename_name)
+        key_parser = KiCadParser(key_sch_sexp)
+        schematic = key_parser.toList()
+
+        tool = KicadTool()
+
+        code = []
+        standoffLocations = []
+        bboxes = []
+
+        bbox = BoundingBox(-1, -1, -1, -1)
+
+        for _item in layout:
+
+            item: KeyInfo = _item
+
+            if item.designator == "":
+                print("skipping " + item.label)
+                continue
+            else:
+                print("Searching for " + item.label + " " + item.designator)
+
+            switch = tool.findFootprintByReference(pcb, "SW" + item.designator)
+
+            item.boundingBox = tool.getBoundingBoxOfLayerLines(
+                switch, Layer.User_Drawings
+            )
+
+            assert item.boundingBox is not None
+
+            # OpenSCAD flips the y-asix
+            item.boundingBox.y1 = -item.boundingBox.y1
+            item.boundingBox.y2 = -item.boundingBox.y2
+
+            hx, hy = self.get_standoff_location(schematic, tool, item)
+
+            standoffLocations.append([hx, hy])
+            bboxes.append(bboxToPolygon(item.boundingBox))
+
+            bbox.update_xy(item.boundingBox.x1, item.boundingBox.y1)
+            bbox.update_xy(item.boundingBox.x2, item.boundingBox.y2)
+
+        bbox.addBorder(self.config.pcb_border)
+
+        # Add a little border so we know all the boxes overlap.
+        # item.boundingBox.addBorder(1)
+
+        # tool.setObjectLocation(pcb, "H101", bbox.x1, bbox.y1, 0)
+        # tool.setObjectLocation(pcb, "H102", bbox.x1, bbox.y2, 0)
+        # tool.setObjectLocation(pcb, "H103", bbox.x2, bbox.y1, 0)
+        # tool.setObjectLocation(pcb, "H104", bbox.x2, bbox.y2, 0)
+
+        code.append("use <../../openscad/utils.scad>;")
+
+        code.append("BASE_THICKNESS = 3;")
+
+        code.append(f"STANDOFF_HOLE_INNER_DIAMETER = {STANDOFF_HOLE_INNER_DIAMETER};")
+        code.append(f"STANDOFF_HOLE_OUTER_DIAMETER = {STANDOFF_HOLE_OUTER_DIAMETER};")
+        code.append(f"STANDOFF_HOLE_HEIGHT = {STANDOFF_HOLE_HEIGHT};")
+
+        code.append("module caseBoundBox() {")
+        code.append("linear_extrude(BASE_THICKNESS)")
+        code.append(bboxToPolygon(bbox))
+        code.append("}")
+
+        code.append("module standOffs() {")
+        for x, y in standoffLocations:
+            code.append(f"translate([{x},{y},BASE_THICKNESS])")
+            code.append(
+                "tube(STANDOFF_HOLE_OUTER_DIAMETER, STANDOFF_HOLE_INNER_DIAMETER, STANDOFF_HOLE_HEIGHT);"
+            )
+
+        code.append("}")
+
+        code.append("module keyBoundingBoxes() {")
+        for bb in bboxes:
+            code.append('color("blue") linear_extrude(BASE_THICKNESS+.25)')
+            code.append(bb)
+        code.append("}")
+
+        #            tool.drawCircle(pcb, Layer.Edge_Cuts, hx, hy, STANDOFF_HOLE_INNER_DIAMETER)
+
+        code.append("")
+
+        len = abs(bbox.x2 - bbox.x1)
+        wid = abs(bbox.y2 - bbox.y1)
+        xorg = -bbox.x1 - len / 2
+        yorg = -bbox.y1 - wid / 2
+
+        code.append(f"translate([{xorg},{yorg},0])" + "{")
+
+        code.append("caseBoundBox();")
+        code.append("standOffs();")
+        code.append("keyBoundingBoxes();")
+        code.append("}")
+
+        out = os.linesep.join(code)
+
+        with open(self.config.case_filename, "w") as f:
             f.write(out)
 
 

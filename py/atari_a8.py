@@ -16,6 +16,8 @@ if __name__ == "__main__":
         "../keyboards/atari-a8/keycaps/keyboard-position.scad"
     )
 
+    config.case_filename = "../keyboards/atari-a8/case/case-position.scad"
+
     config.jlc_bom_filename = "../keyboards/atari-a8/kicad/gerbers/jlc_bom.csv"
     config.jlc_cpl_filename = "../keyboards/atari-a8/kicad/gerbers/jlc_cpl.csv"
     config.matrix_starting_index = 201
@@ -26,8 +28,9 @@ if __name__ == "__main__":
 
     process = ProcessKeyboard(config)
 
-    process.run_it()
-    process.calcPnP()
-    process.makeOpenScad()
-    process.makeJlcPcb()
-    process.setModels()
+    # process.run_it()
+    # process.calcPnP()
+    # process.makeOpenScad()
+    # process.makeJlcPcb()
+    # process.setModels()
+    process.generateOpenscadCase()

@@ -530,19 +530,15 @@ class ProcessKeyboard:
 
             assert item.boundingBox is not None
 
+            hx, rhy = self.get_standoff_location(schematic, tool, item)
+
+            # Handle the flipped y axis
+            hy = -rhy
+
             # OpenSCAD flips the y-axis
             item.boundingBox.y1 = -item.boundingBox.y1
             item.boundingBox.y2 = -item.boundingBox.y2
 
-            hx, rhy = self.get_standoff_location(schematic, tool, item)
-
-            # Handle the flipped y axis
-            hy = rhy - (
-                tool.getSymbolPropertyAsFloat(
-                    schematic, "SW" + item.designator, "PCB_Y", 0
-                )
-                * 2
-            )
 
             standoffLocations.append([hx, hy])
             bboxes.append(BboxToOpenScadItem(item.label, item.boundingBox))

@@ -539,7 +539,6 @@ class ProcessKeyboard:
             item.boundingBox.y1 = -item.boundingBox.y1
             item.boundingBox.y2 = -item.boundingBox.y2
 
-
             standoffLocations.append([hx, hy])
             bboxes.append(BboxToOpenScadItem(item.label, item.boundingBox))
 
@@ -570,11 +569,6 @@ class ProcessKeyboard:
         code.append(f"STANDOFF_HOLE_HEIGHT = {STANDOFF_HOLE_HEIGHT};")
         code.append(f"MOUNTING_HOLE_D = {MOUNTING_HOLE_D};")
         code.append(f"MOUNTING_HOLE_OFFSET = {MOUNTING_HOLE_OFFSET};")
-
-        code.append("module caseBoundBox() {")
-        code.append('color("white") linear_extrude(BASE_THICKNESS)')
-        code.append(bboxToPolygon(bbox))
-        code.append("}")
 
         code.append("keyStandoffs = [")
         for x, y in standoffLocations:

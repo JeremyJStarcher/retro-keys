@@ -90,8 +90,15 @@ module keyBoundingBoxes()
 
         cx = (x1 + x2) / 2;
         cy = (y1 + y2) / 2;
+
+        // Grab just the first two characters since the whole name won't fit
+        // in a readable font
+        char1 = is_string(box[0][0]) ? box[0][0] : "";
+        char2 = is_string(box[0][1]) ? box[0][1] : "";
+        label = str(char1, char2);
+
         color("green") translate(v = [ cx, cy, BASE_THICKNESS ]) linear_extrude(height = 1)
-            text(box[0], valign = "center", halign = "center", size = 3);
+            text(label, valign = "center", halign = "center", size = 9);
     }
 }
 
@@ -104,11 +111,13 @@ module body()
 {
     difference()
     {
-        CASE_BORDER = 2;
-        bottomCase(BOARD_LEN, BOARD_WID, 0, CASE_HEIGTH);
-        translate([ 0, 0, -BASE_THICKNESS ]) centerCubeXy(BOARD_LEN + CASE_BORDER, BOARD_WID + CASE_BORDER, CASE_HEIGTH * 3);
+        CASE_BORDER = 0;
+        color("cyan") bottomCase(BOARD_LEN, BOARD_WID, 0, CASE_HEIGTH);
+        translate([ 0, 0, -BASE_THICKNESS ]) centerCubeXy(BOARD_LEN, BOARD_WID, CASE_HEIGTH * 3);
     }
-    translate([ 0, 0, -0.00 ]) centerChildren() caseBoundBox();
+
+    // Add a little to the size to make sure it properly interfaces with the edge
+    color("white") translate([ 0, 0, -BASE_THICKNESS ]) centerCubeXy(BOARD_LEN + 1, BOARD_WID + 1, BASE_THICKNESS);
 
     translate([ 0, 0, BASE_THICKNESS ]) centerChildren()
     {

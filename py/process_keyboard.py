@@ -7,12 +7,17 @@ from kicad_tools import KicadTool
 from kicad_tools import Layer
 from kicad_tools import BoundingBox
 
-STANDOFF_HOLE_INNER_DIAMETER = 2.2
-STANDOFF_HOLE_OUTER_DIAMETER = 4
+BASE_THICKNESS = 4
+STANDOFF_HOLE_INNER_DIAMETER = 2.2 * 2
+STANDOFF_HOLE_OUTER_DIAMETER = 3 * 2
 STANDOFF_HOLE_HEIGHT = 3
-CASE_HEIGTH = 10
+CASE_HEIGHT = 10
 MOUNTING_HOLE_OFFSET = 5
 MOUNTING_HOLE_D = 3.2
+
+
+PRINTER_X = 280
+PRINTER_Y = 260
 
 
 class ProcessConfiguration:
@@ -277,7 +282,7 @@ class ProcessKeyboard:
 
             hx, hy = self.get_standoff_location(schematic, tool, item)
 
-            tool.drawKeepoutZone(pcb, hx, hy, 3)
+            tool.drawKeepoutZone(pcb, hx, hy, STANDOFF_HOLE_OUTER_DIAMETER)
             tool.drawCircle(pcb, Layer.Edge_Cuts, hx, hy, STANDOFF_HOLE_INNER_DIAMETER)
 
         bbox.addBorder(self.config.pcb_border)
@@ -554,15 +559,15 @@ class ProcessKeyboard:
 
         code.append("include <../../openscad/utils.scad>;")
 
-        code.append("BASE_THICKNESS = 3;")
+        code.append(f"BASE_THICKNESS = {BASE_THICKNESS};")
 
         code.append(f"BOARD_X1 = {xorg};")
         code.append(f"BOARD_Y1 = {yorg};")
         code.append(f"BOARD_X2 = {xorg + len};")
         code.append(f"BOARD_Y2 = {yorg + wid};")
         code.append(f"BOARD_LEN = {len};")
-        code.append(f"BOARD_WID = {wid};")
-        code.append(f"CASE_HEIGTH = {CASE_HEIGTH};")
+        code.append(f"BOARD_WIDTH = {wid};")
+        code.append(f"CASE_HEIGHT = {CASE_HEIGHT};")
 
         code.append(f"STANDOFF_HOLE_INNER_DIAMETER = {STANDOFF_HOLE_INNER_DIAMETER};")
         code.append(f"STANDOFF_HOLE_OUTER_DIAMETER = {STANDOFF_HOLE_OUTER_DIAMETER};")
@@ -580,7 +585,7 @@ class ProcessKeyboard:
             code.append(bb + ",")
         code.append("];")
 
-        code.append("main();")
+        code.append("main(BOARD_WIDTH, BOARD_LEN);")
 
         out = os.linesep.join(code)
 

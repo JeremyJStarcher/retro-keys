@@ -1,20 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use <./josl/josl/cuts/comb.scad>
 use <./josl/josl/cuts/leftright.scad>
 use <./josl/josl/cuts/puzzle.scad>
@@ -26,6 +9,8 @@ module main(BOARD_WIDTH, BOARD_LEN)
     // Radius of the case corner
     CASE_CORNER_R = 5;
     PCB_THICKNESS = 1.6;
+    SCREW_HEAD_GAP = 3;
+    SCREW_HEAD_R = 3;
 
     function puzzleApart() = max(BOARD_WIDTH, BOARD_LEN);
 
@@ -64,8 +49,14 @@ module main(BOARD_WIDTH, BOARD_LEN)
 
     module mountingHoles(blen, bwidth, offset, height)
     {
-        mirror4() translate([ -blen / 2 + offset, -bwidth / 2 + offset, 0 ])
+        mirror4()                                                      //
+            translate([ -blen / 2 + offset, -bwidth / 2 + offset, 0 ]) //
             cylinder(h = height * 10, r = MOUNTING_HOLE_D / 2);
+
+       // Drop down below the zero line to make sure there is no interference
+        mirror4()                                                                    //
+            translate([ -blen / 2 + offset, -bwidth / 2 + offset, -SCREW_HEAD_GAP ]) //
+            cylinder(h = SCREW_HEAD_GAP *2, r = SCREW_HEAD_R);
     }
 
     module mountingStandoffs(blen, bwidth, offset, d, height)
@@ -237,10 +228,10 @@ module main(BOARD_WIDTH, BOARD_LEN)
             echo(str("head ", head));
             echo(str("tail ", tail));
 
-            ll = len(path) == 1 ? len3 : len3 / (2 * len(path)-1);
+            ll = len(path) == 1 ? len3 : len3 / (2 * len(path) - 1);
 
-            cutIt(lr, ll, BOARD_WIDTH) //
-                split()                              //
+            cutIt(head, ll, BOARD_WIDTH) //
+                split()                  //
                 getCuts(tail, len3, width);
         }
     }
@@ -251,9 +242,9 @@ module main(BOARD_WIDTH, BOARD_LEN)
 
         //      translate([ 0, 0, -40 ]) getCuts([], BOARD_LEN, BOARD_WIDTH);
 
-        translate([ 0, 0, 0 ]) getCuts([ "r", "r" ], BOARD_LEN, BOARD_WIDTH);
+        translate([ 0, 0, 0 ]) getCuts([ "l", "l" ], BOARD_LEN, BOARD_WIDTH);
 
-        translate([ 0, 0, -20 ]) cutIt("l", BOARD_LEN, BOARD_WIDTH) split() keyboardCaseBottom();
+        *translate([ 0, 0, -20 ]) cutIt("l", BOARD_LEN, BOARD_WIDTH) split() keyboardCaseBottom();
 
         *cutIt("l", BOARD_LEN / 2, BOARD_WIDTH) //
             split()                             //

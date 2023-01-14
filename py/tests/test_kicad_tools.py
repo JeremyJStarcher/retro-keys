@@ -3,10 +3,11 @@ import pytest
 from kicad_tools import KicadTool
 from kicad_tools import Layer
 from kicad_parser import KiCadParser
+from tests.test_filepaths import SAMPLE_PCB_FILENAME
 
 
 def read_file():
-    data_file = open("sample_pcb", "r")
+    data_file = open(SAMPLE_PCB_FILENAME, "r")
     data = data_file.read()
     data_file.close()
     return data

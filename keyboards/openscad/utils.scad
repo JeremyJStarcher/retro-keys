@@ -244,6 +244,25 @@ module main(BOARD_WIDTH, BOARD_LEN, CASE_PIECES, CASE_PIECE)
                 keyboardCaseBottom();
         }
 
+        module cutInto2(c1)
+        {
+            cutIt(c1, BOARD_LEN, BOARD_WIDTH) //
+                split()                       //
+                keyboardCaseBottom();
+        }
+
+        if (CASE_PIECES == 2)
+        {
+            if (CASE_PIECE == 1)
+            {
+                cutInto2("l");
+            }
+            if (CASE_PIECE == 2)
+            {
+                cutInto2("r");
+            }
+        }
+
         if (CASE_PIECES == 4)
         {
             if (CASE_PIECE == 1)

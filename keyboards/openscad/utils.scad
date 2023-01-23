@@ -3,14 +3,20 @@ use <./josl/josl/cuts/leftright.scad>
 use <./josl/josl/cuts/puzzle.scad>
 use <./josl/josl/cuts/zigzag.scad>
 
-module main(BOARD_WIDTH, BOARD_LEN)
+module main(BOARD_WIDTH, BOARD_LEN, CASE_PIECES, CASE_PIECE)
 {
+    $fs = 0.5;
+    $fa = 5;
 
     // Radius of the case corner
-    CASE_CORNER_R = 5;
+    CASE_CORNER_R = 3;
     PCB_THICKNESS = 1.6;
     SCREW_HEAD_GAP = 3;
     SCREW_HEAD_R = 3;
+    LAYER_HEIGHT = 0.2;
+
+    // HOw much of a gap between the PCB and the case
+    CASE_GAP = 2;
 
     function puzzleApart() = max(BOARD_WIDTH, BOARD_LEN);
 
@@ -53,10 +59,13 @@ module main(BOARD_WIDTH, BOARD_LEN)
             translate([ -blen / 2 + offset, -bwidth / 2 + offset, 0 ]) //
             cylinder(h = height * 10, r = MOUNTING_HOLE_D / 2);
 
-       // Drop down below the zero line to make sure there is no interference
-        mirror4()                                                                    //
-            translate([ -blen / 2 + offset, -bwidth / 2 + offset, -SCREW_HEAD_GAP ]) //
-            cylinder(h = SCREW_HEAD_GAP *2, r = SCREW_HEAD_R);
+        // Drop down below the zero line to make sure there is no interference
+        mirror4() //
+            translate([ -blen / 2 + offset, -bwidth / 2 + offset, -SCREW_HEAD_GAP ])
+        { //
+            cylinder(h = SCREW_HEAD_GAP * 2, r = SCREW_HEAD_R + 1);
+            //  cylinder(h = SCREW_HEAD_GAP *2, r2 = SCREW_HEAD_R+1, r1=MOUNTING_HOLE_D / 2);
+        }
     }
 
     module mountingStandoffs(blen, bwidth, offset, d, height)
@@ -131,7 +140,7 @@ module main(BOARD_WIDTH, BOARD_LEN)
             char2 = is_string(box[0][1]) ? box[0][1] : "";
             label = str(char1, char2);
 
-            color("green") translate(v = [ cx, cy, 0 ]) linear_extrude(height = 2)
+            color("green") translate(v = [ cx, cy, 0 ]) linear_extrude(height = LAYER_HEIGHT)
                 text(label, valign = "center", halign = "center", size = 9);
         }
     }
@@ -143,16 +152,29 @@ module main(BOARD_WIDTH, BOARD_LEN)
 
     module body()
     {
+        outside_len = BOARD_LEN + CASE_CORNER_R + CASE_GAP;
+        outside_width = BOARD_WIDTH + CASE_CORNER_R + CASE_GAP;
+
+        lip_len = outside_len - (CASE_CORNER_R);
+        lip_width = outside_width - (CASE_CORNER_R);
+
         difference()
         {
-            CASE_BORDER = 0;
-            color("cyan") bottomCase(BOARD_LEN, BOARD_WIDTH, 0, CASE_HEIGHT);
-            translate([ 0, 0, -BASE_THICKNESS ]) centerCubeXy(BOARD_LEN, BOARD_WIDTH, CASE_HEIGHT * 3);
+            union()
+            {
+                color("cyan") bottomCase(outside_len, outside_width, 0, CASE_HEIGHT);
+                translate([ 0, 0, BASE_THICKNESS ]) color("green")
+                    bottomCase(lip_len, lip_width, 0, CASE_HEIGHT + 5 - BASE_THICKNESS);
+            }
+
+            translate([ 0, 0, -BASE_THICKNESS ])
+                centerCubeXy(BOARD_LEN + CASE_GAP, BOARD_WIDTH + CASE_GAP, CASE_HEIGHT * 3);
         }
 
-        // Add a little to the size to make sure it properly interfaces with the edge
-        color("white") translate([ 0, 0, -BASE_THICKNESS ])
-            centerCubeXy(BOARD_LEN + 1, BOARD_WIDTH + 1, BASE_THICKNESS + 1);
+        // Put the bottom of the case in.
+        translate([ 0, 0, 0 ]) //
+            color("white")     //
+            bottomCase(outside_len, outside_width, 0, BASE_THICKNESS);
 
         translate([ 0, 0, BASE_THICKNESS ]) centerChildren()
         {
@@ -169,8 +191,6 @@ module main(BOARD_WIDTH, BOARD_LEN)
         {
             body();
             bodyVoids();
-
-            //       translate([ -BOARD_WIDTH / 2, -500, -500 ]) cube([ 1000, 1000, 1000 ]);
         }
     }
 
@@ -211,46 +231,41 @@ module main(BOARD_WIDTH, BOARD_LEN)
 
     function partial(list, start, end) = [for (i = [start:end]) list[i]];
 
-    module getCuts(path, len3, width)
-    {
-
-        echo(str("path ", path));
-
-        if (len(path) == 0 || path[0] == undef)
-        {
-            keyboardCaseBottom();
-        }
-        else
-        {
-            head = path[0];
-            tail = partial(path, 1, len(path) - 1);
-
-            echo(str("head ", head));
-            echo(str("tail ", tail));
-
-            ll = len(path) == 1 ? len3 : len3 / (2 * len(path) - 1);
-
-            cutIt(head, ll, BOARD_WIDTH) //
-                split()                  //
-                getCuts(tail, len3, width);
-        }
-    }
-
     module main2()
     {
-        //  translate([ 0, 400, 0 ]) cutIt("r", BOARD_LEN, BOARD_WIDTH) split();
+        // keyboardCaseBottom();
 
-        //      translate([ 0, 0, -40 ]) getCuts([], BOARD_LEN, BOARD_WIDTH);
+        module cutInto4(c1, c2)
+        {
+            cutIt(c2, BOARD_LEN / 2, BOARD_WIDTH) //
+                split()                           //
+                cutIt(c1, BOARD_LEN, BOARD_WIDTH) //
+                split()                           //
+                keyboardCaseBottom();
+        }
 
-        translate([ 0, 0, 0 ]) getCuts([ "l", "l" ], BOARD_LEN, BOARD_WIDTH);
+        if (CASE_PIECES == 4)
+        {
+            if (CASE_PIECE == 1)
+            {
+                cutInto4("l", "l");
+            }
 
-        *translate([ 0, 0, -20 ]) cutIt("l", BOARD_LEN, BOARD_WIDTH) split() keyboardCaseBottom();
+            if (CASE_PIECE == 2)
+            {
+                cutInto4("l", "r");
+            }
 
-        *cutIt("l", BOARD_LEN / 2, BOARD_WIDTH) //
-            split()                             //
-            cutIt("l", BOARD_LEN, BOARD_WIDTH)  //
-            split()                             //
-            keyboardCaseBottom();
+            if (CASE_PIECE == 3)
+            {
+                cutInto4("r", "l");
+            }
+
+            if (CASE_PIECE == 4)
+            {
+                cutInto4("r", "r");
+            }
+        }
     }
 
     main2();
@@ -261,5 +276,5 @@ module main(BOARD_WIDTH, BOARD_LEN)
 
     // https://eribuijs.blogspot.com/2017/10/openscad-lists-and-list-manipulation.html
 
-    echo(partial(lst, 1, 8));
+    // echo(partial(lst, 1, 8));
 }

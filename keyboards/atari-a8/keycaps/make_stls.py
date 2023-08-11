@@ -57,7 +57,7 @@ class KeyConverter:
         self.STL_DIR = Path("stls")
         self.VRML_DIR = Path("vrml")
         self.TWO_COLOR_DIR = Path("2-color")
-        self.MODEL_TYPE = "3mf"
+        self.MODEL_TYPE: str = ""
         self.print_sideways = False
         self.reset()
 
@@ -340,16 +340,16 @@ if __name__ == "__main__":
     converter.MODEL_TYPE = "3mf"
     converter.STL_DIR = Path("3mfs")
     converter.print_sideways = True
-    # converter.make_all_3dmodels()
+    converter.make_all_3dmodels()
     converter.reset()
     converter.make_two_color()
 
-    # converter = KeyConverter()
-    # converter.MODEL_TYPE = "stl"
-    # converter.STL_DIR = Path("stls")
-    # converter.print_sideways = False
-    # converter.make_all_3dmodels()
-    # converter.reset()
-    # converter.make_vrml()
+    converter.reset()
+    converter.MODEL_TYPE = "stl"
+    converter.STL_DIR = Path("stls")
+    converter.print_sideways = False
+    converter.make_all_3dmodels()
+    converter.reset()
+    converter.make_vrml()
 
     lock.release()

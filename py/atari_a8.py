@@ -19,6 +19,7 @@ class KeyboardPaths:
         self.jlc_cpl = self.base_path / "kicad" / "gerbers" / "jlc_cpl.csv"
         self.kicad_3dmodel = Path("..") / ".." / "kicad-lib" / "3d-models"
         self.kicad_keycap_vrml = Path("..") / "keycaps" / "vrml"
+        self.json_path_to_qmk_layout = "layouts.LAYOUT.layout"
 
 
 if __name__ == "__main__":
@@ -37,6 +38,8 @@ if __name__ == "__main__":
     config.matrix_starting_index = 201
     config.kicad_3dmodel_path_str = str(paths.kicad_3dmodel)
     config.kicad_keycap_vrml_path_str = str(paths.kicad_keycap_vrml)
+
+    config.json_path_to_qmk_layout = paths.json_path_to_qmk_layout
 
     process = ProcessKeyboard(config)
 

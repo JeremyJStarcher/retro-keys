@@ -17,7 +17,7 @@ class TestStringMethods(unittest.TestCase):
 
     def getQmkTools(self) -> QmkTools:
         qmk = self.read_file()
-        qmk_tools = QmkTools(qmk=qmk, json_path_to_layout="layouts.LAYOUT.layout")
+        qmk_tools = QmkTools(qmk=qmk, json_path_to_qmk_layout="layouts.LAYOUT.layout")
         return qmk_tools
 
     def test_upper(self):
@@ -41,6 +41,7 @@ class TestStringMethods(unittest.TestCase):
             x_list = list(map(lambda k: k.x, keys))
             is_x_sorted = x_list == sorted(x_list)
             self.assertTrue(is_x_sorted)
+
 
 if __name__ == "__main__":
     unittest.main()

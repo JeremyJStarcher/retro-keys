@@ -16,25 +16,25 @@ class QmkLayout:
 class QmkTools:
 
     qmk: dict
-    json_path_to_layout: str
+    json_path_to_qmk_layout: str
 
     def __init__(
         self,
         *,
         qmk: dict,
-        json_path_to_layout: str,
+        json_path_to_qmk_layout: str,
     ) -> None:
         self.qmk = qmk
-        self.json_path_to_layout = json_path_to_layout
+        self.json_path_to_qmk_layout = json_path_to_qmk_layout
 
     def format_decimal_value(self, f: float):
         return f"{f:.4f}"
 
     def get_layout_from_dictionary(self) -> list[QmkLayout]:
-        path_elements = self.json_path_to_layout.split(".")
+        path_elements = self.json_path_to_qmk_layout.split(".")
 
         top = self.qmk
-        if self.json_path_to_layout != "":
+        if self.json_path_to_qmk_layout != "":
             for bit in path_elements:
                 top = top[bit]
 

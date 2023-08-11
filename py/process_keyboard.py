@@ -36,6 +36,7 @@ class ProcessConfiguration:
     openscad_position_filename: Path
     jlc_bom_filename: Path
     jlc_cpl_filename: Path
+    json_path_to_qmk_layout: str
 
     # These paths are relative to the KiCad project directory
     kicad_3dmodel_path_str: str
@@ -109,11 +110,11 @@ class ProcessKeyboard:
             data = f.read()
         return data
 
-    def read_json(self, name: Path):
+    def read_qmk_layout_from_json_file(self, name: Path) -> dict:
         with open(name, "r") as f:
             data = f.read()
         d_dict = json.loads(data)
-        return d_dict["layouts"]["LAYOUT"]["layout"]
+        return d_dict
 
     def set_designators(self, starting_index: int, keys: list):
         filtered = list(filter(lambda key: not key.skip, keys))
@@ -138,13 +139,20 @@ class ProcessKeyboard:
                     idx += 1
 
     def get_layout(self) -> list:
-        info = self.read_json(self.config.qmk_layout_filename)
+        qmk = self.read_qmk_layout_from_json_file(self.config.qmk_layout_filename)
+        path_elements = self.config.json_path_to_qmk_layout.split(".")
+
+        top = qmk
+        if self.config.json_path_to_qmk_layout != "":
+            for bit in path_elements:
+                top = top[bit]
+
         keys = []
 
         KEYSWITCH_FIX_X = -11.565
         KEYSWITCH_FIX_Y = -3.946
 
-        for key in info:
+        for key in top:
 
             keyInfo = KeyInfo()
 
@@ -624,9 +632,11 @@ class ProcessKeyboard:
         print(title + ":" + ff)
 
     def make_autogen_files(self) -> None:
-        info = self.read_json(self.config.qmk_layout_filename)
+        info = self.read_qmk_layout_from_json_file(self.config.qmk_layout_filename)
 
-        qmk_tools = QmkTools(qmk=info, json_path_to_layout="")
+        qmk_tools = QmkTools(
+            qmk=info, json_path_to_qmk_layout=self.config.json_path_to_qmk_layout
+        )
         qmk_layout_list = qmk_tools.arrange_layout_in_yx_order()
 
         # print(qmk_layout_list)

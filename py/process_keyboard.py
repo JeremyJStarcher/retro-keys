@@ -437,6 +437,9 @@ class ProcessKeyboard:
 
         bom_row = ["1N4148W", ",".join(bom_refs), "SOD-123", "C176288"]
 
+        directory = Path(self.config.jlc_bom_filename).parent
+        directory.mkdir(parents=True, exist_ok=True)
+
         with open(self.config.jlc_bom_filename, "w", encoding="UTF8") as f:
             writer = csv.writer(f)
 
@@ -445,6 +448,9 @@ class ProcessKeyboard:
 
             # write the data
             writer.writerow(bom_row)
+
+        directory = Path(self.config.jlc_cpl_filename).parent
+        directory.mkdir(parents=True, exist_ok=True)
 
         with open(self.config.jlc_cpl_filename, "w", encoding="UTF8") as f:
             writer = csv.writer(f)

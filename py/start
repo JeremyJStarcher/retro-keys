@@ -1,0 +1,59 @@
+#!/bin/sh
+
+# Customizable virtual environment directory
+venv_dir=".venv"
+requirements_file="requirements.txt"
+requirements_installed_flag="$venv_dir/.requirements_installed"
+
+
+# Check if Python and venv are available
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "Python 3 is not installed. Exiting."
+  exit 1
+fi
+
+if ! python3 -c "import venv" >/dev/null 2>&1; then
+  echo "venv module is not available. Exiting."
+  exit 1
+fi
+
+# Check if the virtual environment directory already exists
+if [ -d "$venv_dir" ]; then
+  echo "$venv_dir already exists. Do you want to overwrite it? (y/n)"
+  read answer
+  if [ "$answer" != "y" ]; then
+    echo "Exiting without overwriting $venv_dir."
+    exit 0
+  fi
+fi
+
+# Create the virtual environment
+python3 -m venv "$venv_dir"
+
+
+# Check if the directory was created
+if [ -d "$venv_dir" ]; then
+  echo "Virtual environment created successfully."
+  . "$venv_dir/bin/activate"
+
+  # Check if requirements have already been installed
+  if [ ! -f "$requirements_installed_flag" ] && [ -f "$requirements_file" ]; then
+    echo "Installing requirements from $requirements_file..."
+    pip install -r "$requirements_file"
+    if [ $? -eq 0 ]; then
+      touch "$requirements_installed_flag"
+      echo "Requirements installed successfully."
+    else
+      echo "Failed to install requirements."
+      exit 1
+    fi
+  else
+    echo "Requirements have already been installed or $requirements_file not found."
+  fi
+else
+  echo "Failed to create virtual environment."
+  exit 1
+fi
+
+# Launch the user's default shell or fallback to /bin/sh
+${SHELL:-/bin/sh}

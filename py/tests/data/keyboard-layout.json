@@ -1,0 +1,299 @@
+[
+  {
+    "css": ".qmk_id {\n    color: white;\n    background-color: gray;\n    font-size: 0.75em\n}\n\n.layout-color-ctrl {\n    color: white;\n    background-color: red;\n    padding: 0.1em;\n}"
+  },
+  [
+    {
+      "x": 3.25,
+      "w": 1.25,
+      "h": 1.25
+    },
+    "\n<i class=\"qmk_id\">POWER</i>\n\n\n\n\n\n\n\nPOWER",
+    {
+      "x": 0.75,
+      "w": 1.25,
+      "h": 1.25
+    },
+    "\n<i class=\"qmk_id\">MENU</i>\n\n\n\n\n\n\n\nMENU",
+    {
+      "w": 1.25,
+      "h": 1.25
+    },
+    "\n<i class=\"qmk_id\">TURBO</i>\n\n\n\n\n\n\n\nTURBO",
+    {
+      "x": 5,
+      "w": 1.25,
+      "h": 1.25
+    },
+    "\n<i class=\"qmk_id\">INV</i>\n\n\n\n\n\n\n\nINV",
+    {
+      "w": 1.25,
+      "h": 1.25
+    },
+    "\n<i class=\"qmk_id\">BREAK</i>\n\n\n\n\n\n\n\nBREAK",
+    {
+      "x": 1.25,
+      "w": 1.25,
+      "h": 1.25
+    },
+    "\n<i class=\"qmk_id\">HELP</i>\n\n\n\n\n\n\n\nHELP"
+  ],
+  [
+    {
+      "y": -0.75,
+      "x": 18.25,
+      "a": 7,
+      "d": true
+    },
+    "<i class=\"qmk_id\">JS1_UP</i>",
+    {
+      "x": 0.25,
+      "d": true
+    },
+    "<i class=\"qmk_id\">JS2_UP</i>"
+  ],
+  [
+    {
+      "x": 18.25,
+      "d": true
+    },
+    "<i class=\"qmk_id\">JS1_DOWN</i>",
+    {
+      "x": 0.25,
+      "d": true
+    },
+    "<i class=\"qmk_id\">JS2_DOWN</i>"
+  ],
+  [
+    {
+      "y": -0.75,
+      "a": 4,
+      "w": 1.25
+    },
+    "\n<i class=\"qmk_id\">ESC</i>\n\n\n\n\n\n\n\nESC",
+    "\n<i class=\"qmk_id\">1</i>\n\n\n\n\n\n\n!\n\n1",
+    "\n<i class=\"qmk_id\">2</i>\n\n\n\n\n\n\n\"\n\n2",
+    "\n<i class=\"qmk_id\">3</i>\n\n\n\n\n\n\n#\n\n3",
+    "\n<i class=\"qmk_id\">4</i>\n\n\n\n\n\n\n$\n\n4",
+    "\n<i class=\"qmk_id\">5</i>\n\n\n\n\n\n\n%\n\n5",
+    "\n<i class=\"qmk_id\">6</i>\n\n\n\n\n\n\n&\n\n6",
+    "\n<i class=\"qmk_id\">7</i>\n\n\n\n\n\n\n'\n\n7",
+    "\n<i class=\"qmk_id\">8</i>\n\n\n\n\n\n\n@\n\n8",
+    "\n<i class=\"qmk_id\">9</i>\n\n\n\n\n\n\n(\n\n9",
+    "\n<i class=\"qmk_id\">0</i>\n\n\n\n\n\n\n)\n\n0",
+    "\n<i class=\"qmk_id\">LT</i>\n\n\n\n\n\n\nCLEAR\n\n<",
+    "\n<i class=\"qmk_id\">GT</i>\n\n\n\n\n\n\nINSERT\n\n>",
+    {
+      "w": 2
+    },
+    "\n<i class=\"qmk_id\">BS</i>\n\n\n\n\n\n\nDEL\n\nBS",
+    {
+      "x": 1.25,
+      "w": 1.25,
+      "h": 1.25
+    },
+    "\n<i class=\"qmk_id\">RESET</i>\n\n\n\n\n\n\n\nRESET"
+  ],
+  [
+    {
+      "y": -0.25,
+      "x": 18.25,
+      "a": 7,
+      "d": true
+    },
+    "<i class=\"qmk_id\">JS1_LEFT</i>",
+    {
+      "x": 0.25,
+      "d": true
+    },
+    "<i class=\"qmk_id\">JS2_LEFT</i>"
+  ],
+  [
+    {
+      "y": -0.75,
+      "a": 4,
+      "w": 1.75
+    },
+    "<span class=\"layout-color-ctrl\">CLR</span>\n\nSET\n\n\n\n\n\n\n<i class=\"qmk_id\">TAB</i>\nTAB",
+    "\n<i class=\"qmk_id\">Q</i>\n\n\n\n\n\n\n\nQ",
+    "\n<i class=\"qmk_id\">W</i>\n\n\n\n\n\n\n\nW",
+    "\n<i class=\"qmk_id\">E</i>\n\n\n\n\n\n\n\nE",
+    "\n<i class=\"qmk_id\">R</i>\n\n\n\n\n\n\n\nR",
+    "\n<i class=\"qmk_id\">T</i>\n\n\n\n\n\n\n\nT",
+    "\n<i class=\"qmk_id\">Y</i>\n\n\n\n\n\n\n\nY",
+    "\n<i class=\"qmk_id\">U</i>\n\n\n\n\n\n\n\nU",
+    "\n<i class=\"qmk_id\">I</i>\n\n\n\n\n\n\n\nI",
+    "\n<i class=\"qmk_id\">O</i>\n\n\n\n\n\n\n\nO",
+    "\n<i class=\"qmk_id\">P</i>\n\n\n\n\n\n\n\nP",
+    {
+      "fa": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    "<span class=\"layout-color-ctrl\">↑<span>\n\n\n\n\n\n\n\n_\n<i class=\"qmk_id\">DASH</i>\n-",
+    {
+      "f": 3
+    },
+    "<span class=\"layout-color-ctrl\">↓</span>\n\n\n\n\n\n\n\n|\n<i class=\"qmk_id\">EQUAL</i>\n=",
+    {
+      "w": 1.5
+    },
+    "\n<i class=\"qmk_id\">RETURN</i>\n\n\n\n\n\n\n\nRETURN"
+  ],
+  [
+    {
+      "y": -0.75,
+      "x": 16.5,
+      "w": 1.25,
+      "h": 1.25
+    },
+    "\n<i class=\"qmk_id\">OPTION</i>\n\n\n\n\n\n\n\nOPTION"
+  ],
+  [
+    {
+      "y": -0.5,
+      "x": 18.25,
+      "a": 7,
+      "d": true
+    },
+    "<i class=\"qmk_id\">JS1_RIGHT</i>",
+    {
+      "x": 0.25,
+      "d": true
+    },
+    "<i class=\"qmk_id\">JS2_RIGHT</i>"
+  ],
+  [
+    {
+      "y": -0.75,
+      "a": 4,
+      "w": 2
+    },
+    "\n<i class=\"qmk_id\">CONTROL</i>\n\n\n\n\n\n\n\n<span class=\"layout-color-ctrl\">CONTROL<span>",
+    "\n<i class=\"qmk_id\">A</i>\n\n\n\n\n\n\n\nA",
+    "\n<i class=\"qmk_id\">S</i>\n\n\n\n\n\n\n\nS",
+    "\n<i class=\"qmk_id\">D</i>\n\n\n\n\n\n\n\nD",
+    {
+      "n": true
+    },
+    "\n<i class=\"qmk_id\">F</i>\n\n\n\n\n\n\n\nF",
+    "\n<i class=\"qmk_id\">G</i>\n\n\n\n\n\n\n\nG",
+    "\n<i class=\"qmk_id\">H</i>\n\n\n\n\n\n\n\nH",
+    {
+      "n": true
+    },
+    "\n<i class=\"qmk_id\">J</i>\n\n\n\n\n\n\n\nJ",
+    "\n<i class=\"qmk_id\">K</i>\n\n\n\n\n\n\n\nK",
+    "\n<i class=\"qmk_id\">L</i>\n\n\n\n\n\n\n\nL",
+    {
+      "a": 5
+    },
+    ":\n;\n\n\n\n\n<i class=\"qmk_id\">SEMI</i>",
+    {
+      "a": 4,
+      "f": 3
+    },
+    "<span class=\"layout-color-ctrl\">←</span>\n\n\n\n\n\n\n\n\\\n<i class=\"qmk_id\">PLUS</i>\n+",
+    {
+      "f": 3
+    },
+    "<span class=\"layout-color-ctrl\">→</span>\n\n\n\n\n\n\n\n^\n<i class=\"qmk_id\">ASTRIX</i>\n*",
+    {
+      "w": 1.25
+    },
+    "\n<i class=\"qmk_id\">CAPS</i>\n\n\n\n\n\n\n\nCAPS"
+  ],
+  [
+    {
+      "y": -0.5,
+      "x": 16.5,
+      "w": 1.25,
+      "h": 1.25
+    },
+    "\n<i class=\"qmk_id\">SELECT</i>\n\n\n\n\n\n\n\nSELECT"
+  ],
+  [
+    {
+      "y": -0.75,
+      "x": 18.25,
+      "a": 7,
+      "d": true
+    },
+    "<i class=\"qmk_id\">JS1_TRIG</i>",
+    {
+      "x": 0.25,
+      "d": true
+    },
+    "<i class=\"qmk_id\">JS2_TRIG</i>"
+  ],
+  [
+    {
+      "y": -0.75,
+      "x": 0.25,
+      "a": 4,
+      "w": 2.25
+    },
+    "\n<i class=\"qmk_id\">LSHIFT</i>\n\n\n\n\n\n\n\nSHIFT",
+    "\n<i class=\"qmk_id\">Z</i>\n\n\n\n\n\n\n\nZ",
+    "\n<i class=\"qmk_id\">X</i>\n\n\n\n\n\n\n\nX",
+    "\n<i class=\"qmk_id\">C</i>\n\n\n\n\n\n\n\nC",
+    "\n<i class=\"qmk_id\">V</i>\n\n\n\n\n\n\n\nV",
+    "\n<i class=\"qmk_id\">B</i>\n\n\n\n\n\n\n\nB",
+    "\n<i class=\"qmk_id\">N</i>\n\n\n\n\n\n\n\nN",
+    "\n<i class=\"qmk_id\">M</i>\n\n\n\n\n\n\n\nM",
+    {
+      "a": 5
+    },
+    "[\n,\n\n\n\n\n<i class=\"qmk_id\">COMMA</i>",
+    "]\n.\n\n\n\n\n<i class=\"qmk_id\">PERIOD</i>",
+    "?\n/\n\n\n\n\n<i class=\"qmk_id\">SLASH</i>",
+    {
+      "a": 4,
+      "w": 1.75
+    },
+    "\n<i class=\"qmk_id\">RSHIFT</i>\n\n\n\n\n\n\n\nSHIFT",
+    {
+      "n": true
+    },
+    "\n<i class=\"qmk_id\">C_UP</i>\n\n\n\n\n\n\n\n↑"
+  ],
+  [
+    {
+      "y": -0.25,
+      "x": 16.5,
+      "w": 1.25,
+      "h": 1.25
+    },
+    "\n<i class=\"qmk_id\">START</i>\n\n\n\n\n\n\n\nSTART"
+  ],
+  [
+    {
+      "y": -0.75,
+      "x": 2
+    },
+    "\n<i class=\"qmk_id\">FN</i>\n\n\n\n\n\n\n\nFN",
+    {
+      "x": 1.75,
+      "a": 7,
+      "w": 6.25
+    },
+    "<i class=\"qmk_id\">SPACE</i>",
+    {
+      "x": 2.25,
+      "a": 4
+    },
+    "\n<i class=\"qmk_id\">C_LEFT</i>\n\n\n\n\n\n\n\n←",
+    "\n<i class=\"qmk_id\">C_DOWN</i>\n\n\n\n\n\n\n\n↓",
+    "\n<i class=\"qmk_id\">C_RIGHT</i>\n\n\n\n\n\n\n\n→"
+  ]
+]

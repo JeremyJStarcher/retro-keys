@@ -1,0 +1,5 @@
+#!/bin/sh
+
+mypy make_stls.py --check-untyped-defs
+
+black .

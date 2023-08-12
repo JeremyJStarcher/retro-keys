@@ -101,22 +101,24 @@
                 { "label": "M", "matrix": [6, 8], "x": 8.5, "y": 4.5 },
 
 
-                { "label": "JS1_UP", "matrix": [7, 0], "x": -1, "y": -1 },
-                { "label": "JS1_TRIG", "matrix": [7, 1], "x": -1, "y": -1 },
-                { "label": "JS1_DOWN", "matrix": [7, 2], "x": -1, "y": -1 },
-                { "label": "JS1_LEFT", "matrix": [7, 3], "x": -1, "y": -1 },
-                { "label": "JS1_RIGHT", "matrix": [7, 4], "x": -1, "y": -1 },
+
+                { "label": "JS1_UP", "matrix": [7, 0], "x": 18.25, "y": 0.25 },
+                { "label": "JS2_UP", "matrix": [8, 0], "x": 19.5, "y": 0.25 },
+                { "label": "JS1_DOWN", "matrix": [7, 2], "x": 18.25, "y": 1.25 },
+                { "label": "JS2_DOWN", "matrix": [8, 2], "x": 19.5, "y": 1.25 },
+                { "label": "JS1_LEFT", "matrix": [7, 3], "x": 18.25, "y": 2.25 },
+                { "label": "JS2_LEFT", "matrix": [8, 3], "x": 19.5, "y": 2.25 },
+                { "label": "JS1_RIGHT", "matrix": [7, 4], "x": 18.25, "y": 3.25 },
+                { "label": "JS2_RIGHT", "matrix": [8, 4], "x": 19.5, "y": 3.25 },
+                { "label": "JS1_TRIG", "matrix": [7, 1], "x": 18.25, "y": 4.25 },
+                { "label": "JS2_TRIG", "matrix": [8, 1], "x": 19.5, "y": 4.25 },
+
                 { "label": "COMMA", "matrix": [7, 5], "x": 9.5, "y": 4.5 },
                 { "label": "PERIOD", "matrix": [7, 6], "x": 10.5, "y": 4.5 },
                 { "label": "SLASH", "matrix": [7, 7], "x": 11.5, "y": 4.5 },
                 { "label": "RSHIFT", "matrix": [7, 8], "w": 1.75, "x": 12.5, "y": 4.5 },
 
 
-                { "label": "JS2_UP", "matrix": [8, 0], "x": -1, "y": -1 },
-                { "label": "JS2_TRIG", "matrix": [8, 1], "x": -1, "y": -1 },
-                { "label": "JS2_DOWN", "matrix": [8, 2], "x": -1, "y": -1 },
-                { "label": "JS2_LEFT", "matrix": [8, 3], "x": -1, "y": -1 },
-                { "label": "JS2_RIGHT", "matrix": [8, 4], "x": -1, "y": -1 },
                 { "h": 1.25, "label": "INV", "matrix": [8, 5], "w": 1.25, "x": 12.75, "y": 0 },
                 { "h": 1.25, "label": "BREAK", "matrix": [8, 6], "w": 1.25, "x": 14, "y": 0 },
                 { "label": "SPACE", "matrix": [8, 7], "w": 6.25, "x": 4.75, "y": 5.5 }

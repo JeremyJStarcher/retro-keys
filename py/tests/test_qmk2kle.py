@@ -28,6 +28,20 @@ class TestStringMethods(unittest.TestCase):
         qmk_layout_list = qmk_tools.get_layout_from_dictionary()
         self.assertGreater(len(qmk_layout_list), 0)
 
+    def test_get_keyname_list_from_qmk(self):
+        qmk_tools = self.getQmkTools()
+        key_names = qmk_tools.get_keynames_list_from_qmk()
+
+        self.assertEqual(len(key_names), 80)
+
+    def test_get_key_layoutdata_by_name(self):
+        qmk_tools = self.getQmkTools()
+        key_names = qmk_tools.get_keynames_list_from_qmk()
+
+        for key_name in key_names:
+            key = qmk_tools.get_key_from_layoutdata_by_name(key_name)
+            self.assertEqual(key.label, key_name)
+
     def test_arrange_layout_in_yx_order(self):
         qmk_tools = self.getQmkTools()
         qmk_layout_list = qmk_tools.arrange_layout_in_yx_order()

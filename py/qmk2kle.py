@@ -16,6 +16,8 @@ class QmkLayout:
 class QmkTools:
 
     qmk: dict
+    __qmk_layout_structure: list[QmkLayout]
+
     json_path_to_qmk_layout: str
 
     def __init__(
@@ -26,11 +28,19 @@ class QmkTools:
     ) -> None:
         self.qmk = qmk
         self.json_path_to_qmk_layout = json_path_to_qmk_layout
+        self.__qmk_layout_structure = []
 
     def format_decimal_value(self, f: float):
         return f"{f:.4f}"
 
+    def get_keynames_list_from_qmk(self) -> List[str]:
+        layout = self.get_layout_from_dictionary()
+        return [key.label for key in layout]
+
     def get_layout_from_dictionary(self) -> list[QmkLayout]:
+        if len(self.__qmk_layout_structure) > 0:
+            return self.__qmk_layout_structure
+
         path_elements = self.json_path_to_qmk_layout.split(".")
 
         top = self.qmk
@@ -57,7 +67,17 @@ class QmkTools:
 
             layout = fromdict(QmkLayout, l)
             qmk_layout_list.append(layout)
+
+        self.__qmk_layout_structure = qmk_layout_list
         return qmk_layout_list
+
+    def get_key_from_layoutdata_by_name(self, name: str) -> QmkLayout:
+        layout = next(
+            (key for key in self.__qmk_layout_structure if key.label == name), None
+        )
+        if layout is None:
+            raise Exception("QmkLayout with the specified name not found.")
+        return layout
 
     def arrange_layout_in_yx_order(self) -> dict[float, list[QmkLayout]]:
         """

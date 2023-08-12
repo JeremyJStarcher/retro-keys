@@ -7,7 +7,7 @@ from kicad_parser import KiCadParser
 from kicad_tools import KicadTool
 from kicad_tools import Layer
 from kicad_tools import BoundingBox
-from qmk2kle import QmkTools
+from qmk_tools import QmkTools
 
 BASE_THICKNESS = 3
 

@@ -1,10 +1,6 @@
 import json
-from typing import List
 import unittest
-from kicad_parser import KiCadParser
-from dataclasses import dataclass
-from qmk2kle import QmkLayout, QmkTools
-from dataclass_wizard import fromdict, asdict  # type: ignore
+from qmk_tools import QmkTools  # type: ignore
 
 from tests.test_filepaths import SAMPLE_QMKINFO_FILENAME
 

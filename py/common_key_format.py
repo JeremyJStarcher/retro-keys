@@ -1,5 +1,6 @@
 from attr import dataclass
-from qmk2kle import QmkTools
+
+from qmk_tools import QmkTools
 
 
 @dataclass

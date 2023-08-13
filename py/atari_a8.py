@@ -9,7 +9,6 @@ if __name__ == "__main__":
 
     config = ProcessConfiguration()
     config.qmk_layout_filename = base_path / "qmkinfo.json"
-    config.raw_layout_filename = base_path / "raw-layout-autogen.raw"
     config.pcb_filename = base_path / "kicad" / "atari-keyboard.kicad_pcb"
     config.keyboard_sch_sheet_filename_name = base_path / "kicad" / "keyboard.kicad_sch"
     config.openscad_position_filename = base_path / "keycaps" / "keyboard-position.scad"
@@ -31,5 +30,3 @@ if __name__ == "__main__":
     process.make_jlc_pcb_assembly_files()
     process.add_3d_models_to_pcb()
     process.generate_openscad_case_file()
-
-    process.make_autogen_files()

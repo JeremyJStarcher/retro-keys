@@ -29,7 +29,6 @@ PRINTER_Y = 260
 class ProcessConfiguration:
     # These paths are relative to the 'py' directory
     qmk_layout_filename: Path
-    raw_layout_filename: Path
     pcb_filename: Path
     case_filename: Path
     keyboard_sch_sheet_filename_name: Path
@@ -630,106 +629,6 @@ class ProcessKeyboard:
         ff = ", ".join(formatted_numbers)
 
         print(title + ":" + ff)
-
-    def make_autogen_files(self) -> None:
-        info = self.read_qmk_layout_from_json_file(self.config.qmk_layout_filename)
-
-        qmk_tools = QmkTools(
-            qmk=info, json_path_to_qmk_layout=self.config.json_path_to_qmk_layout
-        )
-        qmk_layout_list = qmk_tools.arrange_layout_in_yx_order()
-
-        # print(qmk_layout_list)
-
-        calc_y: List[float] = []
-
-        absolute_ys = [y for y, _ in qmk_layout_list.items()]
-        row_heights = [max(k.h for k in keys) for _y, keys in qmk_layout_list.items()]
-
-        # calc_y.append(0)
-        # calc_y.append(absolute_ys[1] - 1)
-        # calc_y.append(absolute_ys[2] - 2 - calc_y[1])
-        # calc_y.append(absolute_ys[3] - 3 - calc_y[2] - calc_y[1])
-        # calc_y.append(absolute_ys[4] - 4 - calc_y[3] - calc_y[2] - calc_y[1])
-
-        calc_y = [0]  # Starting with the first element
-        for i in range(1, len(absolute_ys)):  # Iterate from 1 to 4
-            value = absolute_ys[i] - i  # Subtract the index
-            for j in range(1, i):  # Subtract the previous calc_y values
-                value -= calc_y[j]
-            calc_y.append(value)  # Append the result to the list
-
-        # relative_values = qmk_tools.absolute_to_relative(absolute_values)
-
-        self.__print_formatted("abs", absolute_ys)
-        self.__print_formatted("hw ", row_heights)
-
-        print(" ")
-        self.__print_formatted("c_Y", calc_y)
-
-        # relative_values = [
-        # 0,
-        # 0.5,
-        # 0,
-        # -0.75,
-        # -0.25,
-        # -0.5,
-        # -0.5,
-        # -0.25,
-        # -0.75,
-        # ]
-
-        # self.__print_formatted("###", relative_values)
-
-        y_list: List[str] = []
-        y_idx = -1
-
-        for _y, keys in qmk_layout_list.items():
-
-            y_idx += 1
-
-            y_offset = calc_y[y_idx]
-            x_list: List[str] = []
-            x_offset: float = 0
-
-            for idx, key in enumerate(keys):
-                key_pos_list: List[str] = []
-                if idx == 0:
-                    key_pos_list.append(f"y:{  y_offset }")
-                    x_offset = 0
-
-                key.x -= x_offset
-                key_pos_list.append(f"x:{  key.x}")
-                key_pos_list.append(f"offset: {  x_offset}")
-
-                x_offset = x_offset + key.w + key.x
-
-                key_pos_list.append(f"h:{key.h}")
-                key_pos_list.append(f"w:{key.w}")
-
-                key_pos_str = "{" + ",".join(key_pos_list) + "}"
-
-                x_list.append(key_pos_str)
-                x_list.append('"' + key.label + '"')
-
-            o = [k.h for k in keys]
-            max_h = max(o)
-
-            x_list_str = "[" + ",".join(x_list) + "]"
-            y_list.append(x_list_str)
-            # print(x_list)
-
-        out = ("," + os.linesep).join(y_list)
-
-        with open(self.config.raw_layout_filename, "w") as f:
-            f.write(out)
-
-        print(self.config.raw_layout_filename)
-
-        """
-        [{x:3.25,a:7,w:1.25,h:1.25},"MENU",{w:1.25,h:1.25},"TURBO",{x:7,w:1.25,h:1.25},"INV",{w:1.25,h:1.25},"BREAK",{x:1.25,w:1.25,h:1.25},"HELP"],
-        """
-
 
 if __name__ == "__main__":
     pass

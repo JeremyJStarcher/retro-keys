@@ -6,4 +6,7 @@
 **/3mfs
 **/2-color
 
+# Ignore the coverage map
+.coverage
+
 #keyboards/atari-a8/case/stls

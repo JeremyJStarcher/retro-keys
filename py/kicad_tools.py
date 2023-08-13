@@ -1,7 +1,7 @@
 from enum import Enum
 import copy
 import math
-from typing import cast
+from typing import Dict, List, cast
 
 INF = float("inf")
 
@@ -168,11 +168,40 @@ class KicadTool:
 
         p.append(nn)
 
-    def find_symbol_by_reference(self, root: list, ref: str):
-        prints = self.find_objects_by_atom(root, "symbol", 1)
+    def get_all_symbol_value_references(self, root: list) -> Dict[str, List[str]]:
+        # jjz
+        ret: Dict[str, List[str]] = dict()
 
-        for p in prints:
-            o = self.find_objects_by_atom(p, "property", INF)
+        symbols = self.find_objects_by_atom(root, "symbol", 1)
+
+        for symbol in symbols:
+            properties = self.find_objects_by_atom(symbol, "property", 1)
+
+            value_property = next(
+                filter(lambda fp: (fp[1] == q_string("Value")), properties), "None"
+            )
+
+            reference_property = next(
+                filter(lambda fp: (fp[1] == q_string("Reference")), properties),
+                "--NONE--",
+            )
+
+            if value_property and reference_property:
+                value: str = value_property[2].strip('"')
+                reference: str = reference_property[2].strip('"')
+
+                if not value in ret:
+                    ret[value] = []
+
+                v = ret[value]
+                v.append(reference)
+        return ret
+
+    def find_symbol_by_reference(self, root: list, ref: str):
+        symbols = self.find_objects_by_atom(root, "symbol", 1)
+
+        for symbol in symbols:
+            o = self.find_objects_by_atom(symbol, "property", INF)
 
             filtered = filter(
                 lambda fp: (fp[1] == q_string("Reference"))
@@ -182,7 +211,7 @@ class KicadTool:
 
             lst = list(filtered)
             if len(lst) > 0:
-                return p
+                return symbol
 
     def get_symbol_property(self, root: list, ref: str, prop: str, default: str):
         symbol = cast(list, self.find_symbol_by_reference(root, ref))

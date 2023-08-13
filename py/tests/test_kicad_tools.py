@@ -1,17 +1,8 @@
 import unittest
-import pytest
 from kicad_tools import KicadTool
 from kicad_tools import Layer
 from kicad_parser import KiCadParser
 from tests.test_filepaths import SAMPLE_KEYBOARD_SCH_FILENAME, SAMPLE_PCB_FILENAME
-
-
-def read_pcb_file():
-    data_file = open(SAMPLE_PCB_FILENAME, "r")
-    data = data_file.read()
-    data_file.close()
-    return data
-
 
 class TestKiCadTools(unittest.TestCase):
     def assert_float_str(self, f: float) -> None:
@@ -21,9 +12,10 @@ class TestKiCadTools(unittest.TestCase):
             self.fail(f"{f} is not a valid floating-point number")
 
     def read_pcb_file(self):
-        s = read_pcb_file()
-        parser = KiCadParser(s)
-        return parser.to_list()
+        with open(SAMPLE_PCB_FILENAME, "r") as data_file:
+            data = data_file.read()
+            parser = KiCadParser(data)
+            return parser.to_list()
 
     def read_keyboard_sch_file(self):
         with open(SAMPLE_KEYBOARD_SCH_FILENAME, "r") as data_file:

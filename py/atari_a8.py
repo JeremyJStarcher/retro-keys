@@ -8,7 +8,12 @@ if __name__ == "__main__":
     base_path = Path("../keyboards/atari-a8")
 
     config = ProcessConfiguration()
+
+    # Master input file, source of all truth.
+    config.kle_layout_filename = base_path / "keyboard-layout.json"
+
     config.qmk_layout_filename = base_path / "qmkinfo.json"
+
     config.pcb_filename = base_path / "kicad" / "atari-keyboard.kicad_pcb"
     config.keyboard_sch_sheet_filename_name = base_path / "kicad" / "keyboard.kicad_sch"
     config.openscad_position_filename = base_path / "keycaps" / "keyboard-position.scad"

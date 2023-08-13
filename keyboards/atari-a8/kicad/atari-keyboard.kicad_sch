@@ -1666,7 +1666,7 @@
       (reference "D231") (unit 1) (value "EQUAL") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/06cf9672-125e-4c42-969d-2bac960c1653"
-      (reference "D232") (unit 1) (value "RET") (footprint "retro-kbd:Diode-dual")
+      (reference "D232") (unit 1) (value "RETURN") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/b4116555-1ac2-4137-9eef-20651979f021"
       (reference "D233") (unit 1) (value "HELP") (footprint "retro-kbd:Diode-dual")
@@ -1681,7 +1681,7 @@
       (reference "D236") (unit 1) (value "SELECT") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/0d9e43e8-11fe-4681-96b4-850ab662e4c6"
-      (reference "D237") (unit 1) (value "CTRL") (footprint "retro-kbd:Diode-dual")
+      (reference "D237") (unit 1) (value "CONTROL") (footprint "retro-kbd:Diode-dual")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/c368f874-b80f-4425-b501-f6d46574a747"
       (reference "D238") (unit 1) (value "A") (footprint "retro-kbd:Diode-dual")
@@ -1900,7 +1900,7 @@
       (reference "SW231") (unit 1) (value "EQUAL") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/32b80fdb-b175-4734-92cd-e32ba1b8d671"
-      (reference "SW232") (unit 1) (value "RET") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.50u_PCB")
+      (reference "SW232") (unit 1) (value "RETURN") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.50u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/1ec7b0be-a9c2-411a-a731-d2a12e446eca"
       (reference "SW233") (unit 1) (value "HELP") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
@@ -1915,7 +1915,7 @@
       (reference "SW236") (unit 1) (value "SELECT") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/833d9b93-1abe-4c96-9b58-f5438613275f"
-      (reference "SW237") (unit 1) (value "CTRL") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_2.00u_PCB")
+      (reference "SW237") (unit 1) (value "CONTROL") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_2.00u_PCB")
     )
     (path "/7ce608c9-579d-47fb-84c9-158fdf17ec91/b292e05c-08fc-457b-a6ee-43df1b2c7414"
       (reference "SW238") (unit 1) (value "A") (footprint "Button_Switch_Keyboard:SW_Cherry_MX_1.00u_PCB")

@@ -3,10 +3,12 @@ import csv
 import os
 from pathlib import Path
 from typing import List
+from common_key_format import CommonKeyData
 from kicad_parser import KiCadParser
 from kicad_tools import KicadTool
 from kicad_tools import Layer
 from kicad_tools import BoundingBox
+from kle_tools import KleTools
 from qmk_tools import QmkTools
 
 BASE_THICKNESS = 3
@@ -28,6 +30,7 @@ PRINTER_Y = 260
 
 class ProcessConfiguration:
     # These paths are relative to the 'py' directory
+    kle_layout_filename: Path
     qmk_layout_filename: Path
     pcb_filename: Path
     case_filename: Path
@@ -100,9 +103,13 @@ class KeyInfo:
 
 class ProcessKeyboard:
     config: ProcessConfiguration
+    common_key_format: CommonKeyData = CommonKeyData()
+    layout: List[KeyInfo]
 
     def __init__(self, config: ProcessConfiguration):
         self.config = config
+        self.__populateCommonData()
+        self.layout = self.__get_layout_from_kle()
 
     def read_sexp(self, name: Path):
         with open(name, "r") as f:
@@ -114,6 +121,26 @@ class ProcessKeyboard:
             data = f.read()
         d_dict = json.loads(data)
         return d_dict
+
+    def __populateCommonData(self) -> None:
+
+        #     qmk = self.read_qmk_layout_from_json_file(self.config.qmk_layout_filename)
+
+        with open(self.config.qmk_layout_filename, "r") as qmk_data_file:
+
+            qmk_data = qmk_data_file.read()
+            qmk = json.loads(qmk_data)
+            qmk_tools = QmkTools(qmk=qmk, json_path_to_qmk_layout=self.config.json_path_to_qmk_layout)  # type: ignore
+
+            with open(self.config.kle_layout_filename, "r") as kle_data_file:
+                kle_data = kle_data_file.read()
+                kle = json.loads(kle_data)
+                kle_tools = KleTools(kle=kle)
+
+                self.common_key_format.update_from_kle(kle_tools)
+                self.common_key_format.update_from_qmk(qmk_tools)
+
+                self.common_key_format.convert_kle_location_to_qmk()
 
     def set_designators(self, starting_index: int, keys: list):
         filtered = list(filter(lambda key: not key.skip, keys))
@@ -137,29 +164,22 @@ class ProcessKeyboard:
                     key.designator = str(idx)
                     idx += 1
 
-    def get_layout(self) -> list:
-        qmk = self.read_qmk_layout_from_json_file(self.config.qmk_layout_filename)
-        path_elements = self.config.json_path_to_qmk_layout.split(".")
-
-        top = qmk
-        if self.config.json_path_to_qmk_layout != "":
-            for bit in path_elements:
-                top = top[bit]
-
-        keys = []
+    def __get_layout_from_kle(self) -> List[KeyInfo]:
+        keys: List[KeyInfo] = []
 
         KEYSWITCH_FIX_X = -11.565
         KEYSWITCH_FIX_Y = -3.946
 
-        for key in top:
+        for key_name in self.common_key_format.get_key_names():
+            key = self.common_key_format.get_from_common_keys_or_new(key_name)
 
             keyInfo = KeyInfo()
 
-            keyInfo.skip = key.get("x") == -1
-            keyInfo.label = key.get("label")
+            keyInfo.skip = key.is_decal
+            keyInfo.label = key.name
 
-            keyInfo.w = float(key.get("w", 1))
-            keyInfo.h = float(key.get("h", 1))
+            keyInfo.w = key.w
+            keyInfo.h = key.h
 
             xfix: float = -1
             if keyInfo.w == 1.0:
@@ -195,11 +215,11 @@ class ProcessKeyboard:
                     "Unknown width of" + str(keyInfo.w) + " found " + keyInfo.label
                 )
 
-            keyInfo.l_x = key.get("x")
-            keyInfo.l_y = key.get("y")
+            keyInfo.l_x = key.qmk_location.x
+            keyInfo.l_y = key.qmk_location.y
 
-            x = (float(key.get("x")) + (KeyInfo.w / 2)) * self.config.UNIT
-            y = (float(key.get("y")) + (KeyInfo.h / 2)) * self.config.UNIT
+            x = (keyInfo.l_x + (KeyInfo.w / 2)) * self.config.UNIT
+            y = (keyInfo.l_y + (KeyInfo.h / 2)) * self.config.UNIT
 
             x += self.config.pcb_x_orig
             y += self.config.pcb_y_orig
@@ -219,16 +239,16 @@ class ProcessKeyboard:
             # various key sizes.  (By hand/trial and error)
 
             x1 = (keyInfo.key_x - keyInfo.w / 2) - ww / 2 + KEYSWITCH_FIX_X
-            y1 = (keyInfo.key_y - keyInfo.h / 2) - hh / 2 + KEYSWITCH_FIX_Y
-            x2 = x1 + self.config.UNIT + ww
-            y2 = y1 + self.config.UNIT + hh
+            # y1 = (keyInfo.key_y - keyInfo.h / 2) - hh / 2 + KEYSWITCH_FIX_Y
+            # x2 = x1 + self.config.UNIT + ww
+            # y2 = y1 + self.config.UNIT + hh
 
             x1 += xfix
 
             keyInfo.hole_x = keyInfo.key_x + 10
             keyInfo.hole_y = keyInfo.key_y + 10
 
-            matrix = key.get("matrix")
+            matrix = key.qmk_location.matrix
             keyInfo.matrix_c = matrix[0]
             keyInfo.matrix_r = matrix[1]
 
@@ -238,8 +258,6 @@ class ProcessKeyboard:
         return keys
 
     def relocate_parts_and_draw_silkscreen(self) -> None:
-
-        layout = self.get_layout()
 
         pcb_sexp = self.read_sexp(self.config.pcb_filename)
         pcb_parser = KiCadParser(pcb_sexp)
@@ -253,9 +271,7 @@ class ProcessKeyboard:
 
         bbox = BoundingBox(-1, -1, -1, -1)
 
-        for _item in layout:
-
-            item: KeyInfo = _item
+        for item in self.layout:
 
             if item.designator == "":
                 print("skipping " + item.label)
@@ -333,7 +349,6 @@ class ProcessKeyboard:
         return hx, hy
 
     def calc_pick_n_place(self):
-        layout = self.get_layout()
 
         pcb_sexp = self.read_sexp(self.config.pcb_filename)
         pcb_parser = KiCadParser(pcb_sexp)
@@ -341,7 +356,7 @@ class ProcessKeyboard:
 
         tool = KicadTool()
 
-        for item in layout:
+        for item in self.layout:
 
             if item.designator == "":
                 print("skipping " + item.label)
@@ -353,10 +368,9 @@ class ProcessKeyboard:
             # print(diode)
 
     def make_openscad_config_file(self):
-        layout = self.get_layout()
         out = []
 
-        for item in layout:
+        for item in self.layout:
 
             if item.designator == "":
                 print("skipping " + item.label)
@@ -381,8 +395,6 @@ class ProcessKeyboard:
     def make_jlc_pcb_assembly_files(self):
         def q(s):
             return str(s)
-
-        layout = self.get_layout()
 
         pcb_sexp = self.read_sexp(self.config.pcb_filename)
         pcb_parser = KiCadParser(pcb_sexp)
@@ -469,7 +481,6 @@ class ProcessKeyboard:
             writer.writerows(cpl_rows)
 
     def add_3d_models_to_pcb(self):
-        layout = self.get_layout()
 
         pcb_sexp = self.read_sexp(self.config.pcb_filename)
         pcb_parser = KiCadParser(pcb_sexp)
@@ -477,7 +488,7 @@ class ProcessKeyboard:
 
         tool = KicadTool()
 
-        for item in layout:
+        for item in self.layout:
             if item.designator == "":
                 print("skipping " + item.label)
                 continue
@@ -521,8 +532,6 @@ class ProcessKeyboard:
         def bbox_to_openscad_src(label: str, bbox: BoundingBox) -> str:
             return "[" + f'"{label}", {bbox.x1}, {bbox.y1}, {bbox.x2}, {bbox.y2}' + "]"
 
-        layout = self.get_layout()
-
         pcb_sexp = self.read_sexp(self.config.pcb_filename)
         pcb_parser = KiCadParser(pcb_sexp)
         pcb = pcb_parser.to_list()
@@ -539,7 +548,7 @@ class ProcessKeyboard:
 
         bbox = BoundingBox(-1, -1, -1, -1)
 
-        for _item in layout:
+        for _item in self.layout:
 
             item: KeyInfo = _item
 
@@ -629,6 +638,7 @@ class ProcessKeyboard:
         ff = ", ".join(formatted_numbers)
 
         print(title + ":" + ff)
+
 
 if __name__ == "__main__":
     pass

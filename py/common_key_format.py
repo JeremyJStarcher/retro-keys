@@ -1,3 +1,4 @@
+from typing import List
 from kle_tools import KleTools
 from qmk_tools import QmkTools
 from dataclasses import dataclass, field
@@ -7,6 +8,7 @@ from dataclasses import dataclass, field
 class CommonKeyFormatQmk:
     x: float = -1
     y: float = -1
+    matrix = [-1, -1]
 
 
 class CommonKeyFormatKle:
@@ -23,6 +25,8 @@ class CommonKeyFormat:
     w = 1.0
     h = 1.0
     name: str = ""
+    is_homing_key = False
+    is_decal = False
 
 
 CommonFormatKeys = dict[str, CommonKeyFormat]
@@ -31,6 +35,9 @@ CommonFormatKeys = dict[str, CommonKeyFormat]
 @dataclass
 class CommonKeyData:
     common_key_dict: CommonFormatKeys = field(default_factory=dict)
+
+    def get_key_names(self) -> List[str]:
+        return list(self.common_key_dict)
 
     def get_from_common_keys_or_new(self, canonical_name: str) -> CommonKeyFormat:
         if canonical_name not in self.common_key_dict:
@@ -52,6 +59,7 @@ class CommonKeyData:
 
             common_format.qmk_location.x = qmk_key.x
             common_format.qmk_location.y = qmk_key.y
+            common_format.qmk_location.matrix = qmk_key.matrix
 
     def update_from_kle(self, kle_tools: KleTools) -> None:
         keyname_list = kle_tools.get_keynames_list_from_kle()
@@ -68,6 +76,9 @@ class CommonKeyData:
 
             common_format.w = kle_key.w
             common_format.h = kle_key.h
+
+            common_format.is_decal = kle_key.is_decal
+            common_format.is_homing_key = kle_key.is_homing_key
 
     def convert_kle_location_to_qmk(self):
         """

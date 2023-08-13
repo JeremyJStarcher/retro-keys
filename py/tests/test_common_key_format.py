@@ -105,6 +105,18 @@ class TestCommonKeyFormat(unittest.TestCase):
             self.assertAlmostEqual(kle_key.qmk_location.x, qmk_key.qmk_location.x)
             self.assertAlmostEqual(kle_key.qmk_location.y, qmk_key.qmk_location.y)
 
+    def test_get_key_names(self):
+        common_key_format_kle = CommonKeyData()
+
+        kle_tools = self.getKleTools()
+
+        common_key_format_kle.update_from_kle(kle_tools)
+
+        key_names_kle = sorted(kle_tools.get_keynames_list_from_kle())
+        key_names_common = sorted(common_key_format_kle.get_key_names())
+
+        self.assertEqual(key_names_kle, key_names_common)
+
 
 if __name__ == "__main__":
     unittest.main()

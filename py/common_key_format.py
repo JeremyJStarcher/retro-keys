@@ -1,5 +1,3 @@
-import math
-from typing import List
 from kle_tools import KleTools
 from qmk_tools import QmkTools
 from dataclasses import dataclass, field

@@ -25,8 +25,6 @@ if __name__ == "__main__":
     config.kicad_keycap_vrml_path_str = str(Path("..") / "keycaps" / "vrml")
     config.json_path_to_qmk_layout = "layouts.LAYOUT.layout"
 
-    config.matrix_starting_index = 201
-
     process = ProcessKeyboard(config)
 
     process.relocate_parts_and_draw_silkscreen()

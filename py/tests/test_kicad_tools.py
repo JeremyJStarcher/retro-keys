@@ -4,6 +4,7 @@ from kicad_tools import Layer
 from kicad_parser import KiCadParser
 from tests.test_filepaths import SAMPLE_KEYBOARD_SCH_FILENAME, SAMPLE_PCB_FILENAME
 
+
 class TestKiCadTools(unittest.TestCase):
     def assert_float_str(self, f: float) -> None:
         try:

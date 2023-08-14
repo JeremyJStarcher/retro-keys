@@ -6,7 +6,6 @@ from dataclass_wizard import fromdict, asdict  # type: ignore
 @dataclass
 class QmkLayout:
     label: str
-    matrix: list[int]
     w: float
     h: float
     x: float

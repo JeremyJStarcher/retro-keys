@@ -8,7 +8,6 @@ from dataclasses import dataclass, field
 class CommonKeyFormatQmk:
     x: float = -1
     y: float = -1
-    matrix = [-1, -1]
 
 
 class CommonKeyFormatKle:
@@ -59,7 +58,6 @@ class CommonKeyData:
 
             common_format.qmk_location.x = qmk_key.x
             common_format.qmk_location.y = qmk_key.y
-            common_format.qmk_location.matrix = qmk_key.matrix
 
     def update_from_kle(self, kle_tools: KleTools) -> None:
         keyname_list = kle_tools.get_keynames_list_from_kle()

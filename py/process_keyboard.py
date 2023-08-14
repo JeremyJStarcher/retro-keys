@@ -2,6 +2,7 @@ import json
 import csv
 import os
 from pathlib import Path
+import re
 from typing import List
 from common_key_format import CommonKeyData
 from kicad_parser import KiCadParser
@@ -44,7 +45,6 @@ class ProcessConfiguration:
     kicad_3dmodel_path_str: str
     kicad_keycap_vrml_path_str: str
 
-    matrix_starting_index: int
     pcb_x_orig: float = 61
     pcb_y_orig: float = 177.75
     pcb_border: float = 10
@@ -66,8 +66,6 @@ class KeyInfo:
     key_y: float = 0
     w: float = 0
     h: float = 0
-    matrix_r: float = 0
-    matrix_c: float = 0
     designator: str = ""
     label: str = ""
     skip = True
@@ -94,9 +92,6 @@ class KeyInfo:
 
         l.append("l_x: " + str(self.l_x))
         l.append("l_y: " + str(self.l_y))
-
-        l.append("matrix_c: " + str(self.matrix_c))
-        l.append("matrix_r: " + str(self.matrix_r))
 
         return "{ " + ", ".join(l) + " }"
 
@@ -142,27 +137,31 @@ class ProcessKeyboard:
 
                 self.common_key_format.convert_kle_location_to_qmk()
 
-    def set_designators(self, starting_index: int, keys: list):
+    def __get_bare_reference_id(self, s: str):
+        """
+        Strip off the prefix
+        SW227
+        and D227
+
+        Both just become "227"
+        """
+
+        new_string = re.sub(r"^[a-zA-Z]+", "", s)
+        return new_string
+
+    def set_designators(self, keys: List[KeyInfo]):
         filtered = list(filter(lambda key: not key.skip, keys))
 
-        # Just make sure that "xx" and "yy" are far greater than your grid.
-        # Any spots that are unused will be skipped, just like there are no
-        # references assigned to empty spots on your schematic grid.
+        key_sch_sexp = self.read_sexp(self.config.keyboard_sch_sheet_filename_name)
+        key_parser = KiCadParser(key_sch_sexp)
+        schematic = key_parser.to_list()
 
-        idx = starting_index
-        for col in range(10):
-            for row in range(10):
+        tool = KicadTool()
+        value_references = tool.get_all_symbol_value_references(schematic)
 
-                items = filter(
-                    lambda zkey: (zkey.matrix_r == row) and (zkey.matrix_c == col),
-                    filtered,
-                )
-
-                ll = list(items)
-                if len(ll) > 0:
-                    key = ll[0]
-                    key.designator = str(idx)
-                    idx += 1
+        for item in filtered:
+            references = value_references[item.label]
+            item.designator = self.__get_bare_reference_id(references[0])
 
     def __get_layout_from_kle(self) -> List[KeyInfo]:
         keys: List[KeyInfo] = []
@@ -248,13 +247,9 @@ class ProcessKeyboard:
             keyInfo.hole_x = keyInfo.key_x + 10
             keyInfo.hole_y = keyInfo.key_y + 10
 
-            matrix = key.qmk_location.matrix
-            keyInfo.matrix_c = matrix[0]
-            keyInfo.matrix_r = matrix[1]
-
             keys.append(keyInfo)
 
-        self.set_designators(self.config.matrix_starting_index, keys)
+        self.set_designators(keys)
         return keys
 
     def relocate_parts_and_draw_silkscreen(self) -> None:

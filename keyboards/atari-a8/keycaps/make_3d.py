@@ -9,6 +9,8 @@ import shutil
 from subprocess import Popen
 from typing import Dict, Optional, Tuple
 import time
+
+# type: ignore
 import trimesh
 from threemftool import ThreeMfTool
 
@@ -291,8 +293,6 @@ class KeyConverter:
             cmd1 = f"{exe} {stl1Name} {wrl1Name} {cap_color}"
             cmd2 = f"{exe} {stl2Name} {wrl2Name} {legend_color}"
 
-
-
             if keyInfo.has_legend:
                 process1 = Popen(cmd1, shell=True)
                 process2 = Popen(cmd2, shell=True)
@@ -302,8 +302,6 @@ class KeyConverter:
             else:
                 process1 = Popen(cmd1, shell=True)
                 process1.wait()
-
-
 
     def _create_dir(self, dir_path: Optional[Path]) -> None:
         if dir_path is None:
@@ -406,26 +404,26 @@ def run_main():
     FLAT_STL_PATH = Path(f"{THREE_D_ROOT}/flat-stl")
     VMRL_PATH = Path(f"{THREE_D_ROOT}/vrml")
 
-    # converter.reset()
-    # converter.openscad_model_output = "3mf"
-    # converter.openscad_model_sideways = True
-    # converter.DEST_DIR = SIDEWAYS_3MF_PATH
-    # converter.pocket_dest = True
-    # converter.make_openscad_models()
+    converter.reset()
+    converter.openscad_model_output = "3mf"
+    converter.openscad_model_sideways = True
+    converter.DEST_DIR = SIDEWAYS_3MF_PATH
+    converter.pocket_dest = True
+    converter.make_openscad_models()
 
-    # converter.reset()
-    # converter.DEST_DIR = SIDEWAYS_2COLOR_3MF_PATH
-    # converter.pocket_dest = True
-    # converter.SRC_DIR = SIDEWAYS_3MF_PATH
-    # converter.pocket_src = True
-    # converter.make_two_color()
+    converter.reset()
+    converter.DEST_DIR = SIDEWAYS_2COLOR_3MF_PATH
+    converter.pocket_dest = True
+    converter.SRC_DIR = SIDEWAYS_3MF_PATH
+    converter.pocket_src = True
+    converter.make_two_color()
 
-    # converter.reset()
-    # converter.openscad_model_output = "3mf"
-    # converter.openscad_model_sideways = False
-    # converter.DEST_DIR = FLAT_3MF_PATH
-    # converter.pocket_dest = True
-    # converter.make_openscad_models()
+    converter.reset()
+    converter.openscad_model_output = "3mf"
+    converter.openscad_model_sideways = False
+    converter.DEST_DIR = FLAT_3MF_PATH
+    converter.pocket_dest = True
+    converter.make_openscad_models()
 
     converter.reset()
     converter.SRC_DIR = FLAT_3MF_PATH

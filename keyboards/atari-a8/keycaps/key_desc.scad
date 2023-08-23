@@ -28,7 +28,7 @@ module key_lshift() {
     tu(KEY_LSHIFT)
     u(2.25)
     stabilized()
-    flegend("SHIFT", [0,0], long_size)
+    flegend("SHIFT", POS_1_OF_1, long_size)
     oem_row(4)
     preKey()
     key();
@@ -112,7 +112,7 @@ module key_slash() {
 module key_rshift() {
     tu(KEY_RSHIFT)
     u(1.75)
-    flegend("SHIFT", [0,0], long_size)
+    flegend("SHIFT", POS_1_OF_1, long_size)
     oem_row(4)
     preKey()
     key();
@@ -126,7 +126,7 @@ module key_control() {
     tu(KEY_CONTROL)
     u(2)
     stabilized()
-    flegend("CONTROL", [0,0], long_size)
+    flegend("CONTROL", POS_1_OF_1, long_size)
     oem_row(3)
     preKey()
     key();
@@ -248,7 +248,7 @@ module key_semi() {
 
 module key_plus() {
     tu(KEY_PLUS)
-    graphicsKey3(3, "+", chr(34), ARROW_LEFT, "ctrl-comma");
+    graphicsKey3(3, "+", chr(92), ARROW_LEFT, "ctrl-comma");
 }
 
 
@@ -261,7 +261,7 @@ module key_astrix() {
 module key_caps() {
     tu(KEY_CAPS)
     u(1.25)
-    flegend("CAPS", [0,0], long_size)
+    flegend("CAPS", POS_1_OF_1, long_size)
     oem_row(3)
     preKey()
     key();
@@ -274,9 +274,9 @@ module key_caps() {
 module key_tab() {
     tu(KEY_TAB)
     u(1.75)
-    flegend("TAB", [0,1], long_size)
-    flegend("CLR", [1,-1], long_size)
-    flegend("SET", [-1,-1], long_size)
+    flegend("TAB", POS_S, long_size)
+    flegend("CLR", POS_NW, long_size)
+    flegend("SET", POS_NE, long_size)
     oem_row(2)
     preKey()
     key();
@@ -379,7 +379,7 @@ module key_equal() {
 module key_return() {
     tu(KEY_RETURN)
     u(1.5)
-    flegend("RETURN", [0,0], long_size)
+    flegend("RETURN", POS_1_OF_1, long_size)
     oem_row(2)
     preKey()
     key();
@@ -390,7 +390,7 @@ module key_return() {
 module key_esc() {
     tu(KEY_ESC)
     u(1.25)
-    flegend("ESC", [0,0], long_size)
+    flegend("ESC", POS_1_OF_1, long_size)
     oem_row(1)
     preKey()
     key();
@@ -461,8 +461,8 @@ module key_bs() {
     tu(KEY_BS)
     u(2)
     stabilized()
-    flegend("BACK SP", [0,1], half_size)
-    flegend("DELETE", [0,-1], half_size)
+    flegend("BACK SP", POS_TEXT_1_OF_2, half_size)
+    flegend("DELETE", POS_2_OF_2, half_size)
     oem_row(1)
     preKey()
     key();

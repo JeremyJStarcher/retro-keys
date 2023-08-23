@@ -22,7 +22,7 @@ if __name__ == "__main__":
     config.jlc_cpl_filename = base_path / "kicad" / "gerbers" / "jlc_cpl.csv"
 
     config.kicad_3dmodel_path_str = str(Path("..") / ".." / "kicad-lib" / "3d-models")
-    config.kicad_keycap_vrml_path_str = str(Path("..") / "keycaps" / "vrml")
+    config.kicad_keycap_vrml_path_str = str(Path("..") / "keycaps" / "keycap-models" / "vrml")
     config.json_path_to_qmk_layout = "layouts.LAYOUT.layout"
 
     process = ProcessKeyboard(config)

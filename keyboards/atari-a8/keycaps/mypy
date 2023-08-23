@@ -1,5 +1,5 @@
 #!/bin/sh
 
-mypy make_stls.py --check-untyped-defs
+mypy make_3d.py --check-untyped-defs
 
 black .

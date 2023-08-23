@@ -47,5 +47,5 @@ if __name__ == "__main__":
         a = sys.argv[6]
 
         color = pymeshlab.Color(int(r), int(g), int(b), int(a))
-        print("Converting.." + src)
+        # print("Converting.." + src)
         stl_to_wrl(src, dest, color)

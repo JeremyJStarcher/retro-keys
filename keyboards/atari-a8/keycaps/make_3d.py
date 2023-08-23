@@ -7,9 +7,12 @@ from pathlib import Path
 from enum import Enum
 import shutil
 from subprocess import Popen
-from typing import Dict, Tuple
-
+from typing import Dict, Optional, Tuple
+import time
+import trimesh
 from threemftool import ThreeMfTool
+
+THREE_D_ROOT = "keycap-models"
 
 
 class SingleInstanceLock:
@@ -54,14 +57,21 @@ class KeyInfo:
 
 class KeyConverter:
     def __init__(self):
-        self.STL_DIR = Path("stls")
-        self.VRML_DIR = Path("vrml")
-        self.TWO_COLOR_DIR = Path("2-color")
-        self.MODEL_TYPE: str = ""
-        self.print_sideways = False
+        self.SRC_DIR: Optional[Path] = None
+        self.DEST_DIR: Optional[Path] = None
+        self.pocket_src = False
+        self.pocket_dest = False
+
+        self.openscad_model_output: str = ""
+        self.openscad_model_sideways = False
         self.reset()
 
     def reset(self):
+        self.SRC_DIR = None
+        self.DEST_DIR = None
+        self.pocket_src = False
+        self.pocket_dest = False
+
         self.keyType_count: Dict[str, int] = {}
 
     def getDirectoryForKeyType(self, key_type: KeyType) -> str:
@@ -77,7 +87,7 @@ class KeyConverter:
 
         match key_type:
             case KeyType.CURSOR:
-                return ("255 255 255 0", "0 0 0 0")
+                return ("255 255 255 255", "0 0 0 0")
             case KeyType.SPECIAL:
                 return ("127 0 0 0", "255 255 255 0")
             case KeyType.X2:
@@ -94,13 +104,21 @@ class KeyConverter:
         self.keyType_count.update([(count_key, count + 1)])
 
     def buildFileName(
-        self, dir: Path, keyInfo: KeyInfo, extension: str, mode: StlMode
+        self,
+        dir: Optional[Path],
+        pocket: bool,
+        keyInfo: KeyInfo,
+        extension: str,
+        keycap_mode: StlMode,
     ) -> Path:
         tail = ""
-        if mode == StlMode.KEY_CAP:
+        if keycap_mode == StlMode.KEY_CAP:
             tail = "cap"
-        if mode == StlMode.LEGEND:
+        if keycap_mode == StlMode.LEGEND:
             tail = "legend"
+
+        if dir is None:
+            raise Exception("ACK")
 
         key_dir = self.getDirectoryForKeyType(keyInfo.key_type)
         count_key = key_dir
@@ -111,13 +129,10 @@ class KeyConverter:
 
         full_key_dir = f"{dir}"
 
-        if extension == self.MODEL_TYPE:
+        if pocket:
             full_key_dir = f"{dir}/{key_dir}_{subdirIdx}"
 
-        try:
-            os.makedirs(full_key_dir)
-        except Exception:
-            pass
+        Path(full_key_dir).mkdir(parents=True, exist_ok=True)
 
         rr = f"{full_key_dir}/{keyInfo.key_name}_{tail}.{extension}"
 
@@ -133,14 +148,11 @@ class KeyConverter:
         else:
             tmode = 2
 
-        fileName = self.buildFileName(self.STL_DIR, keyInfo, self.MODEL_TYPE, mode)
-        # fileName2 = self.buildFileName(self.STL_DIR, keyInfo, "obj", mode)
+        fileName = self.buildFileName(
+            self.DEST_DIR, self.pocket_dest, keyInfo, self.openscad_model_output, mode
+        )
 
-        # export_format = 'binstl'
-        # export_format = 'asciistl'
-        # --export-format {export_format}
-
-        sideways_str = "true" if self.print_sideways else "false"
+        sideways_str = "true" if self.openscad_model_sideways else "false"
 
         cmd = f'flatpak run org.openscad.OpenSCAD -D "key=\\"{keyInfo.key_name}\\"" -D "keymode=\\"{tmode}\\"" -o "{fileName}" -D "print_sideways={sideways_str}" "one_atari_key.scad" '
         return cmd
@@ -161,20 +173,32 @@ class KeyConverter:
     #     os.remove(tmp_file_name)
 
     def process_two_color_pair(self, idx: int, keyInfo: KeyInfo) -> None:
-        if self.MODEL_TYPE == "3mf":
+        if self.openscad_model_output == "3mf":
 
             threeFm = ThreeMfTool()
 
             legend_file_name = self.buildFileName(
-                self.STL_DIR, keyInfo, self.MODEL_TYPE, StlMode.LEGEND
+                self.SRC_DIR,
+                self.pocket_src,
+                keyInfo,
+                self.openscad_model_output,
+                StlMode.LEGEND,
             )
 
             keycap_file_name = self.buildFileName(
-                self.STL_DIR, keyInfo, self.MODEL_TYPE, StlMode.KEY_CAP
+                self.SRC_DIR,
+                self.pocket_src,
+                keyInfo,
+                self.openscad_model_output,
+                StlMode.KEY_CAP,
             )
 
             twocolor_file_name = self.buildFileName(
-                self.TWO_COLOR_DIR, keyInfo, self.MODEL_TYPE, StlMode.TWO_COLOR
+                self.DEST_DIR,
+                self.pocket_src,
+                keyInfo,
+                self.openscad_model_output,
+                StlMode.TWO_COLOR,
             )
 
             threeFm.convert_to_two_color(
@@ -186,7 +210,7 @@ class KeyConverter:
                 keyInfo.has_legend,
             )
 
-    def key_to_3dmodel(self, keyInfo: KeyInfo) -> None:
+    def openscad_to_model(self, keyInfo: KeyInfo) -> None:
         if keyInfo.has_legend:
             cmd1 = self.buildOpenScadCmd(keyInfo, StlMode.KEY_CAP)
             cmd2 = self.buildOpenScadCmd(keyInfo, StlMode.LEGEND)
@@ -202,36 +226,59 @@ class KeyConverter:
             process1.wait()
 
     def make_two_color(self) -> None:
-        self._create_dir(self.TWO_COLOR_DIR)
+        self._create_dir(self.DEST_DIR)
 
         for idx, keyInfo in enumerate(key_list):
             self.process_two_color_pair(idx, keyInfo)
             self.incrementTypeCount(keyInfo.key_type)
 
-    def make_all_3dmodels(self) -> None:
-        self._create_dir(self.STL_DIR)
+    def make_openscad_models(self) -> None:
+        self._create_dir(self.DEST_DIR)
 
         for keyInfo in key_list:
-            self.key_to_3dmodel(keyInfo)
+            self.openscad_to_model(keyInfo)
+
+            self.incrementTypeCount(keyInfo.key_type)
+
+    def convert_3mfs_to_stls(self):
+        self._create_dir(self.DEST_DIR)
+
+        def copy_one(keyInfo: KeyInfo, stl_mode: StlMode):
+            file_name_3mf = self.buildFileName(
+                self.SRC_DIR, self.pocket_src, keyInfo, "3mf", stl_mode
+            )
+            file_name_stl = self.buildFileName(
+                self.DEST_DIR, self.pocket_dest, keyInfo, "stl", stl_mode
+            )
+
+            mesh = trimesh.load(file_name_3mf)
+            mesh.export(file_name_stl)
+
+        for keyInfo in key_list:
+            copy_one(keyInfo, StlMode.KEY_CAP)
+
+            if keyInfo.has_legend:
+                copy_one(keyInfo, StlMode.LEGEND)
 
             self.incrementTypeCount(keyInfo.key_type)
 
     def make_vrml(self) -> None:
-        self._create_dir(self.VRML_DIR)
+        self._create_dir(self.DEST_DIR)
 
         for keyInfo in key_list:
-
             stl1Name = self.buildFileName(
-                self.STL_DIR, keyInfo, self.MODEL_TYPE, StlMode.KEY_CAP
+                self.SRC_DIR, self.pocket_src, keyInfo, "stl", StlMode.KEY_CAP
             )
             stl2Name = self.buildFileName(
-                self.STL_DIR, keyInfo, self.MODEL_TYPE, StlMode.LEGEND
+                self.SRC_DIR, self.pocket_src, keyInfo, "stl", StlMode.LEGEND
             )
 
             wrl1Name = self.buildFileName(
-                self.VRML_DIR, keyInfo, "wrl", StlMode.KEY_CAP
+                self.DEST_DIR, self.pocket_dest, keyInfo, "wrl", StlMode.KEY_CAP
             )
-            wrl2Name = self.buildFileName(self.VRML_DIR, keyInfo, "wrl", StlMode.LEGEND)
+            wrl2Name = self.buildFileName(
+                self.DEST_DIR, self.pocket_dest, keyInfo, "wrl", StlMode.LEGEND
+            )
 
             self.incrementTypeCount(keyInfo.key_type)
 
@@ -244,13 +291,24 @@ class KeyConverter:
             cmd1 = f"{exe} {stl1Name} {wrl1Name} {cap_color}"
             cmd2 = f"{exe} {stl2Name} {wrl2Name} {legend_color}"
 
-            process1 = Popen(cmd1, shell=True)
-            process2 = Popen(cmd2, shell=True)
 
-            process1.wait()
-            process2.wait()
 
-    def _create_dir(self, dir_path: Path) -> None:
+            if keyInfo.has_legend:
+                process1 = Popen(cmd1, shell=True)
+                process2 = Popen(cmd2, shell=True)
+
+                process1.wait()
+                process2.wait()
+            else:
+                process1 = Popen(cmd1, shell=True)
+                process1.wait()
+
+
+
+    def _create_dir(self, dir_path: Optional[Path]) -> None:
+        if dir_path is None:
+            raise Exception("_create_dir: dir not set")
+
         if dir_path.exists():
             shutil.rmtree(dir_path)
         dir_path.mkdir(parents=True, exist_ok=True)
@@ -330,26 +388,69 @@ key_list = [
     # KeyInfo("layout", KeyType.LAYOUT, True),
 ]
 
-if __name__ == "__main__":
+
+def run_main():
+
     lock = SingleInstanceLock("/tmp/myscript.lock")
     if not lock.acquire():
         print("Another instance of this script is already running. Exiting.")
         exit(1)
 
     converter = KeyConverter()
-    converter.MODEL_TYPE = "3mf"
-    converter.STL_DIR = Path("3mfs")
-    converter.print_sideways = True
-    converter.make_all_3dmodels()
-    converter.reset()
-    converter.make_two_color()
+
+    SIDEWAYS_3MF_PATH = Path(f"{THREE_D_ROOT}/3mfs")
+    SIDEWAYS_2COLOR_3MF_PATH = Path(f"{THREE_D_ROOT}/two-color")
+
+    FLAT_3MF_PATH = Path(f"{THREE_D_ROOT}/3mfs-flat")
+    FLAT_2COLOR_3MF_PATH = Path(f"{THREE_D_ROOT}/two-color-flat")
+    FLAT_STL_PATH = Path(f"{THREE_D_ROOT}/flat-stl")
+    VMRL_PATH = Path(f"{THREE_D_ROOT}/vrml")
+
+    # converter.reset()
+    # converter.openscad_model_output = "3mf"
+    # converter.openscad_model_sideways = True
+    # converter.DEST_DIR = SIDEWAYS_3MF_PATH
+    # converter.pocket_dest = True
+    # converter.make_openscad_models()
+
+    # converter.reset()
+    # converter.DEST_DIR = SIDEWAYS_2COLOR_3MF_PATH
+    # converter.pocket_dest = True
+    # converter.SRC_DIR = SIDEWAYS_3MF_PATH
+    # converter.pocket_src = True
+    # converter.make_two_color()
+
+    # converter.reset()
+    # converter.openscad_model_output = "3mf"
+    # converter.openscad_model_sideways = False
+    # converter.DEST_DIR = FLAT_3MF_PATH
+    # converter.pocket_dest = True
+    # converter.make_openscad_models()
 
     converter.reset()
-    converter.MODEL_TYPE = "stl"
-    converter.STL_DIR = Path("stls")
-    converter.print_sideways = False
-    converter.make_all_3dmodels()
+    converter.SRC_DIR = FLAT_3MF_PATH
+    converter.pocket_src = True
+    converter.DEST_DIR = FLAT_STL_PATH
+    converter.pocket_dest = False
+    converter.convert_3mfs_to_stls()
+
     converter.reset()
+    converter.SRC_DIR = FLAT_STL_PATH
+    converter.pocket_src = False
+    converter.DEST_DIR = VMRL_PATH
+    converter.pocket_dest = False
     converter.make_vrml()
 
     lock.release()
+
+
+if __name__ == "__main__":
+    start_time = time.time()
+    run_main()
+    end_time = time.time()
+
+    elapsed_time = end_time - start_time
+    hours, remainder = divmod(elapsed_time, 3600)
+    minutes, _ = divmod(remainder, 60)
+
+    print(f"Runtime: {int(hours)} hours, {int(minutes)} minutes")

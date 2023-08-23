@@ -118,9 +118,6 @@ class ProcessKeyboard:
         return d_dict
 
     def __populateCommonData(self) -> None:
-
-        #     qmk = self.read_qmk_layout_from_json_file(self.config.qmk_layout_filename)
-
         with open(self.config.qmk_layout_filename, "r") as qmk_data_file:
 
             qmk_data = qmk_data_file.read()

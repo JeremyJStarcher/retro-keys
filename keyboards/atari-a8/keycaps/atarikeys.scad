@@ -16,7 +16,7 @@ module preKey(size, w2, h2)
 {
     //$font="DejaVu Sans Mono:style=Book";
     // $font = "Liberation Mono:style=Bold";
-    $font = "Liberation Sans:style=Bold";
+    $font = "DejaVu Sans Mono:style=Book";
 
     // $support_type = "bars"; // [flared, bars, flat, disable]
 
@@ -184,8 +184,14 @@ module frontGraphicCutout()
         // this value by trial and error
         inset = -0.2;
 
+
+        ALL_THE_WAY_THROUGH = 3;
+        PART_WAY_THROUGH = 2;
+
+        THROUGH_SIZE = PART_WAY_THROUGH; 
+ 
         maybe_sideways()
-        rotate([ atari_rotation, 0, 0 ]) front_of_key() translate([ 0, inset, 0 ]) scale([ 0.75, 2, 0.75 ])
+        rotate([ atari_rotation, 0, 0 ]) front_of_key() translate([ 0, inset, 0 ]) scale([ 0.75, ALL_THE_WAY_THROUGH, 0.75 ])
         {
             boundBox();
             color("white") children();
@@ -197,7 +203,7 @@ module arrowKey(row, legend, svg)
 {
     difference()
     {
-        u(1) flegend(legend, [ 0, 0 ], arrow_size) oem_row(row) preKey() key();
+        u(1) flegend(legend, POS_1_OF_1, arrow_size) oem_row(row) preKey() key();
 
         frontGraphicCutout() children();
     }
@@ -209,7 +215,7 @@ module graphicsKey(row, legend, svg)
 {
     difference()
     {
-        u(1) flegend(legend, [ 0, 0 ], full_size) oem_row(row) preKey() key();
+        u(1) flegend(legend, POS_1_OF_1, full_size) oem_row(row) preKey() key();
 
         frontGraphicCutout() children();
     }
@@ -221,7 +227,8 @@ module graphicsKey2(row, legendBottom, legendTop, svg)
 {
     difference()
     {
-        u(1) flegend(legendBottom, [ 0, 1 ], half_size) flegend(legendTop, [ 0, -1 ], half_size) oem_row(row) preKey()
+        u(1) flegend(legendBottom, POS_1_OF_2, half_size) 
+        flegend(legendTop, POS_2_OF_2, half_size) oem_row(row) preKey()
             key();
 
         frontGraphicCutout() children();
@@ -233,8 +240,9 @@ module graphicsKey3(row, legendBottom, legendTop, legendLeft, svg)
 {
     difference()
     {
-        u(1) flegend(legendBottom, [ 0, 1 ], half_size) flegend(legendTop, [ 1, -1 ], half_size)
-            flegend(legendLeft, [ -1, -1 ], arrow_size) oem_row(row) preKey() key();
+        u(1) flegend(legendBottom, POS_1_OF_3, half_size)
+         flegend(legendTop, POS_2_OF_3, half_size)
+            flegend(legendLeft, POS_3_OF_3, arrow_size) oem_row(row) preKey() key();
 
         frontGraphicCutout() children();
     }
@@ -250,6 +258,14 @@ module boundBox()
         cube([ 8, gCut, 8 ], center = true);
     }
 }
+
+
+/*
+ * These are used for drawing a bunch of the graphics characters.
+ *
+ * Picture a clock face.  gLine6 draws from the center of the grid
+ * to the 6 o'clock position (or down)
+ */
 
 module gLine6()
 {
@@ -315,7 +331,7 @@ module gridKeyRender(legend)
 
     module key1()
     {
-        u(usize) uh(uhsize) flegend(legend, [ 0, 0 ], grid_key_size) grid_row(1) key();
+        u(usize) uh(uhsize) flegend(legend, POS_GRID_KEY, grid_key_size) grid_row(1) key();
     }
 
     hh = 6;
@@ -342,6 +358,8 @@ module flegend(txt, pos, size)
 {
     if ($show_legend)
     {
+        // s$inset_legend_depth = 100.2;
+
         legend(txt, pos, size) children();
     }
     else

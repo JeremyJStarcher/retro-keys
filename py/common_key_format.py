@@ -10,11 +10,12 @@ class CommonKeyFormatQmk:
     y: float = -1
 
 
+@dataclass
 class CommonKeyFormatKle:
+    y_idx: int = 0
+    x_idx: int = 0
     x: float = -1
     y: float = -1
-    y_idx: int
-    x_idx: int
 
 
 @dataclass
@@ -26,6 +27,7 @@ class CommonKeyFormat:
     name: str = ""
     is_homing_key = False
     is_decal = False
+    matrix = [0, 0]
 
 
 CommonFormatKeys = dict[str, CommonKeyFormat]
@@ -58,6 +60,7 @@ class CommonKeyData:
 
             common_format.qmk_location.x = qmk_key.x
             common_format.qmk_location.y = qmk_key.y
+            common_format.matrix = qmk_key.matrix
 
     def update_from_kle(self, kle_tools: KleTools) -> None:
         keyname_list = kle_tools.get_keynames_list_from_kle()

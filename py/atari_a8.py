@@ -22,14 +22,18 @@ if __name__ == "__main__":
     config.jlc_cpl_filename = base_path / "kicad" / "gerbers" / "jlc_cpl.csv"
 
     config.kicad_3dmodel_path_str = str(Path("..") / ".." / "kicad-lib" / "3d-models")
-    config.kicad_keycap_vrml_path_str = str(Path("..") / "keycaps" / "keycap-models" / "vrml")
+    config.kicad_keycap_vrml_path_str = str(
+        Path("..") / "keycaps" / "keycap-models" / "vrml"
+    )
     config.json_path_to_qmk_layout = "layouts.LAYOUT.layout"
 
     process = ProcessKeyboard(config)
 
-    process.relocate_parts_and_draw_silkscreen()
-    process.calc_pick_n_place()
-    process.make_openscad_config_file()
-    process.make_jlc_pcb_assembly_files()
-    process.add_3d_models_to_pcb()
-    process.generate_openscad_case_file()
+    process.add_keyswitches_to_schematic()
+
+    # process.relocate_parts_and_draw_silkscreen()
+    # process.calc_pick_n_place()
+    # process.make_openscad_config_file()
+    # process.make_jlc_pcb_assembly_files()
+    # process.add_3d_models_to_pcb()
+    # process.generate_openscad_case_file()

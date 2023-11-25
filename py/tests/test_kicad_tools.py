@@ -1,3 +1,4 @@
+import math
 import unittest
 from kicad_tools import KicadTool
 from kicad_tools import Layer
@@ -162,6 +163,26 @@ class TestKiCadTools(unittest.TestCase):
 
         for _, l2 in res.items():
             self.assertEqual(len(l2), 2)
+
+    def test_move_recursive(self):
+        schematic = self.read_keyboard_sch_file()
+        sch_tool = KicadTool()
+
+        parent = sch_tool.find_symbol_by_reference(schematic, "D266")
+        if parent != None:
+            offset_x = -1000
+            offset_y = -1000
+            fudge = 100
+            sch_tool.move_recursive(parent, offset_x, offset_y, 0)
+
+            all_at = sch_tool.find_objects_by_atom(parent, "at", math.inf)
+
+            for at in all_at:
+                x1 = at[1]
+                y1 = at[2]
+
+                self.assertLess(abs(offset_x - x1), fudge)
+                self.assertLess(abs(offset_y - y1), fudge)
 
 
 if __name__ == "__main__":

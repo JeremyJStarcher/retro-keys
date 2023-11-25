@@ -1,7 +1,10 @@
 from enum import Enum
 import copy
 import math
+
 from typing import Dict, List, cast
+
+from ki_symbols import KiSymbols
 
 INF = float("inf")
 
@@ -169,7 +172,6 @@ class KicadTool:
         p.append(nn)
 
     def get_all_symbol_value_references(self, root: list) -> Dict[str, List[str]]:
-        # jjz
         ret: Dict[str, List[str]] = dict()
 
         symbols = self.find_objects_by_atom(root, "symbol", 1)
@@ -341,6 +343,38 @@ class KicadTool:
         ]
 
         root.append(o)
+
+    def move_recursive(self, root: list, mx: float, my: float, mr: int):
+        first_at = self.find_object_by_atom(root, "at", 1)
+        while len(first_at) != 4:
+            first_at.append("0")
+
+        at_x = float(first_at[1])
+        at_y = float(first_at[2])
+        at_r = float(first_at[3])
+
+        all_at = self.find_objects_by_atom(root, "at", math.inf)
+        for atm in all_at:
+            while len(atm) != 4:
+                atm.append("0")
+
+            atm[1] = float(atm[1]) - at_x + mx
+            atm[2] = float(atm[2]) - at_y + my
+            atm[3] = int(float(atm[3]) - at_r + mr)
+
+    def add_keyswitch_to_schematic(
+        self, designator: str, name: str, root: list, mx: int, my: int
+    ):
+        # jjz
+
+        symbol_diode = KiSymbols.get_diode("D" + designator, name)
+        symbol_switch = KiSymbols.get_mx_with_led("SW" + designator, name)
+
+        self.move_recursive(symbol_diode, -50 + (mx * 10), -50 + (my * 10), 0)
+        self.move_recursive(symbol_switch, -50 + (mx * 10), -50 + (my * 10), 0)
+
+        root.append(symbol_diode)
+        root.append(symbol_switch)
 
     def draw_keepout_zone(self, root: list, nx: float, ny: float, r: float):
         def points_in_circumference(r, n=100):

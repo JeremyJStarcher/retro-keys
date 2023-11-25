@@ -10,6 +10,7 @@ class QmkLayout:
     h: float
     x: float
     y: float
+    matrix: list[int]
 
 
 class QmkTools:

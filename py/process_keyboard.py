@@ -1,5 +1,6 @@
 import json
 import csv
+import math
 import os
 from pathlib import Path
 import re
@@ -156,9 +157,10 @@ class ProcessKeyboard:
         tool = KicadTool()
         value_references = tool.get_all_symbol_value_references(schematic)
 
-        for item in filtered:
-            references = value_references[item.label]
-            item.designator = self.__get_bare_reference_id(references[0])
+        if len(value_references.keys()) != 0:
+            for item in filtered:
+                references = value_references[item.label]
+                item.designator = self.__get_bare_reference_id(references[0])
 
     def __get_layout_from_kle(self) -> List[KeyInfo]:
         keys: List[KeyInfo] = []
@@ -248,6 +250,67 @@ class ProcessKeyboard:
 
         self.set_designators(keys)
         return keys
+
+    def add_keyswitches_to_schematic(self) -> None:
+        key_sch_sexp = self.read_sexp(self.config.keyboard_sch_sheet_filename_name)
+        key_parser = KiCadParser(key_sch_sexp)
+        schematic = key_parser.to_list()
+        tool = KicadTool()
+
+        print(schematic)
+
+        key_parser.print_list(schematic, 0)
+
+        matrix_min_x = 32000
+        matrix_min_y = 32000
+        matrix_max_x = -matrix_min_x
+        matrix_max_y = -matrix_min_y
+        base_designator = 500
+
+        for key_name in self.common_key_format.get_key_names():
+            key = self.common_key_format.get_from_common_keys_or_new(key_name)
+
+            mx = int(float(key.matrix[0]))
+            my = int(float(key.matrix[1]))
+
+            matrix_max_x = max(matrix_max_x, mx)
+            matrix_max_y = max(matrix_max_y, my)
+
+            matrix_min_x = min(matrix_min_x, mx)
+            matrix_min_y = min(matrix_min_y, my)
+
+        for y in range(matrix_min_y, matrix_max_y + 1):
+            for x in range(matrix_min_x, matrix_max_x + 1):
+
+                for key_name in self.common_key_format.get_key_names():
+                    key = self.common_key_format.get_from_common_keys_or_new(key_name)
+
+                    if key.is_decal:
+                        continue
+
+                    kmx = int(float(key.matrix[1]))
+                    kmy = int(float(key.matrix[0]))
+
+                    if kmx == x and kmy == y:
+                        # jjz
+
+                        # print("des", base_designator, "x", x, "y", y, "kmx", kmx, "kmy", kmy)
+
+                        tool.add_keyswitch_to_schematic(
+                            str(base_designator),
+                            key.name,
+                            schematic,
+                            x,
+                            y,
+                        )
+
+                        base_designator += 1
+
+        l = key_parser.list_to_sexp(schematic)
+        out = "\r\n".join(l)
+
+        with open(self.config.keyboard_sch_sheet_filename_name, "w") as f:
+            f.write(out)
 
     def relocate_parts_and_draw_silkscreen(self) -> None:
 

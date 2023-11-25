@@ -362,19 +362,62 @@ class KicadTool:
             atm[2] = float(atm[2]) - at_y + my
             atm[3] = int(float(atm[3]) - at_r + mr)
 
+    def get_relative_pin_position_for_schematic(
+        self, root: list, obj: list, type: str, value: str
+    ):
+        item_lib_id = self.find_object_by_atom(obj, "lib_id")
+
+        lib_symbols = self.find_object_by_atom(root, "lib_symbols")
+        symbols = self.find_objects_by_atom(lib_symbols, "symbol", 1)
+
+        for symbol in symbols:
+            if item_lib_id[1] == symbol[1]:
+                pins = self.find_objects_by_atom(symbol, "pin")
+
+                for pin in pins:
+
+                    match = self.find_object_by_atom(pin, type)
+                    pin_value = match[1]
+                    if pin_value == q_string(value):
+                        pin_at = self.find_object_by_atom(pin, "at", 1)
+                        n = [float(pin_at[1]), float(pin_at[2])]
+                        return n
+        return [0, 0]
+
     def add_keyswitch_to_schematic(
         self, designator: str, name: str, root: list, mx: int, my: int
     ):
         # jjz
 
+        TOP_X = -50
+        TOP_Y = -50
+        STEP_X = 30
+        STEP_Y = 20
+
         symbol_diode = KiSymbols.get_diode("D" + designator, name)
         symbol_switch = KiSymbols.get_mx_with_led("SW" + designator, name)
 
-        self.move_recursive(symbol_diode, -50 + (mx * 10), -50 + (my * 10), 0)
-        self.move_recursive(symbol_switch, -50 + (mx * 10), -50 + (my * 10), 0)
+        cluster_x = TOP_X + (mx * STEP_X)
+        cluster_y = TOP_Y + (my * STEP_Y)
 
-        root.append(symbol_diode)
+        self.move_recursive(symbol_switch, cluster_x, cluster_y, 0)
+
+        pos1 = self.get_relative_pin_position_for_schematic(
+            root, symbol_switch, "number", "1"
+        )
+        pos2 = self.get_relative_pin_position_for_schematic(
+            root, symbol_diode, "number", "1"
+        )
+
+        print(pos1, pos2)
+
+        diode_x = cluster_x + pos2[0] - pos1[0]
+        diode_y = cluster_y + pos2[1] - pos1[1]
+
+        self.move_recursive(symbol_diode, diode_x, diode_y, 0)
+
         root.append(symbol_switch)
+        root.append(symbol_diode)
 
     def draw_keepout_zone(self, root: list, nx: float, ny: float, r: float):
         def points_in_circumference(r, n=100):

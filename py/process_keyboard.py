@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 from typing import List
 from common_key_format import CommonKeyData
+from ki_symbols import KiSymbols
 from kicad_parser import KiCadParser
 from kicad_tools import KicadTool
 from kicad_tools import Layer
@@ -251,21 +252,51 @@ class ProcessKeyboard:
         self.set_designators(keys)
         return keys
 
+    def add_schematic_lib_symbols(self) -> None:
+        key_sch_sexp = self.read_sexp(self.config.keyboard_sch_sheet_filename_name)
+        key_parser = KiCadParser(key_sch_sexp)
+        schematic = key_parser.to_list()
+        tool = KicadTool()
+
+        schematic_lib_symbols = tool.find_object_by_atom(schematic, "lib_symbols")
+        schematic_symbols = tool.find_objects_by_atom(
+            schematic_lib_symbols, "symbol", 1
+        )
+        scematic_existing_names = [x[1] for x in schematic_symbols]
+
+        load_lib_symbols = KiSymbols.get_lib_symbols()
+        load_symbols = tool.find_objects_by_atom(load_lib_symbols, "symbol", 1)
+        load_incoming_names = [x[1] for x in load_symbols]
+
+        new_names = list(set(load_incoming_names).difference(scematic_existing_names))
+
+        for symbol in load_symbols:
+            if symbol[1] in new_names:
+                schematic_lib_symbols.append(symbol)
+
+        l = key_parser.list_to_sexp(schematic)
+        out = "\r\n".join(l)
+
+        with open(self.config.keyboard_sch_sheet_filename_name, "w") as f:
+            f.write(out)
+
     def add_keyswitches_to_schematic(self) -> None:
         key_sch_sexp = self.read_sexp(self.config.keyboard_sch_sheet_filename_name)
         key_parser = KiCadParser(key_sch_sexp)
         schematic = key_parser.to_list()
         tool = KicadTool()
 
-        print(schematic)
-
-        key_parser.print_list(schematic, 0)
+        # print(schematic)
+        # key_parser.print_list(schematic, 0)
 
         matrix_min_x = 32000
         matrix_min_y = 32000
         matrix_max_x = -matrix_min_x
         matrix_max_y = -matrix_min_y
-        base_designator = 500
+
+        start_base = 280
+
+        base_designator = start_base
 
         for key_name in self.common_key_format.get_key_names():
             key = self.common_key_format.get_from_common_keys_or_new(key_name)
@@ -292,9 +323,6 @@ class ProcessKeyboard:
                     kmy = int(float(key.matrix[0]))
 
                     if kmx == x and kmy == y:
-                        # jjz
-
-                        # print("des", base_designator, "x", x, "y", y, "kmx", kmx, "kmy", kmy)
 
                         tool.add_keyswitch_to_schematic(
                             str(base_designator),

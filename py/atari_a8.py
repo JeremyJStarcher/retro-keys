@@ -29,6 +29,8 @@ if __name__ == "__main__":
 
     process = ProcessKeyboard(config)
 
+    process.add_schematic_lib_symbols()
+
     process.add_keyswitches_to_schematic()
 
     # process.relocate_parts_and_draw_silkscreen()

@@ -258,6 +258,9 @@ class ProcessKeyboard:
         schematic = key_parser.to_list()
         tool = KicadTool()
 
+        print(schematic)
+        key_parser.print_list(schematic, 0)
+
         schematic_lib_symbols = tool.find_object_by_atom(schematic, "lib_symbols")
         schematic_symbols = tool.find_objects_by_atom(
             schematic_lib_symbols, "symbol", 1
@@ -285,9 +288,6 @@ class ProcessKeyboard:
         key_parser = KiCadParser(key_sch_sexp)
         schematic = key_parser.to_list()
         tool = KicadTool()
-
-        # print(schematic)
-        # key_parser.print_list(schematic, 0)
 
         matrix_min_x = 32000
         matrix_min_y = 32000

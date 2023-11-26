@@ -4,189 +4,6 @@ def q_string(s: str) -> str:
 
 class KiSymbols:
     @staticmethod
-    def get_diode(designator: str, name: str):
-        o = [
-            "symbol",
-            ["lib_id", '"atari-keyboard-rescue:D_Small_ALT-Device"'],
-            ["at", "138.43", "69.85", "90"],
-            ["unit", "1"],
-            ["in_bom", "yes"],
-            ["on_board", "yes"],
-            ["dnp", "no"],
-            # ["uuid", "531a95e8-0a0e-490d-970d-472dfb031305"],
-            [
-                "property",
-                '"Reference"',
-                q_string(designator),
-                ["at", "140.1572", "68.6816", "90"],
-                [
-                    "effects",
-                    ["font", ["size", "1.27", "1.27"]],
-                    ["justify", "right"],
-                ],
-            ],
-            [
-                "property",
-                '"Value"',
-                q_string(name),
-                ["at", "140.1572", "70.993", "90"],
-                [
-                    "effects",
-                    ["font", ["size", "1.27", "1.27"]],
-                    ["justify", "right"],
-                ],
-            ],
-            [
-                "property",
-                '"Footprint"',
-                '"retro-kbd:Diode-dual"',
-                ["at", "138.43", "69.85", "90"],
-                ["effects", ["font", ["size", "1.27", "1.27"]], "hide"],
-            ],
-            [
-                "property",
-                '"Datasheet"',
-                '"~"',
-                ["at", "138.43", "69.85", "90"],
-                ["effects", ["font", ["size", "1.27", "1.27"]], "hide"],
-            ],
-            ["pin", '"1"', ["uuid", "ae415bb0-8625-44d9-a315-c14d3561d720"]],
-            ["pin", '"2"', ["uuid", "a06e82c3-6bd9-476a-a04a-e74e3bdf0a71"]],
-            [
-                "instances",
-                [
-                    "project",
-                    '"atari-keyboard"',
-                    [
-                        "path",
-                        '"/f6a334f3-ee33-4c56-a7bb-b961693d3d0e/7ce608c9-579d-47fb-84c9-158fdf17ec91"',
-                        ["reference", q_string(designator)],
-                        ["unit", "1"],
-                    ],
-                ],
-            ],
-        ]
-        return o
-
-    @staticmethod
-    def get_mx_with_led(designator: str, name: str):
-        o = [
-            "symbol",
-            ["lib_id", '"keebio:MX-with-LED"'],
-            ["at", "45.72", "50.8", "0"],
-            ["unit", "1"],
-            ["in_bom", "yes"],
-            ["on_board", "yes"],
-            ["dnp", "no"],
-            ["fields_autoplaced"],
-            ["uuid", "58cd7370-da76-4ce4-a1f8-b0bd9031cb55"],
-            [
-                "property",
-                '"Reference"',
-                q_string(designator),
-                ["at", "45.72", "41.91", "0"],
-                ["effects", ["font", ["size", "1.524", "1.524"]]],
-            ],
-            [
-                "property",
-                '"Value"',
-                q_string(name),
-                ["at", "45.72", "44.45", "0"],
-                ["effects", ["font", ["size", "1.524", "1.524"]]],
-            ],
-            [
-                "property",
-                '"Footprint"',
-                '""',
-                ["at", "45.72", "50.8", "0"],
-                ["effects", ["font", ["size", "1.524", "1.524"]], "hide"],
-            ],
-            [
-                "property",
-                '"Datasheet"',
-                '""',
-                ["at", "45.72", "50.8", "0"],
-                ["effects", ["font", ["size", "1.524", "1.524"]], "hide"],
-            ],
-            ["pin", '"3"', ["uuid", "50c71f6c-3940-4029-bd52-9c330e627525"]],
-            ["pin", '"4"', ["uuid", "d4ade8df-0030-4389-80d0-9e49cc63cea7"]],
-            ["pin", '"2"', ["uuid", "dddf8399-153f-48c9-a9d8-05927f1e9ba4"]],
-            ["pin", '"1"', ["uuid", "c4b4904f-7e9f-401c-9b02-d29567d52975"]],
-            [
-                "instances",
-                [
-                    "project",
-                    '"atari-keyboard"',
-                    [
-                        "path",
-                        '"/f6a334f3-ee33-4c56-a7bb-b961693d3d0e/7ce608c9-579d-47fb-84c9-158fdf17ec91"',
-                        ["reference", q_string(designator)],
-                        ["unit", "1"],
-                    ],
-                ],
-            ],
-        ]
-
-        o = [
-            "symbol",
-            ["lib_id", '"keebio:MX-with-LED"'],
-            ["at", "58.42", "71.12", "0"],
-            ["unit", "1"],
-            ["in_bom", "yes"],
-            ["on_board", "yes"],
-            ["dnp", "no"],
-            ["fields_autoplaced"],
-            # ["uuid", "06daf049-a17b-4db6-a418-39511317bcf1"],
-            [
-                "property",
-                '"Reference"',
-                q_string(designator),
-                ["at", "58.42", "62.23", "0"],
-                ["effects", ["font", ["size", "1.524", "1.524"]]],
-            ],
-            [
-                "property",
-                '"Value"',
-                '"QQQQ"',
-                ["at", "58.42", "64.77", "0"],
-                ["effects", ["font", ["size", "1.524", "1.524"]]],
-            ],
-            [
-                "property",
-                '"Footprint"',
-                '""',
-                ["at", "58.42", "71.12", "0"],
-                ["effects", ["font", ["size", "1.524", "1.524"]], "hide"],
-            ],
-            [
-                "property",
-                '"Datasheet"',
-                '""',
-                ["at", "58.42", "71.12", "0"],
-                ["effects", ["font", ["size", "1.524", "1.524"]], "hide"],
-            ],
-            ["pin", '"3"', ["uuid", "80acc62b-ff7b-4977-ac40-ab662ac3c706"]],
-            ["pin", '"2"', ["uuid", "e6b9316c-ef3a-49a4-8e1f-2bfe4e0009d4"]],
-            ["pin", '"4"', ["uuid", "237689a8-0a44-4e77-b236-ca319ab88bdd"]],
-            ["pin", '"1"', ["uuid", "bfdcdbaf-c04d-4a2f-a876-44acb102d763"]],
-            [
-                "instances",
-                [
-                    "project",
-                    '"atari-keyboard"',
-                    [
-                        "path",
-                        '"/f6a334f3-ee33-4c56-a7bb-b961693d3d0e/7ce608c9-579d-47fb-84c9-158fdf17ec91"',
-                        ["reference", q_string(designator)],
-                        ["unit", "1"],
-                    ],
-                ],
-            ],
-        ]
-
-        return o
-
-    @staticmethod
     def get_lib_symbols():
 
         o = [
@@ -599,6 +416,449 @@ class KiSymbols:
                             '"4"',
                             ["effects", ["font", ["size", "1.27", "1.27"]]],
                         ],
+                    ],
+                ],
+            ],
+            [
+                "symbol",
+                '"keebio:MX_LED"',
+                ["pin_names", ["offset", "1.016"], "hide"],
+                ["in_bom", "yes"],
+                ["on_board", "yes"],
+                [
+                    "property",
+                    '"Reference"',
+                    '"SW"',
+                    ["at", "1.651", "2.413", "0"],
+                    ["effects", ["font", ["size", "1.27", "1.27"]]],
+                ],
+                [
+                    "property",
+                    '"Value"',
+                    '"MX_LED"',
+                    ["at", "0", "-3.81", "0"],
+                    ["effects", ["font", ["size", "1.27", "1.27"]]],
+                ],
+                [
+                    "property",
+                    '"Footprint"',
+                    '""',
+                    ["at", "0", "0", "0"],
+                    ["effects", ["font", ["size", "1.27", "1.27"]], "hide"],
+                ],
+                [
+                    "property",
+                    '"Datasheet"',
+                    '""',
+                    ["at", "0", "0", "0"],
+                    ["effects", ["font", ["size", "1.27", "1.27"]], "hide"],
+                ],
+                [
+                    "property",
+                    '"ki_locked"',
+                    '""',
+                    ["at", "0", "0", "0"],
+                    ["effects", ["font", ["size", "1.27", "1.27"]]],
+                ],
+                [
+                    "symbol",
+                    '"MX_LED_1_1"',
+                    [
+                        "circle",
+                        ["center", "-2.032", "0"],
+                        ["radius", "0.508"],
+                        ["stroke", ["width", "0"], ["type", "solid"]],
+                        ["fill", ["type", "none"]],
+                    ],
+                    [
+                        "polyline",
+                        ["pts", ["xy", "-2.54", "1.27"], ["xy", "2.54", "1.27"]],
+                        ["stroke", ["width", "0"], ["type", "solid"]],
+                        ["fill", ["type", "none"]],
+                    ],
+                    [
+                        "polyline",
+                        ["pts", ["xy", "0", "1.27"], ["xy", "0", "3.429"]],
+                        ["stroke", ["width", "0"], ["type", "solid"]],
+                        ["fill", ["type", "none"]],
+                    ],
+                    [
+                        "circle",
+                        ["center", "2.032", "0"],
+                        ["radius", "0.508"],
+                        ["stroke", ["width", "0"], ["type", "solid"]],
+                        ["fill", ["type", "none"]],
+                    ],
+                    [
+                        "pin",
+                        "passive",
+                        "line",
+                        ["at", "-5.08", "0", "0"],
+                        ["length", "2.54"],
+                        [
+                            "name",
+                            '"1"',
+                            ["effects", ["font", ["size", "1.27", "1.27"]]],
+                        ],
+                        [
+                            "number",
+                            '"1"',
+                            ["effects", ["font", ["size", "1.27", "1.27"]]],
+                        ],
+                    ],
+                    [
+                        "pin",
+                        "passive",
+                        "line",
+                        ["at", "5.08", "0", "180"],
+                        ["length", "2.54"],
+                        [
+                            "name",
+                            '"2"',
+                            ["effects", ["font", ["size", "1.27", "1.27"]]],
+                        ],
+                        [
+                            "number",
+                            '"2"',
+                            ["effects", ["font", ["size", "1.27", "1.27"]]],
+                        ],
+                    ],
+                ],
+                [
+                    "symbol",
+                    '"MX_LED_2_1"',
+                    [
+                        "polyline",
+                        ["pts", ["xy", "1.27", "-1.27"], ["xy", "1.27", "1.27"]],
+                        ["stroke", ["width", "0.2032"], ["type", "solid"]],
+                        ["fill", ["type", "none"]],
+                    ],
+                    [
+                        "polyline",
+                        ["pts", ["xy", "1.27", "0"], ["xy", "-1.27", "0"]],
+                        ["stroke", ["width", "0"], ["type", "solid"]],
+                        ["fill", ["type", "none"]],
+                    ],
+                    [
+                        "polyline",
+                        [
+                            "pts",
+                            ["xy", "-1.27", "-1.27"],
+                            ["xy", "-1.27", "1.27"],
+                            ["xy", "1.27", "0"],
+                            ["xy", "-1.27", "-1.27"],
+                        ],
+                        ["stroke", ["width", "0.2032"], ["type", "solid"]],
+                        ["fill", ["type", "none"]],
+                    ],
+                    [
+                        "polyline",
+                        [
+                            "pts",
+                            ["xy", "1.778", "-0.762"],
+                            ["xy", "3.302", "-2.286"],
+                            ["xy", "2.54", "-2.286"],
+                            ["xy", "3.302", "-2.286"],
+                            ["xy", "3.302", "-1.524"],
+                        ],
+                        ["stroke", ["width", "0"], ["type", "solid"]],
+                        ["fill", ["type", "none"]],
+                    ],
+                    [
+                        "polyline",
+                        [
+                            "pts",
+                            ["xy", "3.048", "-0.762"],
+                            ["xy", "4.572", "-2.286"],
+                            ["xy", "3.81", "-2.286"],
+                            ["xy", "4.572", "-2.286"],
+                            ["xy", "4.572", "-1.524"],
+                        ],
+                        ["stroke", ["width", "0"], ["type", "solid"]],
+                        ["fill", ["type", "none"]],
+                    ],
+                    [
+                        "pin",
+                        "passive",
+                        "line",
+                        ["at", "-3.81", "0", "0"],
+                        ["length", "2.54"],
+                        [
+                            "name",
+                            '"3"',
+                            ["effects", ["font", ["size", "1.27", "1.27"]]],
+                        ],
+                        [
+                            "number",
+                            '"3"',
+                            ["effects", ["font", ["size", "1.27", "1.27"]]],
+                        ],
+                    ],
+                    [
+                        "pin",
+                        "passive",
+                        "line",
+                        ["at", "3.81", "0", "180"],
+                        ["length", "2.54"],
+                        [
+                            "name",
+                            '"4"',
+                            ["effects", ["font", ["size", "1.27", "1.27"]]],
+                        ],
+                        [
+                            "number",
+                            '"4"',
+                            ["effects", ["font", ["size", "1.27", "1.27"]]],
+                        ],
+                    ],
+                ],
+            ],
+        ]
+
+        return o
+
+    @staticmethod
+    def get_diode(designator: str, name: str):
+        o = [
+            "symbol",
+            ["lib_id", '"atari-keyboard-rescue:D_Small_ALT-Device"'],
+            ["at", "138.43", "69.85", "90"],
+            ["unit", "1"],
+            ["in_bom", "yes"],
+            ["on_board", "yes"],
+            ["dnp", "no"],
+            # ["uuid", "531a95e8-0a0e-490d-970d-472dfb031305"],
+            [
+                "property",
+                '"Reference"',
+                q_string(designator),
+                ["at", "140.1572", "68.6816", "90"],
+                [
+                    "effects",
+                    ["font", ["size", "1.27", "1.27"]],
+                    ["justify", "right"],
+                ],
+            ],
+            [
+                "property",
+                '"Value"',
+                q_string(name),
+                ["at", "140.1572", "70.993", "90"],
+                [
+                    "effects",
+                    ["font", ["size", "1.27", "1.27"]],
+                    ["justify", "right"],
+                ],
+            ],
+            [
+                "property",
+                '"Footprint"',
+                '"retro-kbd:Diode-dual"',
+                ["at", "138.43", "69.85", "90"],
+                ["effects", ["font", ["size", "1.27", "1.27"]], "hide"],
+            ],
+            [
+                "property",
+                '"Datasheet"',
+                '"~"',
+                ["at", "138.43", "69.85", "90"],
+                ["effects", ["font", ["size", "1.27", "1.27"]], "hide"],
+            ],
+            ["pin", '"1"', ["uuid", "ae415bb0-8625-44d9-a315-c14d3561d720"]],
+            ["pin", '"2"', ["uuid", "a06e82c3-6bd9-476a-a04a-e74e3bdf0a71"]],
+            [
+                "instances",
+                [
+                    "project",
+                    '"atari-keyboard"',
+                    [
+                        "path",
+                        '"/f6a334f3-ee33-4c56-a7bb-b961693d3d0e/7ce608c9-579d-47fb-84c9-158fdf17ec91"',
+                        ["reference", q_string(designator)],
+                        ["unit", "1"],
+                    ],
+                ],
+            ],
+        ]
+        return o
+
+    @staticmethod
+    def get_mx_with_led(designator: str, name: str):
+        o = [
+            "symbol",
+            ["lib_id", '"keebio:MX-with-LED"'],
+            ["at", "45.72", "50.8", "0"],
+            ["unit", "1"],
+            ["in_bom", "yes"],
+            ["on_board", "yes"],
+            ["dnp", "no"],
+            ["fields_autoplaced"],
+            ["uuid", "58cd7370-da76-4ce4-a1f8-b0bd9031cb55"],
+            [
+                "property",
+                '"Reference"',
+                q_string(designator),
+                ["at", "45.72", "41.91", "0"],
+                ["effects", ["font", ["size", "1.524", "1.524"]]],
+            ],
+            [
+                "property",
+                '"Value"',
+                q_string(name),
+                ["at", "45.72", "44.45", "0"],
+                ["effects", ["font", ["size", "1.524", "1.524"]]],
+            ],
+            [
+                "property",
+                '"Footprint"',
+                '""',
+                ["at", "45.72", "50.8", "0"],
+                ["effects", ["font", ["size", "1.524", "1.524"]], "hide"],
+            ],
+            [
+                "property",
+                '"Datasheet"',
+                '""',
+                ["at", "45.72", "50.8", "0"],
+                ["effects", ["font", ["size", "1.524", "1.524"]], "hide"],
+            ],
+            ["pin", '"3"', ["uuid", "50c71f6c-3940-4029-bd52-9c330e627525"]],
+            ["pin", '"4"', ["uuid", "d4ade8df-0030-4389-80d0-9e49cc63cea7"]],
+            ["pin", '"2"', ["uuid", "dddf8399-153f-48c9-a9d8-05927f1e9ba4"]],
+            ["pin", '"1"', ["uuid", "c4b4904f-7e9f-401c-9b02-d29567d52975"]],
+            [
+                "instances",
+                [
+                    "project",
+                    '"atari-keyboard"',
+                    [
+                        "path",
+                        '"/f6a334f3-ee33-4c56-a7bb-b961693d3d0e/7ce608c9-579d-47fb-84c9-158fdf17ec91"',
+                        ["reference", q_string(designator)],
+                        ["unit", "1"],
+                    ],
+                ],
+            ],
+        ]
+
+        return o
+
+    @staticmethod
+    def get_mxfull_switch(designator: str, name: str):
+
+        o = [
+            "symbol",
+            ["lib_id", '"keebio:MX_LED"'],
+            ["at", "68.58", "68.58", "0"],
+            ["unit", "1"],
+            ["in_bom", "yes"],
+            ["on_board", "yes"],
+            ["dnp", "no"],
+            ["fields_autoplaced"],
+            ["uuid", "9097d53d-223b-4938-ba61-19c94644d016"],
+            [
+                "property",
+                '"Reference"',
+                q_string(designator),
+                ["at", "68.58", "60.96", "0"],
+                ["effects", ["font", ["size", "1.27", "1.27"]]],
+            ],
+            [
+                "property",
+                '"Value"',
+                q_string(name),
+                ["at", "68.58", "63.5", "0"],
+                ["effects", ["font", ["size", "1.27", "1.27"]]],
+            ],
+            [
+                "property",
+                '"Footprint"',
+                '""',
+                ["at", "68.58", "68.58", "0"],
+                ["effects", ["font", ["size", "1.27", "1.27"]], "hide"],
+            ],
+            [
+                "property",
+                '"Datasheet"',
+                '""',
+                ["at", "68.58", "68.58", "0"],
+                ["effects", ["font", ["size", "1.27", "1.27"]], "hide"],
+            ],
+            ["pin", '"3"', ["uuid", "173fe574-dc9a-4914-89d0-c128234183da"]],
+            ["pin", '"2"', ["uuid", "57b804e4-630b-4a05-96bd-7c78c5ca6f99"]],
+            ["pin", '"4"', ["uuid", "1fe3ac2d-5d22-472c-a74a-87df28e4277d"]],
+            ["pin", '"1"', ["uuid", "da8bb528-2f3c-44e1-ae10-65ab95de5d57"]],
+            [
+                "instances",
+                [
+                    "project",
+                    '"atari-keyboard"',
+                    [
+                        "path",
+                        '"/f6a334f3-ee33-4c56-a7bb-b961693d3d0e/7ce608c9-579d-47fb-84c9-158fdf17ec91"',
+                        ["reference", q_string(designator)],
+                        ["unit", "1"],
+                    ],
+                ],
+            ],
+        ]
+
+        return o
+
+    @staticmethod
+    def get_mxfull_led(designator: str, name: str):
+        o = [
+            "symbol",
+            ["lib_id", '"keebio:MX_LED"'],
+            ["at", "60.96", "101.6", "0"],
+            ["unit", "2"],
+            ["in_bom", "yes"],
+            ["on_board", "yes"],
+            ["dnp", "no"],
+            ["fields_autoplaced"],
+            ["uuid", "6d57d89b-5b95-4119-8bef-11b8e121ebc9"],
+            [
+                "property",
+                '"Reference"',
+                q_string(designator),
+                ["at", "62.5602", "95.25", "0"],
+                ["effects", ["font", ["size", "1.27", "1.27"]]],
+            ],
+            [
+                "property",
+                '"Value"',
+                q_string(name),
+                ["at", "62.5602", "97.79", "0"],
+                ["effects", ["font", ["size", "1.27", "1.27"]]],
+            ],
+            [
+                "property",
+                '"Footprint"',
+                '""',
+                ["at", "60.96", "101.6", "0"],
+                ["effects", ["font", ["size", "1.27", "1.27"]], "hide"],
+            ],
+            [
+                "property",
+                '"Datasheet"',
+                '""',
+                ["at", "60.96", "101.6", "0"],
+                ["effects", ["font", ["size", "1.27", "1.27"]], "hide"],
+            ],
+            ["pin", '"3"', ["uuid", "173fe574-dc9a-4914-89d0-c128234183da"]],
+            ["pin", '"2"', ["uuid", "57b804e4-630b-4a05-96bd-7c78c5ca6f99"]],
+            ["pin", '"4"', ["uuid", "1fe3ac2d-5d22-472c-a74a-87df28e4277d"]],
+            ["pin", '"1"', ["uuid", "da8bb528-2f3c-44e1-ae10-65ab95de5d57"]],
+            [
+                "instances",
+                [
+                    "project",
+                    '"atari-keyboard"',
+                    [
+                        "path",
+                        '"/f6a334f3-ee33-4c56-a7bb-b961693d3d0e/7ce608c9-579d-47fb-84c9-158fdf17ec91"',
+                        ["reference", q_string(designator)],
+                        ["unit", "2"],
                     ],
                 ],
             ],

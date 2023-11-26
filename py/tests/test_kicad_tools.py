@@ -1,3 +1,4 @@
+from decimal import Decimal
 import math
 import unittest
 from kicad_tools import KicadTool
@@ -76,7 +77,7 @@ class TestKiCadTools(unittest.TestCase):
         pcb = self.read_pcb_file()
         pcb_tool = KicadTool()
 
-        l = pcb_tool.find_at_by_reference(pcb, "SW201")
+        l = pcb_tool.find_footprint_at_by_reference(pcb, "SW201")
         self.assertTrue(l != None)
 
         self.assertIsInstance(l[1], str)
@@ -89,11 +90,11 @@ class TestKiCadTools(unittest.TestCase):
         pcb = self.read_pcb_file()
         pcb_tool = KicadTool()
 
-        pcb_tool.set_object_location(pcb, "SW201", -100, -200)
-        l = pcb_tool.find_at_by_reference(pcb, "SW201")
+        pcb_tool.set_object_location(pcb, "SW201", Decimal(-100), Decimal(-200))
+        l = pcb_tool.find_footprint_at_by_reference(pcb, "SW201")
         self.assertTrue(l != None)
-        self.assertEqual(l[1], -100)
-        self.assertEqual(l[2], -200)
+        self.assertEqual(Decimal(l[1]), Decimal(-100))
+        self.assertEqual(Decimal(l[2]), Decimal(-200))
 
     def test_get_bounding_box_of_layer_lines(self):
         pcb = self.read_pcb_file()
@@ -124,6 +125,7 @@ class TestKiCadTools(unittest.TestCase):
         pcb_x = pcb_tool.get_symbol_property(schematic, "SW232", "PCB_X", dummy)
         self.assertNotEqual(pcb_x, dummy)
 
+    # jjz
     def test_get_symbol_propertyPropertyAsFloatFound(self):
         schematic = self.read_keyboard_sch_file()
         pcb_tool = KicadTool()
@@ -170,19 +172,19 @@ class TestKiCadTools(unittest.TestCase):
 
         parent = sch_tool.find_symbol_by_reference(schematic, "D266")
         if parent != None:
-            offset_x = -1000
-            offset_y = -1000
-            fudge = 100
+            offset_x = Decimal(-1000)
+            offset_y = Decimal(-1000)
+            fudge = Decimal(100)
             sch_tool.move_recursive(parent, offset_x, offset_y, 0)
 
             all_at = sch_tool.find_objects_by_atom(parent, "at", math.inf)
 
             for at in all_at:
-                x1 = at[1]
-                y1 = at[2]
+                x1 = Decimal(at[1])
+                y1 = Decimal(at[2])
 
-                self.assertLess(abs(offset_x - x1), fudge)
-                self.assertLess(abs(offset_y - y1), fudge)
+                self.assertLess(Decimal(abs(offset_x - x1)), fudge)
+                self.assertLess(Decimal(abs(offset_y - y1)), fudge)
 
 
 if __name__ == "__main__":

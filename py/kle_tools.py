@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import List, cast
 from attr import dataclass
 from bs4 import BeautifulSoup, Tag
@@ -5,12 +6,13 @@ from bs4 import BeautifulSoup, Tag
 
 @dataclass
 class KleData:
+    # Comes in from JSON so these must be floats
     x = 0.0
     y = 0.0
     h = 1.0
     w = 1.0
-    y_idx = 0
-    x_idx = 0
+    y_idx: int = 0
+    x_idx: int = 0
     is_homing_key = False
     is_decal = False
     labels: str = ""
@@ -37,7 +39,6 @@ class KleTools:
 
         key_list = [p for p in self.kle if isinstance(p, list)]
 
-        # jjz
         for y_idx, y_row in enumerate(key_list):
             x_array_idx = 0
             x_key_idx = 0

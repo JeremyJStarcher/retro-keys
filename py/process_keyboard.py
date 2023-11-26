@@ -1,3 +1,4 @@
+from decimal import Decimal, getcontext
 import json
 import csv
 import os
@@ -29,6 +30,7 @@ MOUNTING_HOLE_D = 3.2
 PRINTER_X = 280
 PRINTER_Y = 260
 
+
 class ProcessConfiguration:
     # These paths are relative to the 'py' directory
     kle_layout_filename: Path
@@ -45,39 +47,41 @@ class ProcessConfiguration:
     kicad_3dmodel_path_str: str
     kicad_keycap_vrml_path_str: str
 
-    pcb_x_orig: float = 61
-    pcb_y_orig: float = 177.75
-    pcb_border: float = 10
+    pcb_x_orig = Decimal(61)
+    pcb_y_orig = Decimal(177.75)
+    pcb_border = Decimal(10)
 
-    UNIT = 19.05
+    UNIT = Decimal(19.05)
 
     # How much to move the diodes
-    diode_offset_x = 6.5
-    diode_offset_y = 5.52
+    diode_offset_x = Decimal(6.5)
+    diode_offset_y = Decimal(5.52)
 
 
 class KeyInfo:
-    # Logoical position, based on key units
-    l_x: float = 0
-    l_y: float = 0
+    # Logical position, based on key units
+    l_x: Decimal = Decimal(0)
+    l_y: Decimal = Decimal(0)
 
     # Absolute position
-    key_x: float = 0
-    key_y: float = 0
-    w: float = 0
-    h: float = 0
+    key_x: Decimal = Decimal(0)
+    key_y: Decimal = Decimal(0)
+    w: Decimal = Decimal(0)
+    h: Decimal = Decimal(0)
     designator: str = ""
     label: str = ""
     skip = True
-    diode_x: float = 0
-    diode_y: float = 0
-    hole_x: float = 0
-    hole_y: float = 0
+    diode_x: Decimal = Decimal(0)
+    diode_y: Decimal = Decimal(0)
+    hole_x: Decimal = Decimal(0)
+    hole_y: Decimal = Decimal(0)
     bounding_box: BoundingBox | None = None
 
     def __init__(self):
+        getcontext().prec = 8
+
         self.bbox = BoundingBox(
-            float("inf"), float("inf"), float("-inf"), float("-inf")
+            Decimal("inf"), Decimal("inf"), Decimal("-inf"), Decimal("-inf")
         )
 
     def __repr__(self):
@@ -164,8 +168,8 @@ class ProcessKeyboard:
     def __get_layout_from_kle(self) -> List[KeyInfo]:
         keys: List[KeyInfo] = []
 
-        KEYSWITCH_FIX_X = -11.565
-        KEYSWITCH_FIX_Y = -3.946
+        KEYSWITCH_FIX_X = Decimal(-11.565)
+        KEYSWITCH_FIX_Y = Decimal(-3.946)
 
         for key_name in self.common_key_format.get_key_names():
             key = self.common_key_format.get_from_common_keys_or_new(key_name)
@@ -178,34 +182,34 @@ class ProcessKeyboard:
             keyInfo.w = key.w
             keyInfo.h = key.h
 
-            xfix: float = -1
+            xfix = Decimal(-1)
             if keyInfo.w == 1.0:
                 # print("**1.0**")
-                xfix = 0
+                xfix = Decimal(0)
 
             if keyInfo.w == 1.5:
                 # print("**1.5**")
-                xfix = 0
+                xfix = Decimal(0)
 
             if keyInfo.w == 1.25:
                 # print("**1.25**")
-                xfix = 0.125
+                xfix = Decimal(0.125)
 
             if keyInfo.w == 1.75:
                 # print("**1.75**")
-                xfix = 0.375
+                xfix = Decimal(0.375)
 
             if keyInfo.w == 2:
                 # print("**2.0**")
-                xfix = 0.5
+                xfix = Decimal(0.5)
 
             if keyInfo.w == 2.25:
                 # print("**2.25**")
-                xfix = 0.625
+                xfix = Decimal(0.625)
 
             if keyInfo.w == 6.25:
                 # print("**6.250**")
-                xfix = 2.625
+                xfix = Decimal(2.625)
 
             if xfix == -1:
                 raise Exception(
@@ -256,8 +260,8 @@ class ProcessKeyboard:
         schematic = key_parser.to_list()
         tool = KicadTool()
 
-        print(schematic)
-        key_parser.print_list(schematic, 0)
+        # print(schematic)
+        # key_parser.print_list(schematic, 0)
 
         schematic_lib_symbols = tool.find_object_by_atom(schematic, "lib_symbols")
         schematic_symbols = tool.find_objects_by_atom(
@@ -289,6 +293,8 @@ class ProcessKeyboard:
 
         tool = KicadTool()
 
+        matrix: list[list[int]] = []
+
         matrix_min_x = 32000
         matrix_min_y = 32000
         matrix_max_x = -matrix_min_x
@@ -315,7 +321,11 @@ class ProcessKeyboard:
             matrix_min_y = min(matrix_min_y, my)
 
         for y in range(matrix_min_y, matrix_max_y + 1):
+
+            matrix.append([])
+
             for x in range(matrix_min_x, matrix_max_x + 1):
+                matrix[y].append(-1)
 
                 for key_name in self.common_key_format.get_key_names():
                     key = self.common_key_format.get_from_common_keys_or_new(key_name)
@@ -327,6 +337,8 @@ class ProcessKeyboard:
                     kmy = int(float(key.matrix[0]))
 
                     if kmx == x and kmy == y:
+                        matrix[y].pop()
+                        matrix[y].append(base_designator)
 
                         tool.add_keyswitch_to_schematic(
                             str(base_designator),
@@ -337,6 +349,8 @@ class ProcessKeyboard:
                         )
 
                         base_designator += 1
+
+        tool.add_wires_to_schematic(key_schematic, matrix)
 
         key_list = key_parser.list_to_sexp(key_schematic)
         key_out = "\r\n".join(key_list)
@@ -356,7 +370,7 @@ class ProcessKeyboard:
 
         tool = KicadTool()
 
-        bbox = BoundingBox(-1, -1, -1, -1)
+        bbox = BoundingBox(Decimal(-1), Decimal(-1), Decimal(-1), Decimal(-1))
 
         for item in self.layout:
 
@@ -367,11 +381,11 @@ class ProcessKeyboard:
                 print("Searching for " + item.label + " " + item.designator)
 
             tool.set_object_location(
-                pcb, "SW" + item.designator, item.key_x, item.key_y, 0
+                pcb, "SW" + item.designator, item.key_x, item.key_y, Decimal(0)
             )
 
             switch = tool.find_footprint_by_reference(pcb, "SW" + item.designator)
-            at = tool.find_at_by_reference(pcb, "SW" + item.designator)
+            at = tool.find_footprint_at_by_reference(pcb, "SW" + item.designator)
             tool.set_hidden_footprint_text_by_reference(
                 pcb, "SW" + item.designator, "value", False
             )
@@ -394,7 +408,7 @@ class ProcessKeyboard:
             bbox.update_xy(item.bounding_box.x2, item.bounding_box.y2)
 
             tool.set_object_location(
-                pcb, "D" + item.designator, item.diode_x, item.diode_y, -90
+                pcb, "D" + item.designator, item.diode_x, item.diode_y, Decimal(-90)
             )
 
             hx, hy = self.get_standoff_location(schematic, tool, item)
@@ -405,11 +419,11 @@ class ProcessKeyboard:
         bbox.add_border(self.config.pcb_border)
         tool.add_bounding_box(pcb, bbox, 0.3, Layer.Edge_Cuts)
 
-        bbox.add_border(-MOUNTING_HOLE_OFFSET)
-        tool.set_object_location(pcb, "H101", bbox.x1, bbox.y1, 0)
-        tool.set_object_location(pcb, "H102", bbox.x1, bbox.y2, 0)
-        tool.set_object_location(pcb, "H103", bbox.x2, bbox.y1, 0)
-        tool.set_object_location(pcb, "H104", bbox.x2, bbox.y2, 0)
+        bbox.add_border(Decimal(-MOUNTING_HOLE_OFFSET))
+        tool.set_object_location(pcb, "H101", bbox.x1, bbox.y1, Decimal(0))
+        tool.set_object_location(pcb, "H102", bbox.x1, bbox.y2, Decimal(0))
+        tool.set_object_location(pcb, "H103", bbox.x2, bbox.y1, Decimal(0))
+        tool.set_object_location(pcb, "H104", bbox.x2, bbox.y2, Decimal(0))
 
         l = pcb_parser.list_to_sexp(pcb)
         out = "\r\n".join(l)
@@ -523,11 +537,11 @@ class ProcessKeyboard:
         for dRef in diodesRefs:
             bom_refs.append(dRef)
 
-            at = tool.find_at_by_reference(pcb, dRef)
+            at = tool.find_footprint_at_by_reference(pcb, dRef)
 
-            x = float(at[1])
-            y = float(at[2])
-            r = float(at[3])
+            x = Decimal(at[1])
+            y = Decimal(at[2])
+            r = Decimal(at[3])
 
             cpl_row = [
                 q(dRef),
@@ -535,7 +549,7 @@ class ProcessKeyboard:
                 q("SOD-123"),
                 q(str(x) + "mm"),
                 q(str(-y) + "mm"),  # The y coordinate system is inverted, of course.
-                q(r + 180),
+                q(str(r + 180)),
                 q("top"),
             ]
 
@@ -629,11 +643,11 @@ class ProcessKeyboard:
 
         tool = KicadTool()
 
-        code: List[str] = []
+        code: list[str] = []
         standoffLocations: List[List[float]] = []
-        bboxes: List[str] = []
+        bboxes: list[str] = []
 
-        bbox = BoundingBox(-1, -1, -1, -1)
+        bbox = BoundingBox(Decimal(-1), Decimal(-1), Decimal(-1), Decimal(-1))
 
         for _item in self.layout:
 

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from decimal import Decimal
 from typing import List
 from dataclass_wizard import fromdict, asdict  # type: ignore
 
@@ -6,10 +7,10 @@ from dataclass_wizard import fromdict, asdict  # type: ignore
 @dataclass
 class QmkLayout:
     label: str
-    w: float
-    h: float
-    x: float
-    y: float
+    w: Decimal
+    h: Decimal
+    x: Decimal
+    y: Decimal
     matrix: list[int]
 
 
@@ -79,7 +80,7 @@ class QmkTools:
             raise Exception("QmkLayout with the specified name not found.")
         return layout
 
-    def arrange_layout_in_yx_order(self) -> dict[float, list[QmkLayout]]:
+    def arrange_layout_in_yx_order(self) -> dict[Decimal, list[QmkLayout]]:
         """
         Return a sorted list by keyboard layout, by each
         different 'y' and then the keys sorted by 'x' within
@@ -93,7 +94,7 @@ class QmkTools:
         y_list.sort()
 
         # Pre-prime all of the values so we have them in sorted order.
-        heightDict: dict[float, list[QmkLayout]] = {}
+        heightDict: dict[Decimal, list[QmkLayout]] = {}
         for y in y_list:
             heightDict[y] = []
 

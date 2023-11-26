@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import List
 from kle_tools import KleTools
 from qmk_tools import QmkTools
@@ -6,24 +7,24 @@ from dataclasses import dataclass, field
 
 @dataclass
 class CommonKeyFormatQmk:
-    x: float = -1
-    y: float = -1
+    x: Decimal = Decimal(-1)
+    y: Decimal = Decimal(-1)
 
 
 @dataclass
 class CommonKeyFormatKle:
     y_idx: int = 0
     x_idx: int = 0
-    x: float = -1
-    y: float = -1
+    x: Decimal = Decimal(-1)
+    y: Decimal = Decimal(-1)
 
 
 @dataclass
 class CommonKeyFormat:
     kle_location = CommonKeyFormatKle()
     qmk_location = CommonKeyFormatQmk()
-    w = 1.0
-    h = 1.0
+    w = Decimal(1.0)
+    h = Decimal(1.0)
     name: str = ""
     is_homing_key = False
     is_decal = False
@@ -70,13 +71,16 @@ class CommonKeyData:
 
             common_format = self.get_from_common_keys_or_new(keyname)
 
-            common_format.kle_location.x = kle_key.x
-            common_format.kle_location.y = kle_key.y
+            xx = Decimal(kle_key.x)
+            yy = Decimal(kle_key.y)
+
+            common_format.kle_location.x = xx
+            common_format.kle_location.y = Decimal(kle_key.y)
             common_format.kle_location.y_idx = kle_key.y_idx
             common_format.kle_location.x_idx = kle_key.x_idx
 
-            common_format.w = kle_key.w
-            common_format.h = kle_key.h
+            common_format.w = Decimal(kle_key.w)
+            common_format.h = Decimal(kle_key.h)
 
             common_format.is_decal = kle_key.is_decal
             common_format.is_homing_key = kle_key.is_homing_key
@@ -102,7 +106,7 @@ class CommonKeyData:
         )
 
         # The absolute Y position
-        abs_y = 0.0
+        abs_y = Decimal(0.0)
         for y_idx in y_indexes:
             x_vals = [
                 i2
@@ -120,7 +124,7 @@ class CommonKeyData:
             abs_y += y_offset
 
             # The absolute 'X' position
-            abs_x = 0
+            abs_x = Decimal(0)
             for x_key in x_keys_sorted:
 
                 # Update by the 'X' offset on the key record itself

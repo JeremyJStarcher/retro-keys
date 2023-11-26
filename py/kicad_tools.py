@@ -1,12 +1,25 @@
+from decimal import Decimal
 from enum import Enum
 import copy
 import math
-
 from typing import Dict, List, cast
+from attr import dataclass
+from ki_symbols import KiSymbols, PinPosition, Wire
 
-from ki_symbols import KiSymbols
+INF = math.inf
 
-INF = float("inf")
+
+@dataclass
+class KeyGridInfo:
+    grid_spacing: Decimal = Decimal(2.54)
+    switch_origin_x: Decimal = grid_spacing * 60
+    switch_origin_y: Decimal = grid_spacing * 10
+
+    led_origin_x: Decimal = Decimal(1.27 * 3) + (grid_spacing * 8)  # grid_spacing
+    led_origin_y: Decimal = switch_origin_y
+
+    spacing_x: Decimal = grid_spacing * 5
+    spacing_y: Decimal = grid_spacing * 6
 
 
 class Layer(str, Enum):
@@ -33,29 +46,35 @@ class Layer(str, Enum):
 
 
 class BoundingBox:
-    def __init__(self, x1: float = -1, y1: float = -1, x2: float = -1, y2: float = -1):
+    def __init__(
+        self,
+        x1: Decimal = Decimal(-1),
+        y1: Decimal = Decimal(-1),
+        x2: Decimal = Decimal(-1),
+        y2: Decimal = Decimal(-1),
+    ):
 
         if x1 == -1:
-            self.x1 = float("inf")
-            self.y1 = float("inf")
-            self.x2 = float("-inf")
-            self.y2 = float("-inf")
+            self.x1 = Decimal("inf")
+            self.y1 = Decimal("inf")
+            self.x2 = Decimal("-inf")
+            self.y2 = Decimal("-inf")
         else:
             self.x1 = x1
             self.y1 = y1
             self.x2 = x2
             self.y2 = y2
 
-    def update_xy(self, sx: str | float, sy: str | float) -> None:
-        x = float(sx)
-        y = float(sy)
+    def update_xy(self, sx: str | Decimal, sy: str | Decimal) -> None:
+        x = Decimal(sx)
+        y = Decimal(sy)
 
         self.x1 = min(self.x1, x)
         self.y1 = min(self.y1, y)
         self.x2 = max(self.x2, x)
         self.y2 = max(self.y2, y)
 
-    def add_border(self, n: float) -> None:
+    def add_border(self, n: Decimal) -> None:
         self.x1 -= n
         self.y1 -= n
         self.x2 += n
@@ -108,8 +127,6 @@ class KicadTool:
         prints = self.find_objects_by_atom(root, "footprint", 1)
 
         for p in prints:
-            # print(p)
-
             o = self.find_objects_by_atom(p, "fp_text", INF)
             filtered = filter(
                 lambda fp: (fp[1] == "reference") and (fp[2] == q_string(ref)), o
@@ -199,21 +216,31 @@ class KicadTool:
                 v.append(reference)
         return ret
 
-    def find_symbol_by_reference(self, root: list, ref: str):
+    def find_symbol_by_reference(self, root: list, ref: str, unit="1") -> list | None:
         symbols = self.find_objects_by_atom(root, "symbol", 1)
 
         for symbol in symbols:
-            o = self.find_objects_by_atom(symbol, "property", INF)
+            unit_objects = self.find_objects_by_atom(symbol, "property", INF)
 
-            filtered = filter(
+            property_filtered = filter(
                 lambda fp: (fp[1] == q_string("Reference"))
                 and (fp[2] == q_string(ref)),
-                o,
+                unit_objects,
             )
 
-            lst = list(filtered)
-            if len(lst) > 0:
+            unit_objects = self.find_objects_by_atom(symbol, "unit", INF)
+
+            is_unit_right = True
+
+            if unit_objects is None:
+                is_unit_right = True
+            else:
+                is_unit_right = unit_objects[0][1] == unit
+
+            lst = list(property_filtered)
+            if len(lst) > 0 and is_unit_right:
                 return symbol
+        return None
 
     def get_symbol_property(self, root: list, ref: str, prop: str, default: str):
         symbol = cast(list, self.find_symbol_by_reference(root, ref))
@@ -232,7 +259,7 @@ class KicadTool:
         r = str(r)
         return float(r.strip('"'))
 
-    def find_at_by_reference(self, root: list, ref: str) -> list:
+    def find_footprint_at_by_reference(self, root: list, ref: str) -> list:
         footprint = self.find_footprint_by_reference(root, ref)
         assert footprint is not None
 
@@ -247,46 +274,46 @@ class KicadTool:
         return o
 
     def set_object_location(
-        self, root: list, ref: str, x: float, y: float, rot: float = 0
+        self, root: list, ref: str, x: Decimal, y: Decimal, rot: Decimal = Decimal(0)
     ):
         footprint = self.find_footprint_by_reference(root, ref)
 
-        cat = self.find_at_by_reference(root, ref)
+        cat = self.find_footprint_at_by_reference(root, ref)
 
-        current_rot = float(cat[3])
+        current_rot = Decimal(cat[3])
         # If the object is already rotated, then un-rotate it
         if current_rot != 0:
-            cat[3] = float(cat[3]) - current_rot
+            cat[3] = str(Decimal(cat[3]) - current_rot)
             self.set_object_location(root, ref, x, y, -current_rot)
 
         all_ats = self.find_objects_by_atom(footprint, "at", INF)
         for at1 in all_ats:
             at1.append(0)  # If there isn't a rotation, add it.
 
-            at1_x = at1[1]
-            at1_y = at1[2]
-            at1_rot = at1[3]
+            at1_x = Decimal(at1[1])
+            at1_y = Decimal(at1[2])
+            at1_rot = Decimal(at1[3])
 
             while len(at1) > 0:
                 at1.pop()
 
             at1.append("at")
-            at1.append(at1_x)
-            at1.append(at1_y)
-            at1.append(int(at1_rot) + rot)
+            at1.append(str(at1_x))
+            at1.append(str(at1_y))
+            at1.append(str(at1_rot + rot))
 
         # Set the primary location and rotation
-        at = self.find_at_by_reference(root, ref)
+        at = self.find_footprint_at_by_reference(root, ref)
         if at != None:
-            at.append(0)
+            at.append("0")
             old_rot = at[3]
             while len(at) > 0:
                 at.pop()
 
             at.append("at")
-            at.append(x)
-            at.append(y)
-            at.append(rot)
+            at.append(str(x))
+            at.append(str(y))
+            at.append(str(rot))
 
     def add_bounding_box(
         self, root: list, box: BoundingBox, width: float, layer: Layer
@@ -308,8 +335,8 @@ class KicadTool:
         g_lines = self.find_objects_by_atom(root, "fp_line", float("inf"))
         at = self.find_objects_by_atom(root, "at", 1)
 
-        origin_x = float(at[0][1])
-        origin_y = float(at[0][2])
+        origin_x = Decimal(at[0][1])
+        origin_y = Decimal(at[0][2])
 
         for g_line in g_lines:
             layers = self.find_objects_by_atom(g_line, "layer", float("inf"))
@@ -317,15 +344,15 @@ class KicadTool:
                 if layer[1] == layerName:
                     lines.append(g_line)
 
-        box = BoundingBox(-1, -1, -1, -1)
+        box = BoundingBox(Decimal(-1), Decimal(-1), Decimal(-1), Decimal(-1))
         for line in lines:
             start = self.find_object_by_atom(line, "start", float("inf"))
             end = self.find_object_by_atom(line, "end", float("inf"))
 
-            x1 = float(start[1])
-            y1 = float(start[2])
-            x2 = float(end[1])
-            y2 = float(end[2])
+            x1 = Decimal(start[1])
+            y1 = Decimal(start[2])
+            x2 = Decimal(end[1])
+            y2 = Decimal(end[2])
 
             box.update_xy(x1 + origin_x, y1 + origin_y)
             box.update_xy(x2 + origin_x, y2 + origin_y)
@@ -344,86 +371,213 @@ class KicadTool:
 
         root.append(o)
 
-    def move_recursive(self, root: list, mx: float, my: float, mr: int):
+    def move_recursive(self, root: list, mx: Decimal, my: Decimal, mr: int):
         first_at = self.find_object_by_atom(root, "at", 1)
         while len(first_at) != 4:
             first_at.append("0")
 
-        at_x = float(first_at[1])
-        at_y = float(first_at[2])
-        at_r = float(first_at[3])
+        at_x = Decimal(first_at[1])
+        at_y = Decimal(first_at[2])
+        at_r = Decimal(first_at[3])
 
         all_at = self.find_objects_by_atom(root, "at", math.inf)
         for atm in all_at:
             while len(atm) != 4:
                 atm.append("0")
 
-            atm[1] = float(atm[1]) - at_x + mx
-            atm[2] = float(atm[2]) - at_y + my
-            atm[3] = int(float(atm[3]) - at_r + mr)
+            atm[1] = str(Decimal(atm[1]) - at_x + mx)
+            atm[2] = str(Decimal(atm[2]) - at_y + my)
+            atm[3] = str(Decimal(atm[3]) - at_r + mr)
 
     def get_relative_pin_position_for_schematic(
-        self, root: list, obj: list, type: str, value: str
-    ):
+        self, schematic_root: list, obj: list, type: str, value: str
+    ) -> list[Decimal]:
         item_lib_id = self.find_object_by_atom(obj, "lib_id")
 
-        lib_symbols = self.find_object_by_atom(root, "lib_symbols")
+        lib_symbols = self.find_object_by_atom(schematic_root, "lib_symbols")
         symbols = self.find_objects_by_atom(lib_symbols, "symbol", 1)
 
         for symbol in symbols:
             if item_lib_id[1] == symbol[1]:
                 pins = self.find_objects_by_atom(symbol, "pin")
+                symbol_at = self.find_object_by_atom(obj, "at", 1)
+                symbol_rotation = int(float(symbol_at[3]))
 
                 for pin in pins:
-
                     match = self.find_object_by_atom(pin, type)
                     pin_value = match[1]
                     if pin_value == q_string(value):
                         pin_at = self.find_object_by_atom(pin, "at", 1)
-                        n = [float(pin_at[1]), float(pin_at[2])]
-                        return n
-        return [0, 0]
+
+                        dx = Decimal(pin_at[1])
+                        dy = Decimal(pin_at[2])
+
+                        if symbol_rotation == 0:
+                            return [dx, dy]
+                        if symbol_rotation == 90:
+                            return [dy, -dx]
+                        if symbol_rotation == 180:
+                            return [-dx, dy]
+                        if symbol_rotation == 270:
+                            return [dy, dx]
+
+        return [Decimal(0), Decimal(0)]
+
+    def _get_key_grid_info(self):
+        pass
 
     def add_keyswitch_to_schematic(
-        self, 
-        designator: str, 
-        name: str, 
-        key_root: list,
-          mx: int, 
-          my: int
+        self, designator: str, name: str, key_root: list, mx: int, my: int
     ):
-
-        GRID = 2.54
-        TOP_SWITCH_X = GRID * 60
-        TOP_SWITCH_Y = GRID * 10
-
-        TOP_LED_X = GRID * 10
-        TOP_LED_Y =  TOP_SWITCH_Y
-
-        STEP_X = GRID * 5
-        STEP_Y = GRID * 6
+        key_grid_info = KeyGridInfo()
 
         symbol_diode = KiSymbols.get_diode("D" + designator, name)
         # symbol_switch = KiSymbols.get_mx_with_led("SW" + designator, name)
         symbol_switch = KiSymbols.get_mxfull_switch("SW" + designator, name)
         symbol_switch_led = KiSymbols.get_mxfull_led("SW" + designator, name)
 
-        cluster_x = TOP_SWITCH_X + (mx * STEP_X)
-        cluster_y = TOP_SWITCH_Y + (my * STEP_Y)
+        cluster_x = key_grid_info.switch_origin_x + (mx * key_grid_info.spacing_x)
+        cluster_y = key_grid_info.switch_origin_y + (my * key_grid_info.spacing_y)
 
-        diode_x = cluster_x - (GRID * 2)
-        diode_y = cluster_y + (GRID * 1)
+        diode_x = cluster_x - (key_grid_info.grid_spacing * 2)
+        diode_y = cluster_y + (key_grid_info.grid_spacing * 1)
 
-        led_x =  TOP_LED_X + (mx * STEP_X)
-        led_y = TOP_LED_Y + (my * STEP_Y)
+        led_x = key_grid_info.led_origin_x + (mx * key_grid_info.spacing_x)
+        led_y = key_grid_info.led_origin_y + (my * key_grid_info.spacing_y)
 
         self.move_recursive(symbol_switch, cluster_x, cluster_y, 0)
         self.move_recursive(symbol_diode, diode_x, diode_y, 90)
-        self.move_recursive(symbol_switch_led, led_x, led_y, 180)
+        self.move_recursive(symbol_switch_led, led_x, led_y, 0)
 
         key_root.append(symbol_switch)
         key_root.append(symbol_diode)
         key_root.append(symbol_switch_led)
+
+    def rotate_matrix(self, m):
+        # return [[m[j][i] for j in range(len(m))] for i in range(len(m[0]) - 1, -1, -1)]
+
+        list_of_tuples = zip(*m[::-1])
+        return [list(elem) for elem in list_of_tuples]
+
+    def get_pin_position_list(
+        self,
+        designator_type: str,
+        pin_type: str,
+        pin_type_id: str,
+        unit: str,
+        root: list,
+        matrix: list[list[int]],
+    ) -> list[Wire]:
+        wires: list[Wire] = []
+
+        for row in matrix:
+            for col_idx in range(len(row) - 1):
+                designator1 = row[col_idx]
+                designator2 = row[col_idx + 1]
+
+                part1_ref = f"{designator_type}{designator1}"
+                part2_ref = f"{designator_type}{designator2}"
+
+                part1_sym = self.find_symbol_by_reference(root, part1_ref, unit)
+                part2_sym = self.find_symbol_by_reference(root, part2_ref, unit)
+
+                if part1_sym is not None and part2_sym is not None:
+
+                    at1 = self.find_object_by_atom(part1_sym, "at", 1)
+                    at2 = self.find_object_by_atom(part2_sym, "at", 1)
+
+                    pin_offset1 = self.get_relative_pin_position_for_schematic(
+                        root, part1_sym, pin_type, pin_type_id
+                    )
+                    pin_offset2 = self.get_relative_pin_position_for_schematic(
+                        root, part2_sym, pin_type, pin_type_id
+                    )
+
+                    x1 = Decimal(Decimal(at1[1]) + pin_offset1[0])
+                    y1 = Decimal(Decimal(at1[2]) + pin_offset1[1])
+
+                    x2 = Decimal(Decimal(at2[1]) + pin_offset2[0])
+                    y2 = Decimal(Decimal(at2[2]) + pin_offset2[1])
+
+                    pin1 = PinPosition(x1, y1)
+                    pin2 = PinPosition(x2, y2)
+
+                    w = Wire(pin1, pin2)
+                    wires.append(w)
+
+        return wires
+
+    def add_wires_to_schematic(self, root: list, matrix: list[list[int]]):
+        key_grid_info = KeyGridInfo()
+        matrix_rotated = self.rotate_matrix(matrix)
+
+        all_wires: list[Wire] = []
+
+        UNIT_1 = "1"
+        UNIT_2 = "2"
+
+        switch_row_wires: list[Wire] = self.get_pin_position_list(
+            "D", "number", "1", UNIT_1, root, matrix
+        )
+        switch_col_wires: list[Wire] = self.get_pin_position_list(
+            "SW", "number", "2", UNIT_1, root, matrix_rotated
+        )
+
+        led_row_wires: list[Wire] = self.get_pin_position_list(
+            "SW", "number", "3", UNIT_2, root, matrix
+        )
+        led_row_connect: list[Wire] = []
+
+        led_col_wires: list[Wire] = self.get_pin_position_list(
+            "SW", "number", "4", UNIT_2, root, matrix_rotated
+        )
+        led_col_connect: list[Wire] = []
+
+        for i in led_row_wires:
+            cwStart = PinPosition(Decimal(0), Decimal(0))
+            cwEnd = PinPosition(Decimal(0), Decimal(0))
+
+            cwStart.x = i.end.x
+            cwEnd.x = i.end.x
+            cwStart.y = i.end.y
+
+            i.start.y += key_grid_info.grid_spacing * 2
+            i.end.y += key_grid_info.grid_spacing * 2
+
+            cwEnd.y = i.end.y
+
+            led_row_connect.append(Wire(cwStart, cwEnd))
+
+        for i in led_col_wires:
+            cwStart = PinPosition(Decimal(0), Decimal(0))
+            cwEnd = PinPosition(Decimal(0), Decimal(0))
+
+            cwStart.y = i.end.y
+            cwEnd.y = i.end.y
+            cwStart.x = i.end.x
+
+            i.start.x += key_grid_info.grid_spacing * 1
+            i.end.x += key_grid_info.grid_spacing * 1
+
+            cwEnd.x = i.end.x
+
+            led_col_connect.append(Wire(cwStart, cwEnd))
+
+        all_wires = (
+            []
+            + switch_row_wires
+            + switch_col_wires
+            + led_row_wires
+            + led_row_connect
+            + led_col_wires
+            + led_col_connect
+        )
+
+        # all_wires = led_col_wires
+
+        for wire in all_wires:
+            wire = KiSymbols.get_wire(wire)
+            root.append(wire)
 
     def draw_keepout_zone(self, root: list, nx: float, ny: float, r: float):
         def points_in_circumference(r, n=100):
@@ -471,7 +625,7 @@ class KicadTool:
 
         root.append(o)
 
-    def remove_atoms(self, parent:list, atom: str):
+    def remove_atoms(self, parent: list, atom: str):
         while True:
             atoms = self.find_objects_by_atom(parent, atom, 1)
             if len(atoms) == 0:

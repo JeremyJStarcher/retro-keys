@@ -1,3 +1,19 @@
+from decimal import Decimal
+from attr import dataclass
+
+
+@dataclass
+class PinPosition:
+    x: Decimal
+    y: Decimal
+
+
+@dataclass
+class Wire:
+    start: PinPosition
+    end: PinPosition
+
+
 def q_string(s: str) -> str:
     return '"' + s + '"'
 
@@ -864,4 +880,28 @@ class KiSymbols:
             ],
         ]
 
+        return o
+
+    @staticmethod
+    def get_junction(x: str | Decimal, y: str | Decimal):
+        return [
+            "junction",
+            ["at", str(x), str(y)],
+            ["diameter", "0"],
+            ["color", "0", "0", "0", "0"],
+        ]
+
+    @staticmethod
+    def get_wire(wire: Wire):
+        x1 = str(wire.start.x)
+        y1 = str(wire.start.y)
+
+        x2 = str(wire.end.x)
+        y2 = str(wire.end.y)
+
+        o = [
+            "wire",
+            ["pts", ["xy", x1, y1], ["xy", x2, y2]],
+            ["stroke", ["width", "0"], ["type", "default"]],
+        ]
         return o

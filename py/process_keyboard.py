@@ -1,6 +1,5 @@
 import json
 import csv
-import math
 import os
 from pathlib import Path
 import re
@@ -29,7 +28,6 @@ MOUNTING_HOLE_D = 3.2
 
 PRINTER_X = 280
 PRINTER_Y = 260
-
 
 class ProcessConfiguration:
     # These paths are relative to the 'py' directory
@@ -286,7 +284,9 @@ class ProcessKeyboard:
     def add_keyswitches_to_schematic(self) -> None:
         key_sch_sexp = self.read_sexp(self.config.keyboard_sch_sheet_filename_name)
         key_parser = KiCadParser(key_sch_sexp)
-        schematic = key_parser.to_list()
+
+        key_schematic = key_parser.to_list()
+
         tool = KicadTool()
 
         matrix_min_x = 32000
@@ -294,9 +294,13 @@ class ProcessKeyboard:
         matrix_max_x = -matrix_min_x
         matrix_max_y = -matrix_min_y
 
-        start_base = 280
+        start_base = 200
 
         base_designator = start_base
+
+        tool.remove_atoms(key_schematic, "symbol")
+        tool.remove_atoms(key_schematic, "wire")
+        tool.remove_atoms(key_schematic, "junction")
 
         for key_name in self.common_key_format.get_key_names():
             key = self.common_key_format.get_from_common_keys_or_new(key_name)
@@ -327,18 +331,18 @@ class ProcessKeyboard:
                         tool.add_keyswitch_to_schematic(
                             str(base_designator),
                             key.name,
-                            schematic,
+                            key_schematic,
                             x,
                             y,
                         )
 
                         base_designator += 1
 
-        l = key_parser.list_to_sexp(schematic)
-        out = "\r\n".join(l)
+        key_list = key_parser.list_to_sexp(key_schematic)
+        key_out = "\r\n".join(key_list)
 
         with open(self.config.keyboard_sch_sheet_filename_name, "w") as f:
-            f.write(out)
+            f.write(key_out)
 
     def relocate_parts_and_draw_silkscreen(self) -> None:
 

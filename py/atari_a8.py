@@ -16,6 +16,7 @@ if __name__ == "__main__":
 
     config.pcb_filename = base_path / "kicad" / "atari-keyboard.kicad_pcb"
     config.keyboard_sch_sheet_filename_name = base_path / "kicad" / "keyboard.kicad_sch"
+
     config.openscad_position_filename = base_path / "keycaps" / "keyboard-position.scad"
     config.case_filename = base_path / "case" / "case-position.scad"
     config.jlc_bom_filename = base_path / "kicad" / "gerbers" / "jlc_bom.csv"

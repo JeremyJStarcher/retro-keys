@@ -385,40 +385,45 @@ class KicadTool:
         return [0, 0]
 
     def add_keyswitch_to_schematic(
-        self, designator: str, name: str, root: list, mx: int, my: int
+        self, 
+        designator: str, 
+        name: str, 
+        key_root: list,
+          mx: int, 
+          my: int
     ):
-        # jjz
-        # (at -38.1 -93.98 0)
-        # (at -38.1 -93.98 0)
-        # (at -35.56 -91.44 0)
 
         GRID = 2.54
-        TOP_X = -2.54 * 20
-        TOP_Y = -2.54 * 20
-        STEP_X = GRID * 6
-        STEP_Y = GRID * 5.5
+        TOP_SWITCH_X = GRID * 60
+        TOP_SWITCH_Y = GRID * 10
+
+        TOP_LED_X = GRID * 10
+        TOP_LED_Y =  TOP_SWITCH_Y
+
+        STEP_X = GRID * 5
+        STEP_Y = GRID * 6
 
         symbol_diode = KiSymbols.get_diode("D" + designator, name)
         # symbol_switch = KiSymbols.get_mx_with_led("SW" + designator, name)
         symbol_switch = KiSymbols.get_mxfull_switch("SW" + designator, name)
         symbol_switch_led = KiSymbols.get_mxfull_led("SW" + designator, name)
 
-        cluster_x = TOP_X + (mx * STEP_X)
-        cluster_y = TOP_Y + (my * STEP_Y)
+        cluster_x = TOP_SWITCH_X + (mx * STEP_X)
+        cluster_y = TOP_SWITCH_Y + (my * STEP_Y)
 
         diode_x = cluster_x - (GRID * 2)
         diode_y = cluster_y + (GRID * 1)
 
-        led_x = cluster_x - 100
-        led_y = cluster_y - 100
+        led_x =  TOP_LED_X + (mx * STEP_X)
+        led_y = TOP_LED_Y + (my * STEP_Y)
 
         self.move_recursive(symbol_switch, cluster_x, cluster_y, 0)
         self.move_recursive(symbol_diode, diode_x, diode_y, 90)
-        self.move_recursive(symbol_switch_led, led_x, led_y, 90)
+        self.move_recursive(symbol_switch_led, led_x, led_y, 180)
 
-        root.append(symbol_switch)
-        root.append(symbol_diode)
-        root.append(symbol_switch_led)
+        key_root.append(symbol_switch)
+        key_root.append(symbol_diode)
+        key_root.append(symbol_switch_led)
 
     def draw_keepout_zone(self, root: list, nx: float, ny: float, r: float):
         def points_in_circumference(r, n=100):
@@ -466,9 +471,9 @@ class KicadTool:
 
         root.append(o)
 
-    def remove_atoms(self, parent, atom):
+    def remove_atoms(self, parent:list, atom: str):
         while True:
-            atoms = self.find_objects_by_atom(parent, atom, INF)
+            atoms = self.find_objects_by_atom(parent, atom, 1)
             if len(atoms) == 0:
                 break
 

@@ -459,7 +459,48 @@ class KicadTool:
         list_of_tuples = zip(*m[::-1])
         return [list(elem) for elem in list_of_tuples]
 
-    def get_pin_position_list(
+    def process_pin_pair(
+        self,
+        designator_type: str,
+        pin_type: str,
+        pin_type_id: str,
+        unit: str,
+        root: list,
+        designator1: int,
+        designator2: int,
+    ) -> Wire | None:
+        part1_ref = f"{designator_type}{designator1}"
+        part2_ref = f"{designator_type}{designator2}"
+
+        part1_sym = self.find_symbol_by_reference(root, part1_ref, unit)
+        part2_sym = self.find_symbol_by_reference(root, part2_ref, unit)
+
+        if part1_sym is not None and part2_sym is not None:
+
+            at1 = self.find_object_by_atom(part1_sym, "at", 1)
+            at2 = self.find_object_by_atom(part2_sym, "at", 1)
+
+            pin_offset1 = self.get_relative_pin_position_for_schematic(
+                root, part1_sym, pin_type, pin_type_id
+            )
+            pin_offset2 = self.get_relative_pin_position_for_schematic(
+                root, part2_sym, pin_type, pin_type_id
+            )
+
+            x1 = Decimal(Decimal(at1[1]) + pin_offset1[0])
+            y1 = Decimal(Decimal(at1[2]) + pin_offset1[1])
+
+            x2 = Decimal(Decimal(at2[1]) + pin_offset2[0])
+            y2 = Decimal(Decimal(at2[2]) + pin_offset2[1])
+
+            pin1 = PinPosition(x1, y1)
+            pin2 = PinPosition(x2, y2)
+
+            w = Wire(pin1, pin2)
+            return w
+        return None
+
+    def get_wire_positions_list(
         self,
         designator_type: str,
         pin_type: str,
@@ -468,47 +509,79 @@ class KicadTool:
         root: list,
         matrix: list[list[int]],
     ) -> list[Wire]:
+        """
+        Get wire pair combonations -- we are matching from
+        the same pin number on the same type of designator
+        (for instance, "SW" and pin "2").   This will return
+        a row-by-row combo of all the wires that would jump
+        between matching pairs.
+        """
         wires: list[Wire] = []
 
-        for row in matrix:
-            for col_idx in range(len(row) - 1):
-                designator1 = row[col_idx]
-                designator2 = row[col_idx + 1]
+        for row_idx in range(len(matrix)):
+            row = matrix[row_idx]
+            row2 = row[::-1]
 
-                part1_ref = f"{designator_type}{designator1}"
-                part2_ref = f"{designator_type}{designator2}"
+            """
+            When using the rotated matrix, the edge was not getting
+            picked.  So we rotate the row values and run a second
+            time.  This gives us some duplicated reversed lines in
+            the output but we'll detect/clean those up later.
+            """
+            for direction in range(2):
+                for col_idx in range(len(row) - 1):
 
-                part1_sym = self.find_symbol_by_reference(root, part1_ref, unit)
-                part2_sym = self.find_symbol_by_reference(root, part2_ref, unit)
+                    designator1 = row[col_idx]
+                    designator2 = row[col_idx + 1]
 
-                if part1_sym is not None and part2_sym is not None:
+                    if direction == 1:
+                        designator1 = row2[col_idx]
+                        designator2 = row2[col_idx + 1]
 
-                    at1 = self.find_object_by_atom(part1_sym, "at", 1)
-                    at2 = self.find_object_by_atom(part2_sym, "at", 1)
-
-                    pin_offset1 = self.get_relative_pin_position_for_schematic(
-                        root, part1_sym, pin_type, pin_type_id
+                    w = self.process_pin_pair(
+                        designator_type,
+                        pin_type,
+                        pin_type_id,
+                        unit,
+                        root,
+                        designator1,
+                        designator2,
                     )
-                    pin_offset2 = self.get_relative_pin_position_for_schematic(
-                        root, part2_sym, pin_type, pin_type_id
-                    )
-
-                    x1 = Decimal(Decimal(at1[1]) + pin_offset1[0])
-                    y1 = Decimal(Decimal(at1[2]) + pin_offset1[1])
-
-                    x2 = Decimal(Decimal(at2[1]) + pin_offset2[0])
-                    y2 = Decimal(Decimal(at2[2]) + pin_offset2[1])
-
-                    pin1 = PinPosition(x1, y1)
-                    pin2 = PinPosition(x2, y2)
-
-                    w = Wire(pin1, pin2)
-                    wires.append(w)
+                    if w is not None:
+                        wires.append(w)
 
         return wires
 
+    def calculate_wire_offset(
+        self, wire: Wire, led_x_offset: Decimal, led_y_offset: Decimal
+    ):
+        new_wire = Wire(
+            PinPosition(wire.start.x, wire.start.y), PinPosition(wire.end.x, wire.end.y)
+        )
+        connector_wire = Wire(
+            PinPosition(wire.start.x, wire.start.y), PinPosition(wire.end.x, wire.end.y)
+        )
+
+        new_wire.start.x += led_x_offset
+        new_wire.start.y += led_y_offset
+
+        new_wire.end.x += led_x_offset
+        new_wire.end.y += led_y_offset
+
+        connector_wire.end = new_wire.start
+        return (new_wire, connector_wire)
+
     def add_wires_to_schematic(self, root: list, matrix: list[list[int]]):
+        """
+        Add all the needed wires to the schematic.  This routine also adjusts
+        for when you need to run a wire close to the part and use a short
+        connector to bridge the gap.
+        """
+
         key_grid_info = KeyGridInfo()
+        led_y_offset = key_grid_info.grid_spacing * 2
+        led_x_offset = key_grid_info.grid_spacing * 1
+
         matrix_rotated = self.rotate_matrix(matrix)
 
         all_wires: list[Wire] = []
@@ -516,64 +589,49 @@ class KicadTool:
         UNIT_1 = "1"
         UNIT_2 = "2"
 
-        switch_row_wires: list[Wire] = self.get_pin_position_list(
+        switch_row_wires: list[Wire] = self.get_wire_positions_list(
             "D", "number", "1", UNIT_1, root, matrix
         )
-        switch_col_wires: list[Wire] = self.get_pin_position_list(
+        switch_col_wires: list[Wire] = self.get_wire_positions_list(
             "SW", "number", "2", UNIT_1, root, matrix_rotated
         )
 
-        led_row_wires: list[Wire] = self.get_pin_position_list(
+        led_row_wires: list[Wire] = self.get_wire_positions_list(
             "SW", "number", "3", UNIT_2, root, matrix
         )
-        led_row_connect: list[Wire] = []
 
-        led_col_wires: list[Wire] = self.get_pin_position_list(
+        led_col_wires: list[Wire] = self.get_wire_positions_list(
             "SW", "number", "4", UNIT_2, root, matrix_rotated
         )
         led_col_connect: list[Wire] = []
+        led_col_fixed: list[Wire] = []
+
+        led_row_connect: list[Wire] = []
+        led_row_fixed: list[Wire] = []
 
         for i in led_row_wires:
-            cwStart = PinPosition(Decimal(0), Decimal(0))
-            cwEnd = PinPosition(Decimal(0), Decimal(0))
-
-            cwStart.x = i.end.x
-            cwEnd.x = i.end.x
-            cwStart.y = i.end.y
-
-            i.start.y += key_grid_info.grid_spacing * 2
-            i.end.y += key_grid_info.grid_spacing * 2
-
-            cwEnd.y = i.end.y
-
-            led_row_connect.append(Wire(cwStart, cwEnd))
+            (led_row_wire, led_row_connector) = self.calculate_wire_offset(
+                i, Decimal(0), led_y_offset
+            )
+            led_row_fixed.append(led_row_wire)
+            led_row_connect.append(led_row_connector)
 
         for i in led_col_wires:
-            cwStart = PinPosition(Decimal(0), Decimal(0))
-            cwEnd = PinPosition(Decimal(0), Decimal(0))
-
-            cwStart.y = i.end.y
-            cwEnd.y = i.end.y
-            cwStart.x = i.end.x
-
-            i.start.x += key_grid_info.grid_spacing * 1
-            i.end.x += key_grid_info.grid_spacing * 1
-
-            cwEnd.x = i.end.x
-
-            led_col_connect.append(Wire(cwStart, cwEnd))
+            (led_col_wire, led_col_connector) = self.calculate_wire_offset(
+                i, led_x_offset, Decimal(0)
+            )
+            led_col_fixed.append(led_col_wire)
+            led_col_connect.append(led_col_connector)
 
         all_wires = (
             []
             + switch_row_wires
             + switch_col_wires
-            + led_row_wires
-            + led_row_connect
-            + led_col_wires
+            + led_col_fixed
             + led_col_connect
+            + led_row_fixed
+            + led_row_connect
         )
-
-        # all_wires = led_col_wires
 
         for wire in all_wires:
             wire = KiSymbols.get_wire(wire)

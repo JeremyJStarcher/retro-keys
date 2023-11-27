@@ -905,3 +905,27 @@ class KiSymbols:
             ["stroke", ["width", "0"], ["type", "default"]],
         ]
         return o
+
+    @staticmethod
+    def get_global_label(label: str):
+        o = [
+            "global_label",
+            q_string(label),
+            ["shape", "input"],
+            ["at", "147.32", "30.48", "180"],
+            ["fields_autoplaced"],
+            ["effects", ["font", ["size", "1.27", "1.27"]], ["justify", "right"]],
+            [
+                "property",
+                '"Intersheetrefs"',
+                '"${INTERSHEET_REFS}"',
+                ["at", "139.667", "30.48", "0"],
+                [
+                    "effects",
+                    ["font", ["size", "1.27", "1.27"]],
+                    ["justify", "right"],
+                    "hide",
+                ],
+            ],
+        ]
+        return o

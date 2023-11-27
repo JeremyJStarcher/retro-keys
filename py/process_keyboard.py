@@ -260,8 +260,8 @@ class ProcessKeyboard:
         schematic = key_parser.to_list()
         tool = KicadTool()
 
-        # print(schematic)
-        # key_parser.print_list(schematic, 0)
+        print(schematic)
+        key_parser.print_list(schematic, 0)
 
         schematic_lib_symbols = tool.find_object_by_atom(schematic, "lib_symbols")
         schematic_symbols = tool.find_objects_by_atom(

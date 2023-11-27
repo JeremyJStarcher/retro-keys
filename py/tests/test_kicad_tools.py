@@ -125,7 +125,6 @@ class TestKiCadTools(unittest.TestCase):
         pcb_x = pcb_tool.get_symbol_property(schematic, "SW232", "PCB_X", dummy)
         self.assertNotEqual(pcb_x, dummy)
 
-    # jjz
     def test_get_symbol_propertyPropertyAsFloatFound(self):
         schematic = self.read_keyboard_sch_file()
         pcb_tool = KicadTool()

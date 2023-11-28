@@ -127,7 +127,7 @@ class KicadTool:
         if len(objs) > 1:
             raise Exception(f"Found too many {atom}")
         if len(objs) == 0:
-            raise Exception(f"Found zero {atom}" + atom)
+            raise Exception(f"Found zero {atom}")
         return objs[0]
 
     def find_footprint_by_reference(self, root: SexpType, ref: str) -> SexpType:
@@ -311,21 +311,23 @@ class KicadTool:
             while len(at1) < 4:
                 at1.append("0")  # If there isn't a rotation, add it.
 
-                at1_x = makeDecimal(at1[1])
-                at1_y = makeDecimal(at1[2])
-                at1_rot = makeDecimal(at1[3])
+            at1_x = makeDecimal(at1[1])
+            at1_y = makeDecimal(at1[2])
+            at1_rot = makeDecimal(at1[3])
 
-                while len(at1) > 0:
-                    at1.pop()
+            while len(at1) > 0:
+                at1.pop()
 
-                at1.append("at")
-                at1.append(str(at1_x))
-                at1.append(str(at1_y))
-                at1.append(str(at1_rot + rot))
+            at1.append("at")
+            at1.append(str(at1_x))
+            at1.append(str(at1_y))
+            at1.append(str(at1_rot + rot))
 
         # Set the primary location and rotation
         at = self.find_footprint_at_by_reference(root, ref)
-        if at != None:
+        if at is None:
+            raise Exception("Could not find" + ref)
+        else:
             at.append("0")
             old_rot = at[3]
             while len(at) > 0:
@@ -665,7 +667,7 @@ class KicadTool:
     def draw_keepout_zone(
         self, root: SexpType, nx: Decimal, ny: Decimal, r: Decimal
     ) -> None:
-        def points_in_circumference(r, n=100):
+        def points_in_circumference(r: float, n=100):
             pi = math.pi
 
             return [
@@ -703,10 +705,69 @@ class KicadTool:
 
         slot = self.find_objects_by_atom(o, "pts", INF)
 
-        pts = points_in_circumference(r, 30)
+        pts = points_in_circumference(float(r), 30)
         for point in pts:
-            rr = ["xy", point[0] + nx, point[1] + ny]
+            rr: SexpType = ["xy", str(point[0] + float(nx)), str(point[1] + float(ny))]
             slot[0].append(rr)
+            # jjz
+
+        foo = [
+            "zone",
+            ["net", "0"],
+            ["net_name", '""'],
+            ["layers", "F&B.Cu"],
+            ["tstamp", "4b23aa4c-b704-4f99-b8ee-66b834c9f1a2"],
+            ["name", '"FOOBAR"'],
+            ["hatch", "full", "0.508"],
+            ["connect_pads", ["clearance", "0"]],
+            ["min_thickness", "0.254"],
+            [
+                "keepout",
+                ["tracks", "not_allowed"],
+                ["vias", "not_allowed"],
+                ["pads", "not_allowed"],
+                ["copperpour", "allowed"],
+                ["footprints", "allowed"],
+            ],
+            ["fill", ["thermal_gap", "0.508"], ["thermal_bridge_width", "0.508"]],
+            [
+                "polygon",
+                [
+                    "pts",
+                    ["xy", "347.9875", "274.5"],
+                    ["xy", "347.8563856044028", "275.7474701449066"],
+                    ["xy", "347.46877274585563", "276.9404198584548"],
+                    ["xy", "346.8416019662497", "278.02671151375483"],
+                    ["xy", "346.0022836381532", "278.95886895286435"],
+                    ["xy", "344.9875", "279.69615242270663"],
+                    ["xy", "343.8416019662497", "280.2063390977709"],
+                    ["xy", "342.61467077960594", "280.4671313722096"],
+                    ["xy", "341.3603292203941", "280.4671313722096"],
+                    ["xy", "340.1333980337503", "280.2063390977709"],
+                    ["xy", "338.9875", "279.69615242270663"],
+                    ["xy", "337.9727163618469", "278.95886895286435"],
+                    ["xy", "337.1333980337503", "278.02671151375483"],
+                    ["xy", "336.5062272541444", "276.9404198584548"],
+                    ["xy", "336.1186143955972", "275.7474701449066"],
+                    ["xy", "335.9875", "274.5"],
+                    ["xy", "336.1186143955972", "273.2525298550934"],
+                    ["xy", "336.5062272541444", "272.0595801415452"],
+                    ["xy", "337.1333980337503", "270.97328848624517"],
+                    ["xy", "337.97271636184684", "270.04113104713565"],
+                    ["xy", "338.9875", "269.30384757729337"],
+                    ["xy", "340.1333980337503", "268.7936609022291"],
+                    ["xy", "341.3603292203941", "268.5328686277904"],
+                    ["xy", "342.61467077960594", "268.5328686277904"],
+                    ["xy", "343.8416019662497", "268.7936609022291"],
+                    ["xy", "344.9875", "269.30384757729337"],
+                    ["xy", "346.00228363815313", "270.04113104713565"],
+                    ["xy", "346.8416019662497", "270.97328848624517"],
+                    ["xy", "347.46877274585563", "272.0595801415452"],
+                    ["xy", "347.8563856044028", "273.2525298550934"],
+                    ["xy", "347.9875", "274.5"],
+                ],
+            ],
+        ]
 
         root.append(o)
 

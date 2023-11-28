@@ -729,7 +729,7 @@ class KiSymbols:
             [
                 "property",
                 '"Footprint"',
-                '""',
+                '"mx_alps:MX-1U"',
                 ["at", "45.72", "50.8", "0"],
                 ["effects", ["font", ["size", "1.524", "1.524"]], "hide"],
             ],
@@ -791,7 +791,7 @@ class KiSymbols:
             [
                 "property",
                 '"Footprint"',
-                '""',
+                '"mx_alps:MX-1U"',
                 ["at", "68.58", "68.58", "0"],
                 ["effects", ["font", ["size", "1.27", "1.27"]], "hide"],
             ],

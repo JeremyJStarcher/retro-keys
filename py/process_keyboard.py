@@ -229,8 +229,6 @@ class ProcessKeyboard:
             ww = (keyInfo.w - 1) * self.config.UNIT
             hh = (keyInfo.h - 1) * self.config.UNIT
 
-            # print("keyInfo: w, h", keyInfo.h, keyInfo.w, ww, hh)
-
             keyInfo.key_x = x + ww / 2
             keyInfo.key_y = y + hh / 2
 
@@ -261,8 +259,8 @@ class ProcessKeyboard:
         schematic = key_parser.to_list()
         tool = KicadTool()
 
-        print(schematic)
-        key_parser.print_list(schematic, 0)
+        # print(schematic)
+        # key_parser.print_list(schematic, 0)
 
         schematic_lib_symbols = tool.find_object_by_atom(schematic, "lib_symbols")
         schematic_symbols = tool.find_objects_by_atom(
@@ -468,7 +466,6 @@ class ProcessKeyboard:
                 print("Searching for " + item.label + " " + item.designator)
 
             diode = tool.find_footprint_by_reference(pcb, "D" + item.designator)
-            # print(diode)
 
     def make_openscad_config_file(self) -> None:
         out = []

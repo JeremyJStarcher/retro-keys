@@ -13,15 +13,16 @@ from kicad_tools import Layer
 from kicad_tools import BoundingBox
 from kle_tools import KleTools
 from qmk_tools import QmkTools
+from sexptype import SexpType, makeDecimal, makeString
 
 BASE_THICKNESS = 3
 
 """Make it smaller then the ACTUAL hole so our peg isn't caught"""
 # STANDOFF_HOLE_INNER_DIAMETER = (2.2 * 2) * .8
-STANDOFF_HOLE_INNER_DIAMETER = 3
+STANDOFF_HOLE_INNER_DIAMETER = Decimal(3)
 
-STANDOFF_HOLE_OUTER_DIAMETER = 3 * 2
-STANDOFF_HOLE_HEIGHT = 3
+STANDOFF_HOLE_OUTER_DIAMETER = Decimal(3 * 2)
+STANDOFF_HOLE_HEIGHT = Decimal(3)
 CASE_HEIGHT = 6
 MOUNTING_HOLE_OFFSET = 5
 MOUNTING_HOLE_D = 3.2
@@ -110,7 +111,7 @@ class ProcessKeyboard:
         self.__populateCommonData()
         self.layout = self.__get_layout_from_kle()
 
-    def read_sexp(self, name: Path):
+    def read_sexp(self, name: Path) -> str:
         with open(name, "r") as f:
             data = f.read()
         return data
@@ -138,7 +139,7 @@ class ProcessKeyboard:
 
                 self.common_key_format.convert_kle_location_to_qmk()
 
-    def __get_bare_reference_id(self, s: str):
+    def __get_bare_reference_id(self, s: str) -> str:
         """
         Strip off the prefix
         SW227
@@ -150,7 +151,7 @@ class ProcessKeyboard:
         new_string = re.sub(r"^[a-zA-Z]+", "", s)
         return new_string
 
-    def set_designators(self, keys: List[KeyInfo]):
+    def set_designators(self, keys: List[KeyInfo]) -> None:
         filtered = list(filter(lambda key: not key.skip, keys))
 
         key_sch_sexp = self.read_sexp(self.config.keyboard_sch_sheet_filename_name)
@@ -431,25 +432,26 @@ class ProcessKeyboard:
         with open(self.config.pcb_filename, "w") as f:
             f.write(out)
 
-    def get_standoff_location(self, schematic, tool, item):
-        hx = (
-            item.bounding_box.x1
-            + 0.0
-            + tool.get_symbol_property_as_float(
-                schematic, "SW" + item.designator, "PCB_X", 0
-            )
+    def get_standoff_location(
+        self, schematic: SexpType, tool: KicadTool, item: KeyInfo
+    ) -> tuple[Decimal, Decimal]:
+        if item.bounding_box is None:
+            raise Exception("get_standoff_location called with invalid bounding box")
+
+        hx = item.bounding_box.x1 + tool.get_symbol_property_as_decimal(
+            schematic, "SW" + item.designator, "PCB_X", 0
         )
         hy = (
             item.bounding_box.y1
-            + 1.5
-            + tool.get_symbol_property_as_float(
+            + Decimal(1.5)
+            + tool.get_symbol_property_as_decimal(
                 schematic, "SW" + item.designator, "PCB_Y", 0
             )
         )
 
         return hx, hy
 
-    def calc_pick_n_place(self):
+    def calc_pick_n_place(self) -> None:
 
         pcb_sexp = self.read_sexp(self.config.pcb_filename)
         pcb_parser = KiCadParser(pcb_sexp)
@@ -468,7 +470,7 @@ class ProcessKeyboard:
             diode = tool.find_footprint_by_reference(pcb, "D" + item.designator)
             # print(diode)
 
-    def make_openscad_config_file(self):
+    def make_openscad_config_file(self) -> None:
         out = []
 
         for item in self.layout:
@@ -488,12 +490,12 @@ class ProcessKeyboard:
 
                 out.append("KEY_" + item.label + " = [" + ", ".join(oo) + "];")
 
-        out = "\r\n".join(out)
+        outtxt = "\r\n".join(out)
 
         with open(self.config.openscad_position_filename, "w") as f:
-            f.write(out)
+            f.write(outtxt)
 
-    def make_jlc_pcb_assembly_files(self):
+    def make_jlc_pcb_assembly_files(self) -> None:
         def q(s):
             return str(s)
 
@@ -506,16 +508,18 @@ class ProcessKeyboard:
         diodesRefs = []
         prints = tool.find_objects_by_atom(pcb, "footprint", 1)
         for p in prints:
-            # print(p)
 
             o = tool.find_objects_by_atom(p, "fp_text", float("inf"))
             filtered = filter(
-                lambda fp: (fp[1] == "reference") and (fp[2].startswith('"D')), o
+                lambda fp: (isinstance(fp[2], str) and fp[1] == "reference")
+                and (fp[2].startswith('"D')),
+                o,
             )
+
             lf = list(filtered)
             if len(lf) == 1:
-                ref = list(lf)[0][2]
-                ref = ref.replace('"', "")
+                ref1 = list(lf)[0][2]
+                ref = makeString(ref1).replace('"', "")
                 diodesRefs.append(ref)
 
         diodesRefs.sort()
@@ -539,9 +543,9 @@ class ProcessKeyboard:
 
             at = tool.find_footprint_at_by_reference(pcb, dRef)
 
-            x = Decimal(at[1])
-            y = Decimal(at[2])
-            r = Decimal(at[3])
+            x = makeDecimal(at[1])
+            y = makeDecimal(at[2])
+            r = makeDecimal(at[3])
 
             cpl_row = [
                 q(dRef),
@@ -581,7 +585,7 @@ class ProcessKeyboard:
             # write the data
             writer.writerows(cpl_rows)
 
-    def add_3d_models_to_pcb(self):
+    def add_3d_models_to_pcb(self) -> None:
 
         pcb_sexp = self.read_sexp(self.config.pcb_filename)
         pcb_parser = KiCadParser(pcb_sexp)
@@ -644,7 +648,7 @@ class ProcessKeyboard:
         tool = KicadTool()
 
         code: list[str] = []
-        standoffLocations: List[List[float]] = []
+        standoffLocations: List[List[Decimal]] = []
         bboxes: list[str] = []
 
         bbox = BoundingBox(Decimal(-1), Decimal(-1), Decimal(-1), Decimal(-1))
@@ -667,6 +671,7 @@ class ProcessKeyboard:
 
             assert item.bounding_box is not None
 
+            # jjz
             hx, rhy = self.get_standoff_location(schematic, tool, item)
 
             # Handle the flipped y axis
@@ -726,19 +731,6 @@ class ProcessKeyboard:
 
         with open(self.config.case_filename, "w") as f:
             f.write(out)
-
-    def __print_formatted(self, title: str, numbers: List[float]):
-        formatted_numbers: List[str] = []
-
-        for n in numbers:
-            fmt = f"{n:2.2f}"
-            if n >= 0:
-                fmt = " " + fmt
-            formatted_numbers.append(fmt)
-
-        ff = ", ".join(formatted_numbers)
-
-        print(title + ":" + ff)
 
 
 if __name__ == "__main__":

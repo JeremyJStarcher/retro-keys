@@ -5,6 +5,7 @@ import math
 from typing import Dict, List, cast
 from attr import dataclass
 from ki_symbols import KiSymbols, PinPosition, Wire
+from sexptype import SexpListType, SexpType, SexpTypeValue, makeDecimal, makeString
 
 INF = math.inf
 
@@ -100,8 +101,12 @@ class KicadTool:
     # def __init__():
     #     pass
 
-    def find_objects_by_atom(self, root: list, atom: str, maxDepth=float("inf")):
-        def _find_objects_by_atom_inner(array, atom, maxDepth, depth, out):
+    def find_objects_by_atom(
+        self, root: SexpType, atom: str, maxDepth=float("inf")
+    ) -> SexpListType:
+        def _find_objects_by_atom_inner(
+            array, atom, maxDepth, depth, out: SexpListType
+        ):
             for e in array:
                 if isinstance(e, list):
                     if (len(e) > 0) and (e[0] == atom):
@@ -115,7 +120,9 @@ class KicadTool:
 
         return _find_objects_by_atom_inner([root], atom, maxDepth, 0, [])
 
-    def find_object_by_atom(self, root: list, atom: str, maxDepth=float("inf")):
+    def find_object_by_atom(
+        self, root: SexpType, atom: str, maxDepth=float("inf")
+    ) -> SexpType:
         objs = self.find_objects_by_atom(root, atom, maxDepth)
         if len(objs) > 1:
             raise Exception(f"Found too many {atom}")
@@ -123,7 +130,7 @@ class KicadTool:
             raise Exception(f"Found zero {atom}" + atom)
         return objs[0]
 
-    def find_footprint_by_reference(self, root: list, ref: str) -> list:
+    def find_footprint_by_reference(self, root: SexpType, ref: str) -> SexpType:
         prints = self.find_objects_by_atom(root, "footprint", 1)
 
         for p in prints:
@@ -138,7 +145,7 @@ class KicadTool:
 
         return []
 
-    def _get_text_obj_by_type(self, root: list, ref: str, type: str) -> list:
+    def _get_text_obj_by_type(self, root: SexpType, ref: str, type: str) -> SexpType:
         p = self.find_footprint_by_reference(root, ref)
 
         assert p is not None
@@ -149,8 +156,8 @@ class KicadTool:
         return obj
 
     def set_hidden_footprint_text_by_reference(
-        self, root: list, ref: str, type: str, hidden: bool
-    ):
+        self, root: SexpType, ref: str, type: str, hidden: bool
+    ) -> None:
         obj = self._get_text_obj_by_type(root, ref, type)
 
         # If it is already there, remove it.
@@ -160,7 +167,9 @@ class KicadTool:
         if hidden:
             obj.append("hide")
 
-    def move_text_to_layer(self, root: list, ref: str, type: str, layer: Layer):
+    def move_text_to_layer(
+        self, root: SexpType, ref: str, type: str, layer: Layer
+    ) -> None:
         obj = self._get_text_obj_by_type(root, ref, type)
 
         o = self.find_objects_by_atom(obj, "layer", INF)
@@ -168,7 +177,7 @@ class KicadTool:
         lst = list(o)
         lst[0][1] = layer
 
-    def copy_to_back_silkscreen(self, root: list, ref: str, type: str):
+    def copy_to_back_silkscreen(self, root: SexpType, ref: str, type: str) -> None:
         p = self.find_footprint_by_reference(root, ref)
         assert p is not None
 
@@ -188,7 +197,7 @@ class KicadTool:
 
         p.append(nn)
 
-    def get_all_symbol_value_references(self, root: list) -> Dict[str, List[str]]:
+    def get_all_symbol_value_references(self, root: SexpType) -> Dict[str, List[str]]:
         ret: Dict[str, List[str]] = dict()
 
         symbols = self.find_objects_by_atom(root, "symbol", 1)
@@ -206,8 +215,8 @@ class KicadTool:
             )
 
             if value_property and reference_property:
-                value: str = value_property[2].strip('"')
-                reference: str = reference_property[2].strip('"')
+                value: str = makeString(value_property[2]).strip('"')
+                reference: str = makeString(reference_property[2]).strip('"')
 
                 if not value in ret:
                     ret[value] = []
@@ -216,7 +225,9 @@ class KicadTool:
                 v.append(reference)
         return ret
 
-    def find_symbol_by_reference(self, root: list, ref: str, unit="1") -> list | None:
+    def find_symbol_by_reference(
+        self, root: SexpType, ref: str, unit="1"
+    ) -> SexpType | None:
         symbols = self.find_objects_by_atom(root, "symbol", 1)
 
         for symbol in symbols:
@@ -242,7 +253,9 @@ class KicadTool:
                 return symbol
         return None
 
-    def get_symbol_property(self, root: list, ref: str, prop: str, default: str):
+    def get_symbol_property(
+        self, root: SexpType, ref: str, prop: str, default: str
+    ) -> SexpTypeValue:
         symbol = cast(list, self.find_symbol_by_reference(root, ref))
 
         o = self.find_objects_by_atom(symbol, "property", INF)
@@ -254,12 +267,14 @@ class KicadTool:
         else:
             return default
 
-    def get_symbol_property_as_float(self, root: list, ref: str, prop: str, default):
+    def get_symbol_property_as_decimal(
+        self, root: SexpType, ref: str, prop: str, default
+    ) -> Decimal:
         r = self.get_symbol_property(root, ref, prop, default)
         r = str(r)
-        return float(r.strip('"'))
+        return Decimal(r.strip('"'))
 
-    def find_footprint_at_by_reference(self, root: list, ref: str) -> list:
+    def find_footprint_at_by_reference(self, root: SexpType, ref: str) -> SexpType:
         footprint = self.find_footprint_by_reference(root, ref)
         assert footprint is not None
 
@@ -274,33 +289,39 @@ class KicadTool:
         return o
 
     def set_object_location(
-        self, root: list, ref: str, x: Decimal, y: Decimal, rot: Decimal = Decimal(0)
-    ):
+        self,
+        root: SexpType,
+        ref: str,
+        x: Decimal,
+        y: Decimal,
+        rot: Decimal = Decimal(0),
+    ) -> None:
         footprint = self.find_footprint_by_reference(root, ref)
 
         cat = self.find_footprint_at_by_reference(root, ref)
 
-        current_rot = Decimal(cat[3])
+        current_rot = makeDecimal(cat[3])
         # If the object is already rotated, then un-rotate it
         if current_rot != 0:
-            cat[3] = str(Decimal(cat[3]) - current_rot)
+            cat[3] = str(makeDecimal(cat[3]) - current_rot)
             self.set_object_location(root, ref, x, y, -current_rot)
 
         all_ats = self.find_objects_by_atom(footprint, "at", INF)
         for at1 in all_ats:
-            at1.append(0)  # If there isn't a rotation, add it.
+            while len(at1) < 4:
+                at1.append("0")  # If there isn't a rotation, add it.
 
-            at1_x = Decimal(at1[1])
-            at1_y = Decimal(at1[2])
-            at1_rot = Decimal(at1[3])
+                at1_x = makeDecimal(at1[1])
+                at1_y = makeDecimal(at1[2])
+                at1_rot = makeDecimal(at1[3])
 
-            while len(at1) > 0:
-                at1.pop()
+                while len(at1) > 0:
+                    at1.pop()
 
-            at1.append("at")
-            at1.append(str(at1_x))
-            at1.append(str(at1_y))
-            at1.append(str(at1_rot + rot))
+                at1.append("at")
+                at1.append(str(at1_x))
+                at1.append(str(at1_y))
+                at1.append(str(at1_rot + rot))
 
         # Set the primary location and rotation
         at = self.find_footprint_at_by_reference(root, ref)
@@ -316,27 +337,29 @@ class KicadTool:
             at.append(str(rot))
 
     def add_bounding_box(
-        self, root: list, box: BoundingBox, width: float, layer: Layer
-    ):
-        _box = [
+        self, root: SexpType, box: BoundingBox, width: float, layer: Layer
+    ) -> None:
+        _box: SexpType = [
             "gr_rect",
-            ["start", box.x1, box.y1],
-            ["end", box.x2, box.y2],
+            ["start", str(box.x1), str(box.y1)],
+            ["end", str(box.x2), str(box.y2)],
             ["layer", layer],
-            ["width", width],
+            ["width", str(width)],
             ["fill", "none"],
         ]
 
         root.append(_box)
 
-    def get_bounding_box_of_layer_lines(self, root: list, layerName: Layer):
+    def get_bounding_box_of_layer_lines(
+        self, root: SexpType, layerName: Layer
+    ) -> BoundingBox:
         lines = []
 
         g_lines = self.find_objects_by_atom(root, "fp_line", float("inf"))
         at = self.find_objects_by_atom(root, "at", 1)
 
-        origin_x = Decimal(at[0][1])
-        origin_y = Decimal(at[0][2])
+        origin_x = makeDecimal(at[0][1])
+        origin_y = makeDecimal(at[0][2])
 
         for g_line in g_lines:
             layers = self.find_objects_by_atom(g_line, "layer", float("inf"))
@@ -349,21 +372,23 @@ class KicadTool:
             start = self.find_object_by_atom(line, "start", float("inf"))
             end = self.find_object_by_atom(line, "end", float("inf"))
 
-            x1 = Decimal(start[1])
-            y1 = Decimal(start[2])
-            x2 = Decimal(end[1])
-            y2 = Decimal(end[2])
+            x1 = makeDecimal(start[1])
+            y1 = makeDecimal(start[2])
+            x2 = makeDecimal(end[1])
+            y2 = makeDecimal(end[2])
 
             box.update_xy(x1 + origin_x, y1 + origin_y)
             box.update_xy(x2 + origin_x, y2 + origin_y)
 
         return box
 
-    def draw_circle(self, root: list, layer: Layer, x: float, y: float, r: float):
-        o = [
+    def draw_circle(
+        self, root: SexpType, layer: Layer, x: Decimal, y: Decimal, r: Decimal
+    ) -> None:
+        o: SexpType = [
             "gr_circle",
-            ["center", x, y],
-            ["end", x, y - r],
+            ["center", str(x), str(y)],
+            ["end", str(x), str(y - r)],
             ["layer", layer],
             ["width", "0.2"],
             ["fill", "none"],
@@ -371,26 +396,26 @@ class KicadTool:
 
         root.append(o)
 
-    def move_recursive(self, root: list, mx: Decimal, my: Decimal, mr: int):
+    def move_recursive(self, root: SexpType, mx: Decimal, my: Decimal, mr: int) -> None:
         first_at = self.find_object_by_atom(root, "at", 1)
-        while len(first_at) != 4:
+        while len(first_at) < 4:
             first_at.append("0")
 
-        at_x = Decimal(first_at[1])
-        at_y = Decimal(first_at[2])
-        at_r = Decimal(first_at[3])
+        at_x = makeDecimal(first_at[1])
+        at_y = makeDecimal(first_at[2])
+        at_r = makeDecimal(first_at[3])
 
         all_at = self.find_objects_by_atom(root, "at", math.inf)
         for atm in all_at:
             while len(atm) != 4:
                 atm.append("0")
 
-            atm[1] = str(Decimal(atm[1]) - at_x + mx)
-            atm[2] = str(Decimal(atm[2]) - at_y + my)
-            atm[3] = str(Decimal(atm[3]) - at_r + mr)
+            atm[1] = str(makeDecimal(atm[1]) - at_x + mx)
+            atm[2] = str(makeDecimal(atm[2]) - at_y + my)
+            atm[3] = str(makeDecimal(atm[3]) - at_r + mr)
 
     def get_relative_pin_position_for_schematic(
-        self, schematic_root: list, obj: list, type: str, value: str
+        self, schematic_root: SexpType, obj: SexpType, type: str, value: str
     ) -> list[Decimal]:
         item_lib_id = self.find_object_by_atom(obj, "lib_id")
 
@@ -401,7 +426,7 @@ class KicadTool:
             if item_lib_id[1] == symbol[1]:
                 pins = self.find_objects_by_atom(symbol, "pin")
                 symbol_at = self.find_object_by_atom(obj, "at", 1)
-                symbol_rotation = int(float(symbol_at[3]))
+                symbol_rotation = makeDecimal(symbol_at[3])
 
                 for pin in pins:
                     match = self.find_object_by_atom(pin, type)
@@ -409,8 +434,8 @@ class KicadTool:
                     if pin_value == q_string(value):
                         pin_at = self.find_object_by_atom(pin, "at", 1)
 
-                        dx = Decimal(pin_at[1])
-                        dy = Decimal(pin_at[2])
+                        dx = makeDecimal(pin_at[1])
+                        dy = makeDecimal(pin_at[2])
 
                         if symbol_rotation == 0:
                             return [dx, dy]
@@ -427,8 +452,8 @@ class KicadTool:
         pass
 
     def add_keyswitch_to_schematic(
-        self, designator: str, name: str, key_root: list, mx: int, my: int
-    ):
+        self, designator: str, name: str, key_root: SexpType, mx: int, my: int
+    ) -> None:
         key_grid_info = KeyGridInfo()
 
         symbol_diode = KiSymbols.get_diode("D" + designator, name)
@@ -465,7 +490,7 @@ class KicadTool:
         pin_type: str,
         pin_type_id: str,
         unit: str,
-        root: list,
+        root: SexpType,
         designator1: int,
         designator2: int,
     ) -> Wire | None:
@@ -487,11 +512,11 @@ class KicadTool:
                 root, part2_sym, pin_type, pin_type_id
             )
 
-            x1 = Decimal(Decimal(at1[1]) + pin_offset1[0])
-            y1 = Decimal(Decimal(at1[2]) + pin_offset1[1])
+            x1 = makeDecimal(at1[1]) + pin_offset1[0]
+            y1 = makeDecimal(at1[2]) + pin_offset1[1]
 
-            x2 = Decimal(Decimal(at2[1]) + pin_offset2[0])
-            y2 = Decimal(Decimal(at2[2]) + pin_offset2[1])
+            x2 = makeDecimal(at2[1]) + pin_offset2[0]
+            y2 = makeDecimal(at2[2]) + pin_offset2[1]
 
             pin1 = PinPosition(x1, y1)
             pin2 = PinPosition(x2, y2)
@@ -506,7 +531,7 @@ class KicadTool:
         pin_type: str,
         pin_type_id: str,
         unit: str,
-        root: list,
+        root: SexpType,
         matrix: list[list[int]],
     ) -> list[Wire]:
         """
@@ -554,7 +579,7 @@ class KicadTool:
 
     def calculate_wire_offset(
         self, wire: Wire, led_x_offset: Decimal, led_y_offset: Decimal
-    ):
+    ) -> tuple[Wire, Wire]:
         new_wire = Wire(
             PinPosition(wire.start.x, wire.start.y), PinPosition(wire.end.x, wire.end.y)
         )
@@ -571,7 +596,7 @@ class KicadTool:
         connector_wire.end = new_wire.start
         return (new_wire, connector_wire)
 
-    def add_wires_to_schematic(self, root: list, matrix: list[list[int]]):
+    def add_wires_to_schematic(self, root: SexpType, matrix: list[list[int]]) -> None:
         """
         Add all the needed wires to the schematic.  This routine also adjusts
         for when you need to run a wire close to the part and use a short
@@ -634,10 +659,12 @@ class KicadTool:
         )
 
         for wire in all_wires:
-            wire = KiSymbols.get_wire(wire)
-            root.append(wire)
+            wirec = KiSymbols.get_wire(wire)
+            root.append(wirec)
 
-    def draw_keepout_zone(self, root: list, nx: float, ny: float, r: float):
+    def draw_keepout_zone(
+        self, root: SexpType, nx: Decimal, ny: Decimal, r: Decimal
+    ) -> None:
         def points_in_circumference(r, n=100):
             pi = math.pi
 
@@ -646,7 +673,7 @@ class KicadTool:
                 for x in range(0, n + 1)
             ]
 
-        o = [
+        o: SexpType = [
             "zone",
             ["net", "0"],
             ["net_name", '""'],
@@ -683,7 +710,7 @@ class KicadTool:
 
         root.append(o)
 
-    def remove_atoms(self, parent: list, atom: str):
+    def remove_atoms(self, parent: SexpType, atom: str) -> None:
         while True:
             atoms = self.find_objects_by_atom(parent, atom, 1)
             if len(atoms) == 0:
@@ -691,8 +718,8 @@ class KicadTool:
 
             parent.remove(atoms[0])
 
-    def add_sd123_model(self, parent: list, path: str):
-        o = [
+    def add_sd123_model(self, parent: SexpType, path: str) -> None:
+        o: SexpType = [
             "model",
             '"${KIPRJMOD}/' + str(path) + 'SOD-diodes/SOD-123.step"',
             ["offset", ["xyz", "0", "0", "0"]],
@@ -701,8 +728,8 @@ class KicadTool:
         ]
         parent.append(o)
 
-    def add_switch_model(self, parent: list, path: str):
-        o = [
+    def add_switch_model(self, parent: SexpType, path: str) -> None:
+        o: SexpType = [
             "model",
             '"${KIPRJMOD}/' + str(path) + '/cherry-mx-switches/asm_mx_asm_PCB.stp"',
             ["offset", ["xyz", "-2.1", "-4.5", "4"]],
@@ -711,8 +738,8 @@ class KicadTool:
         ]
         parent.append(o)
 
-    def add_keycap_model(self, parent: list, url: str):
-        o = [
+    def add_keycap_model(self, parent: SexpType, url: str) -> None:
+        o: SexpType = [
             "model",
             f'"{url}"',
             ["offset", ["xyz", "-2.2", "-4.9", "10"]],

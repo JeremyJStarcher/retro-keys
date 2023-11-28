@@ -1,4 +1,5 @@
-from typing import List, Union
+from typing import List
+from sexptype import SexpType, makeString
 
 
 class KiCadParser:
@@ -65,11 +66,11 @@ class KiCadParser:
         self.idx = saveidx
         return token
 
-    def to_list(self) -> List:
+    def to_list(self) -> SexpType:
         """
         Parses the S-expression string and converts it to a nested list structure.
         """
-        ret: List = []
+        ret: SexpType = []
         stack: List[List] = [ret]
 
         self.eat_space()
@@ -99,7 +100,7 @@ class KiCadParser:
                 token = self.get_next_token()
                 stack[-1].append(token)
 
-    def print_list(self, list: List, depth: int = 0) -> str:
+    def print_list(self, list: SexpType, depth: int = 0) -> str:
         """
         Returns a formatted string representation of the nested list.
         """
@@ -116,13 +117,13 @@ class KiCadParser:
 
         return "\n".join(output)
 
-    def list_to_sexp(self, root: List) -> List[str]:
+    def list_to_sexp(self, root: SexpType) -> List[str]:
         """
         Converts a nested list back to an S-expression string.
         """
 
         def list_to_sexp_inner(
-            root: List, depth: int = 0, out: List[str] = []
+            root: SexpType, depth: int = 0, out: List[str] = []
         ) -> List[str]:
 
             indent = " " * 2 * depth
@@ -135,7 +136,7 @@ class KiCadParser:
                 elif isinstance(e, (float, int)):
                     out.append(indent + str(e))
                 else:
-                    out.append(indent + e)
+                    out.append(indent + makeString(e))
             return out
 
         return list_to_sexp_inner([root], 0, [])

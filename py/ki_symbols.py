@@ -1,6 +1,8 @@
 from decimal import Decimal
 from attr import dataclass
 
+from sexptype import SexpType
+
 
 @dataclass
 class PinPosition:
@@ -20,9 +22,9 @@ def q_string(s: str) -> str:
 
 class KiSymbols:
     @staticmethod
-    def get_lib_symbols():
+    def get_lib_symbols() -> SexpType:
 
-        o = [
+        o: SexpType = [
             "lib_symbols",
             [
                 "symbol",
@@ -634,8 +636,8 @@ class KiSymbols:
         return o
 
     @staticmethod
-    def get_diode(designator: str, name: str):
-        o = [
+    def get_diode(designator: str, name: str) -> SexpType:
+        o: SexpType = [
             "symbol",
             ["lib_id", '"atari-keyboard-rescue:D_Small_ALT-Device"'],
             ["at", "138.43", "69.85", "90"],
@@ -699,8 +701,8 @@ class KiSymbols:
         return o
 
     @staticmethod
-    def get_mx_with_led(designator: str, name: str):
-        o = [
+    def get_mx_with_led(designator: str, name: str) -> SexpType:
+        o: SexpType = [
             "symbol",
             ["lib_id", '"keebio:MX-with-LED"'],
             ["at", "45.72", "50.8", "0"],
@@ -760,9 +762,9 @@ class KiSymbols:
         return o
 
     @staticmethod
-    def get_mxfull_switch(designator: str, name: str):
+    def get_mxfull_switch(designator: str, name: str) -> SexpType:
 
-        o = [
+        o: SexpType = [
             "symbol",
             ["lib_id", '"keebio:MX_LED"'],
             ["at", "68.58", "68.58", "0"],
@@ -822,8 +824,8 @@ class KiSymbols:
         return o
 
     @staticmethod
-    def get_mxfull_led(designator: str, name: str):
-        o = [
+    def get_mxfull_led(designator: str, name: str) -> SexpType:
+        o: SexpType = [
             "symbol",
             ["lib_id", '"keebio:MX_LED"'],
             ["at", "60.96", "101.6", "0"],
@@ -883,23 +885,24 @@ class KiSymbols:
         return o
 
     @staticmethod
-    def get_junction(x: str | Decimal, y: str | Decimal):
-        return [
+    def get_junction(x: str | Decimal, y: str | Decimal) -> SexpType:
+        o: SexpType = [
             "junction",
             ["at", str(x), str(y)],
             ["diameter", "0"],
             ["color", "0", "0", "0", "0"],
         ]
+        return o
 
     @staticmethod
-    def get_wire(wire: Wire):
+    def get_wire(wire: Wire) -> SexpType:
         x1 = str(wire.start.x)
         y1 = str(wire.start.y)
 
         x2 = str(wire.end.x)
         y2 = str(wire.end.y)
 
-        o = [
+        o: SexpType = [
             "wire",
             ["pts", ["xy", x1, y1], ["xy", x2, y2]],
             ["stroke", ["width", "0"], ["type", "default"]],
@@ -907,8 +910,8 @@ class KiSymbols:
         return o
 
     @staticmethod
-    def get_global_label(label: str):
-        o = [
+    def get_global_label(label: str) -> SexpType:
+        o: SexpType = [
             "global_label",
             q_string(label),
             ["shape", "input"],

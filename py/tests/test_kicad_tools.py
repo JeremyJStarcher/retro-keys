@@ -4,6 +4,7 @@ import unittest
 from kicad_tools import KicadTool
 from kicad_tools import Layer
 from kicad_parser import KiCadParser
+from sexptype import SexpType, makeDecimal
 from tests.test_filepaths import SAMPLE_KEYBOARD_SCH_FILENAME, SAMPLE_PCB_FILENAME
 
 
@@ -14,13 +15,13 @@ class TestKiCadTools(unittest.TestCase):
         except ValueError:
             self.fail(f"{f} is not a valid floating-point number")
 
-    def read_pcb_file(self):
+    def read_pcb_file(self) -> SexpType:
         with open(SAMPLE_PCB_FILENAME, "r") as data_file:
             data = data_file.read()
             parser = KiCadParser(data)
             return parser.to_list()
 
-    def read_keyboard_sch_file(self):
+    def read_keyboard_sch_file(self) -> SexpType:
         with open(SAMPLE_KEYBOARD_SCH_FILENAME, "r") as data_file:
             data = data_file.read()
             parser = KiCadParser(data)
@@ -83,9 +84,6 @@ class TestKiCadTools(unittest.TestCase):
         self.assertIsInstance(l[1], str)
         self.assertIsInstance(l[2], str)
 
-        self.assert_float_str(l[1])
-        self.assert_float_str(l[2])
-
     def test_findset_object_location(self):
         pcb = self.read_pcb_file()
         pcb_tool = KicadTool()
@@ -93,8 +91,8 @@ class TestKiCadTools(unittest.TestCase):
         pcb_tool.set_object_location(pcb, "SW201", Decimal(-100), Decimal(-200))
         l = pcb_tool.find_footprint_at_by_reference(pcb, "SW201")
         self.assertTrue(l != None)
-        self.assertEqual(Decimal(l[1]), Decimal(-100))
-        self.assertEqual(Decimal(l[2]), Decimal(-200))
+        self.assertEqual(makeDecimal(l[1]), Decimal(-100))
+        self.assertEqual(makeDecimal(l[2]), Decimal(-200))
 
     def test_get_bounding_box_of_layer_lines(self):
         pcb = self.read_pcb_file()
@@ -131,7 +129,7 @@ class TestKiCadTools(unittest.TestCase):
 
         dummy_val = 99999.99
 
-        pcb_x = pcb_tool.get_symbol_property_as_float(
+        pcb_x = pcb_tool.get_symbol_property_as_decimal(
             schematic, "SW232", "PCB_X", dummy_val
         )
         self.assertNotEqual(pcb_x, dummy_val)
@@ -140,7 +138,9 @@ class TestKiCadTools(unittest.TestCase):
         schematic = self.read_pcb_file()
         pcb_tool = KicadTool()
 
-        pcb_x = pcb_tool.get_symbol_property_as_float(schematic, "SW232", "XYZZY", 100)
+        pcb_x = pcb_tool.get_symbol_property_as_decimal(
+            schematic, "SW232", "XYZZY", 100
+        )
         self.assertEqual(pcb_x, 100)
 
     def test_remove_atoms(self):
@@ -179,8 +179,8 @@ class TestKiCadTools(unittest.TestCase):
             all_at = sch_tool.find_objects_by_atom(parent, "at", math.inf)
 
             for at in all_at:
-                x1 = Decimal(at[1])
-                y1 = Decimal(at[2])
+                x1 = makeDecimal(at[1])
+                y1 = makeDecimal(at[2])
 
                 self.assertLess(Decimal(abs(offset_x - x1)), fudge)
                 self.assertLess(Decimal(abs(offset_y - y1)), fudge)

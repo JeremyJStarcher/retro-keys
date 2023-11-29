@@ -37,5 +37,5 @@ if __name__ == "__main__":
     # process.calc_pick_n_place()
     # process.make_openscad_config_file()
     # process.make_jlc_pcb_assembly_files()
-    # process.add_3d_models_to_pcb()
+    process.add_3d_models_to_pcb()
     # process.generate_openscad_case_file()

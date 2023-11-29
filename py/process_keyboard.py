@@ -55,7 +55,7 @@ class ProcessConfiguration:
 
     # How much to move the diodes
     diode_offset_x = Decimal(UNIT / 2)
-    diode_offset_y = Decimal(UNIT / 8)  # A little breathing room for the support screws
+    diode_offset_y = Decimal(UNIT / 8) +2 # A little breathing room for the support screws
 
 
 class KeyInfo:
@@ -232,6 +232,8 @@ class ProcessKeyboard:
             keyInfo.key_y = y + hh / 2
 
             keyInfo.diode_x = keyInfo.key_x + self.config.diode_offset_x
+            keyInfo.diode_x = keyInfo.key_x + keyInfo.w * self.config.UNIT /2
+
             keyInfo.diode_y = keyInfo.key_y + self.config.diode_offset_y
 
             # The math for figuring out the actual bounding box is off, so manually correct for
@@ -460,7 +462,7 @@ class ProcessKeyboard:
         )
         hy = (
             item.bounding_box.y1
-            + Decimal(1.5)
+            + Decimal(3.5)
             + tool.get_symbol_property_as_decimal(
                 schematic, "SW" + item.designator, "PCB_Y", 0
             )

@@ -679,7 +679,8 @@ class KicadTool:
     def draw_keepout_zone(
         self, root: SexpType, nx: Decimal, ny: Decimal, r: Decimal
     ) -> None:
-        self.draw_circle(root, Layer.Edge_Cuts, nx, ny, r, "none")
+        self.draw_circle(root, Layer.F_Silkscreen, nx, ny, r, "none")
+        self.draw_circle(root, Layer.B_Silkscreen, nx, ny, r, "none")
 
         def points_in_circumference(r: float, n=100):
             pi = math.pi
@@ -805,7 +806,7 @@ class KicadTool:
         o: SexpType = [
             "model",
             '"${KIPRJMOD}/' + str(path) + '/cherry-mx-switches/asm_mx_asm_PCB.stp"',
-            ["offset", ["xyz", "-2.1", "-4.5", "4"]],
+            ["offset", ["xyz", "0", "0", "4"]],
             ["scale", ["xyz", "1", "1", "1"]],
             ["rotate", ["xyz", "-180", "0", "90"]],
         ]
@@ -815,7 +816,7 @@ class KicadTool:
         o: SexpType = [
             "model",
             f'"{url}"',
-            ["offset", ["xyz", "-2.2", "-4.9", "10"]],
+            ["offset", ["xyz", "0", "0", "6"]],
             ["scale", ["xyz", "0.4", "0.4", "0.4"]],
             ["rotate", ["xyz", "0", "0", "0"]],
         ]

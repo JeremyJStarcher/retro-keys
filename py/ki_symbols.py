@@ -701,7 +701,7 @@ class KiSymbols:
         return o
 
     @staticmethod
-    def get_mx_with_led(designator: str, name: str) -> SexpType:
+    def get_mx_with_led(designator: str, name: str, size: Decimal) -> SexpType:
         o: SexpType = [
             "symbol",
             ["lib_id", '"keebio:MX-with-LED"'],
@@ -729,7 +729,7 @@ class KiSymbols:
             [
                 "property",
                 '"Footprint"',
-                '"mx_alps:MX-1U"',
+                f'"mx_alps:MX-{size}U"',
                 ["at", "45.72", "50.8", "0"],
                 ["effects", ["font", ["size", "1.524", "1.524"]], "hide"],
             ],
@@ -762,7 +762,7 @@ class KiSymbols:
         return o
 
     @staticmethod
-    def get_mxfull_switch(designator: str, name: str) -> SexpType:
+    def get_mxfull_switch(designator: str, name: str, size: Decimal) -> SexpType:
 
         o: SexpType = [
             "symbol",
@@ -791,7 +791,7 @@ class KiSymbols:
             [
                 "property",
                 '"Footprint"',
-                '"mx_alps:MX-1U"',
+                f'"mx_alps:MX-{size}U"',
                 ["at", "68.58", "68.58", "0"],
                 ["effects", ["font", ["size", "1.27", "1.27"]], "hide"],
             ],

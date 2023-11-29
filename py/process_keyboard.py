@@ -19,9 +19,8 @@ BASE_THICKNESS = 3
 
 """Make it smaller then the ACTUAL hole so our peg isn't caught"""
 # STANDOFF_HOLE_INNER_DIAMETER = (2.2 * 2) * .8
-STANDOFF_HOLE_INNER_DIAMETER = Decimal(3)
-
-STANDOFF_HOLE_OUTER_DIAMETER = Decimal(3 * 2)
+STANDOFF_HOLE_INNER_DIAMETER = Decimal(1.5)
+STANDOFF_HOLE_OUTER_DIAMETER = Decimal(3)
 STANDOFF_HOLE_HEIGHT = Decimal(3)
 CASE_HEIGHT = 6
 MOUNTING_HOLE_OFFSET = 5
@@ -48,15 +47,15 @@ class ProcessConfiguration:
     kicad_3dmodel_path_str: str
     kicad_keycap_vrml_path_str: str
 
-    pcb_x_orig = Decimal(61)
-    pcb_y_orig = Decimal(177.75)
-    pcb_border = Decimal(10)
-
     UNIT = Decimal(19.05)
 
+    pcb_x_orig = Decimal(2 * UNIT)
+    pcb_y_orig = Decimal(9 * UNIT)
+    pcb_border = Decimal(UNIT / 2)
+
     # How much to move the diodes
-    diode_offset_x = Decimal(6.5)
-    diode_offset_y = Decimal(5.52)
+    diode_offset_x = Decimal(UNIT / 2)
+    diode_offset_y = Decimal(UNIT / 8)  # A little breathing room for the support screws
 
 
 class KeyInfo:
@@ -345,6 +344,7 @@ class ProcessKeyboard:
                             key_schematic,
                             x,
                             y,
+                            key.w,
                         )
 
                         base_designator += 1
@@ -359,6 +359,8 @@ class ProcessKeyboard:
 
     def relocate_parts_and_draw_silkscreen(self) -> None:
 
+        # jjz
+
         pcb_sexp = self.read_sexp(self.config.pcb_filename)
         pcb_parser = KiCadParser(pcb_sexp)
         pcb = pcb_parser.to_list()
@@ -370,6 +372,21 @@ class ProcessKeyboard:
         tool = KicadTool()
 
         bbox = BoundingBox(Decimal(-1), Decimal(-1), Decimal(-1), Decimal(-1))
+
+        zones = tool.find_objects_by_atom(pcb, "zone", 1)
+        for zone in zones:
+            keepout_flag = tool.find_object_by_atom(zone, "keepout", 1)
+            print(keepout_flag)
+            if keepout_flag != None:
+                pcb.remove(zone)
+
+        shapes = tool.find_objects_by_atom(pcb, "gr_circle", 1)
+        for shape in shapes:
+            pcb.remove(shape)
+
+        shapes = tool.find_objects_by_atom(pcb, "gr_rect", 1)
+        for shape in shapes:
+            pcb.remove(shape)
 
         for item in self.layout:
 
@@ -413,7 +430,9 @@ class ProcessKeyboard:
             hx, hy = self.get_standoff_location(schematic, tool, item)
 
             tool.draw_keepout_zone(pcb, hx, hy, STANDOFF_HOLE_OUTER_DIAMETER)
-            tool.draw_circle(pcb, Layer.Edge_Cuts, hx, hy, STANDOFF_HOLE_INNER_DIAMETER)
+            tool.draw_circle(
+                pcb, Layer.Edge_Cuts, hx, hy, STANDOFF_HOLE_INNER_DIAMETER, "solid"
+            )
 
         bbox.add_border(self.config.pcb_border)
         tool.add_bounding_box(pcb, bbox, 0.3, Layer.Edge_Cuts)

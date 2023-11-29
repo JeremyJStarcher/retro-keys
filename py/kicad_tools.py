@@ -385,7 +385,13 @@ class KicadTool:
         return box
 
     def draw_circle(
-        self, root: SexpType, layer: Layer, x: Decimal, y: Decimal, r: Decimal
+        self,
+        root: SexpType,
+        layer: Layer,
+        x: Decimal,
+        y: Decimal,
+        r: Decimal,
+        fill: str,
     ) -> None:
         o: SexpType = [
             "gr_circle",
@@ -393,7 +399,7 @@ class KicadTool:
             ["end", str(x), str(y - r)],
             ["layer", layer],
             ["width", "0.2"],
-            ["fill", "none"],
+            ["fill", fill],
         ]
 
         root.append(o)
@@ -454,13 +460,19 @@ class KicadTool:
         pass
 
     def add_keyswitch_to_schematic(
-        self, designator: str, name: str, key_root: SexpType, mx: int, my: int
+        self,
+        designator: str,
+        name: str,
+        key_root: SexpType,
+        mx: int,
+        my: int,
+        size: Decimal,
     ) -> None:
         key_grid_info = KeyGridInfo()
 
         symbol_diode = KiSymbols.get_diode("D" + designator, name)
         # symbol_switch = KiSymbols.get_mx_with_led("SW" + designator, name)
-        symbol_switch = KiSymbols.get_mxfull_switch("SW" + designator, name)
+        symbol_switch = KiSymbols.get_mxfull_switch("SW" + designator, name, size)
         symbol_switch_led = KiSymbols.get_mxfull_led("SW" + designator, name)
 
         cluster_x = key_grid_info.switch_origin_x + (mx * key_grid_info.spacing_x)
@@ -667,6 +679,8 @@ class KicadTool:
     def draw_keepout_zone(
         self, root: SexpType, nx: Decimal, ny: Decimal, r: Decimal
     ) -> None:
+        self.draw_circle(root, Layer.Edge_Cuts, nx, ny, r, "none")
+
         def points_in_circumference(r: float, n=100):
             pi = math.pi
 
@@ -680,7 +694,6 @@ class KicadTool:
             ["net", "0"],
             ["net_name", '""'],
             ["layers", "F&B.Cu"],
-            ["tstamp", "4b23aa4c-b704-4f99-b8ee-66b834c9f1a2"],
             ["name", '"FOOBAR"'],
             ["hatch", "full", "0.508"],
             ["connect_pads", ["clearance", "0"]],
@@ -709,7 +722,6 @@ class KicadTool:
         for point in pts:
             rr: SexpType = ["xy", str(point[0] + float(nx)), str(point[1] + float(ny))]
             slot[0].append(rr)
-            # jjz
 
         foo = [
             "zone",

@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from decimal import Decimal, getcontext
 import json
 import csv
+import math
 import os
 from pathlib import Path
 import re
@@ -31,12 +32,55 @@ MOUNTING_HOLE_D = 3.2
 PRINTER_X = 280
 PRINTER_Y = 260
 
+INF = math.inf
+
+
+class KeyInfo:
+    # Logical position, based on key units
+    l_x: Decimal = Decimal(0)
+    l_y: Decimal = Decimal(0)
+
+    # Absolute position
+    key_x: Decimal = Decimal(0)
+    key_y: Decimal = Decimal(0)
+    w: Decimal = Decimal(0)
+    h: Decimal = Decimal(0)
+    designator: str = ""
+    label: str = ""
+    skip = True
+    diode_x: Decimal = Decimal(0)
+    diode_y: Decimal = Decimal(0)
+    hole_x: Decimal = Decimal(0)
+    hole_y: Decimal = Decimal(0)
+    bounding_box: BoundingBox | None = None
+
+    def __init__(self):
+        getcontext().prec = 8
+
+        self.bbox = BoundingBox()
+
+    def __repr__(self):
+        l = []
+
+        l.append("label: " + str(self.label))
+        l.append("designator: " + str(self.designator))
+        l.append("x: " + str(self.key_x))
+        l.append("y: " + str(self.key_y))
+        l.append("w: " + str(self.w))
+        l.append("h: " + str(self.h))
+
+        l.append("l_x: " + str(self.l_x))
+        l.append("l_y: " + str(self.l_y))
+
+        return "{ " + ", ".join(l) + " }"
+
 
 @dataclass
 class RunWrappedOptions:
     pcb: SexpType
     schematic: SexpType
     tool: KicadTool
+    keys: List[KeyInfo]
 
 
 RunWrappedType = Callable[[RunWrappedOptions], None]
@@ -69,48 +113,6 @@ class ProcessConfiguration:
     diode_offset_y = (
         Decimal(UNIT / 8) + 2
     )  # A little breathing room for the support screws
-
-
-class KeyInfo:
-    # Logical position, based on key units
-    l_x: Decimal = Decimal(0)
-    l_y: Decimal = Decimal(0)
-
-    # Absolute position
-    key_x: Decimal = Decimal(0)
-    key_y: Decimal = Decimal(0)
-    w: Decimal = Decimal(0)
-    h: Decimal = Decimal(0)
-    designator: str = ""
-    label: str = ""
-    skip = True
-    diode_x: Decimal = Decimal(0)
-    diode_y: Decimal = Decimal(0)
-    hole_x: Decimal = Decimal(0)
-    hole_y: Decimal = Decimal(0)
-    bounding_box: BoundingBox | None = None
-
-    def __init__(self):
-        getcontext().prec = 8
-
-        self.bbox = BoundingBox(
-            Decimal("inf"), Decimal("inf"), Decimal("-inf"), Decimal("-inf")
-        )
-
-    def __repr__(self):
-        l = []
-
-        l.append("label: " + str(self.label))
-        l.append("designator: " + str(self.designator))
-        l.append("x: " + str(self.key_x))
-        l.append("y: " + str(self.key_y))
-        l.append("w: " + str(self.w))
-        l.append("h: " + str(self.h))
-
-        l.append("l_x: " + str(self.l_x))
-        l.append("l_y: " + str(self.l_y))
-
-        return "{ " + ", ".join(l) + " }"
 
 
 class ProcessKeyboard:
@@ -366,7 +368,8 @@ class ProcessKeyboard:
 
         tool = KicadTool()
 
-        options = RunWrappedOptions(pcb, schematic, tool)
+        filtered_list = [obj for obj in self.layout if obj.designator != ""]
+        options = RunWrappedOptions(pcb, schematic, tool, filtered_list)
 
         for func in funcs:
             func(options)
@@ -389,12 +392,11 @@ class ProcessKeyboard:
         schematic = options.schematic
         tool = options.tool
 
-        bbox = BoundingBox(Decimal(-1), Decimal(-1), Decimal(-1), Decimal(-1))
+        bbox = BoundingBox()
 
         zones = tool.find_objects_by_atom(pcb, "zone", 1)
         for zone in zones:
             keepout_flag = tool.find_object_by_atom(zone, "keepout", 1)
-            print(keepout_flag)
             if keepout_flag != None:
                 pcb.remove(zone)
 
@@ -406,14 +408,7 @@ class ProcessKeyboard:
         for shape in shapes:
             pcb.remove(shape)
 
-        for item in self.layout:
-
-            if item.designator == "":
-                print("skipping " + item.label)
-                continue
-            else:
-                print("Searching for " + item.label + " " + item.designator)
-
+        for item in options.keys:
             tool.set_object_location(
                 pcb, "SW" + item.designator, item.key_x, item.key_y, Decimal(0)
             )
@@ -484,35 +479,21 @@ class ProcessKeyboard:
         pcb = options.pcb
         tool = options.tool
 
-        for item in self.layout:
-
-            if item.designator == "":
-                print("skipping " + item.label)
-                continue
-            else:
-                print("Searching for " + item.label + " " + item.designator)
-
+        for item in options.keys:
             diode = tool.find_footprint_by_reference(pcb, "D" + item.designator)
 
     def make_openscad_config_file(self, options: RunWrappedOptions) -> None:
         out = []
 
-        for item in self.layout:
+        for item in options.keys:
+            oo = [
+                str(item.l_x),
+                str(item.l_y),
+                str(item.key_x),
+                str(item.key_y),
+            ]
 
-            if item.designator == "":
-                print("skipping " + item.label)
-                continue
-            else:
-                print("Searching for " + item.label + " " + item.designator)
-
-                oo = [
-                    str(item.l_x),
-                    str(item.l_y),
-                    str(item.key_x),
-                    str(item.key_y),
-                ]
-
-                out.append("KEY_" + item.label + " = [" + ", ".join(oo) + "];")
+            out.append("KEY_" + item.label + " = [" + ", ".join(oo) + "];")
 
         outtxt = "\r\n".join(out)
 
@@ -530,7 +511,7 @@ class ProcessKeyboard:
         prints = tool.find_objects_by_atom(pcb, "footprint", 1)
         for p in prints:
 
-            o = tool.find_objects_by_atom(p, "fp_text", float("inf"))
+            o = tool.find_objects_by_atom(p, "fp_text", INF)
             filtered = filter(
                 lambda fp: (isinstance(fp[2], str) and fp[1] == "reference")
                 and (fp[2].startswith('"D')),
@@ -610,12 +591,7 @@ class ProcessKeyboard:
         pcb = options.pcb
         tool = options.tool
 
-        for item in self.layout:
-            if item.designator == "":
-                print("skipping " + item.label)
-                continue
-            else:
-                print("Searching for " + item.label + " " + item.designator)
+        for item in options.keys:
 
             diodeFootprint = tool.find_footprint_by_reference(
                 pcb, "D" + item.designator
@@ -656,18 +632,9 @@ class ProcessKeyboard:
         standoffLocations: List[List[Decimal]] = []
         bboxes: list[str] = []
 
-        bbox = BoundingBox(Decimal(-1), Decimal(-1), Decimal(-1), Decimal(-1))
+        bbox = BoundingBox()
 
-        for _item in self.layout:
-
-            item: KeyInfo = _item
-
-            if item.designator == "":
-                print("skipping " + item.label)
-                continue
-            else:
-                print("Searching for " + item.label + " " + item.designator)
-
+        for item in options.keys:
             switch = tool.find_footprint_by_reference(pcb, "SW" + item.designator)
 
             item.bounding_box = tool.get_bounding_box_of_layer_lines(

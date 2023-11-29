@@ -2,7 +2,7 @@ from decimal import Decimal
 from enum import Enum
 import copy
 import math
-from typing import Dict, List, cast
+from typing import Dict, List, Optional, cast
 from attr import dataclass
 from ki_symbols import KiSymbols, PinPosition, Wire
 from sexptype import SexpListType, SexpType, SexpTypeValue, makeDecimal, makeString
@@ -49,13 +49,12 @@ class Layer(str, Enum):
 class BoundingBox:
     def __init__(
         self,
-        x1: Decimal = Decimal(-1),
-        y1: Decimal = Decimal(-1),
-        x2: Decimal = Decimal(-1),
-        y2: Decimal = Decimal(-1),
+        x1: Optional[Decimal] = None,
+        y1: Optional[Decimal] = None,
+        x2: Optional[Decimal] = None,
+        y2: Optional[Decimal] = None,
     ):
-
-        if x1 == -1:
+        if x1 is None or y1 is None or x2 is None or y2 is None:
             self.x1 = Decimal("inf")
             self.y1 = Decimal("inf")
             self.x2 = Decimal("-inf")
@@ -102,7 +101,7 @@ class KicadTool:
     #     pass
 
     def find_objects_by_atom(
-        self, root: SexpType, atom: str, maxDepth=float("inf")
+        self, root: SexpType, atom: str, maxDepth=INF
     ) -> SexpListType:
         def _find_objects_by_atom_inner(
             array, atom, maxDepth, depth, out: SexpListType
@@ -120,9 +119,7 @@ class KicadTool:
 
         return _find_objects_by_atom_inner([root], atom, maxDepth, 0, [])
 
-    def find_object_by_atom(
-        self, root: SexpType, atom: str, maxDepth=float("inf")
-    ) -> SexpType:
+    def find_object_by_atom(self, root: SexpType, atom: str, maxDepth=INF) -> SexpType:
         objs = self.find_objects_by_atom(root, atom, maxDepth)
         if len(objs) > 1:
             raise Exception(f"Found too many {atom}")
@@ -357,22 +354,22 @@ class KicadTool:
     ) -> BoundingBox:
         lines = []
 
-        g_lines = self.find_objects_by_atom(root, "fp_line", float("inf"))
+        g_lines = self.find_objects_by_atom(root, "fp_line", INF)
         at = self.find_objects_by_atom(root, "at", 1)
 
         origin_x = makeDecimal(at[0][1])
         origin_y = makeDecimal(at[0][2])
 
         for g_line in g_lines:
-            layers = self.find_objects_by_atom(g_line, "layer", float("inf"))
+            layers = self.find_objects_by_atom(g_line, "layer", INF)
             for layer in layers:
                 if layer[1] == layerName:
                     lines.append(g_line)
 
-        box = BoundingBox(Decimal(-1), Decimal(-1), Decimal(-1), Decimal(-1))
+        box = BoundingBox()
         for line in lines:
-            start = self.find_object_by_atom(line, "start", float("inf"))
-            end = self.find_object_by_atom(line, "end", float("inf"))
+            start = self.find_object_by_atom(line, "start", INF)
+            end = self.find_object_by_atom(line, "end", INF)
 
             x1 = makeDecimal(start[1])
             y1 = makeDecimal(start[2])
@@ -594,9 +591,11 @@ class KicadTool:
     def calculate_wire_offset(
         self, wire: Wire, led_x_offset: Decimal, led_y_offset: Decimal
     ) -> tuple[Wire, Wire]:
-        new_wire = Wire(
-            PinPosition(wire.start.x, wire.start.y), PinPosition(wire.end.x, wire.end.y)
-        )
+
+        start_pin = PinPosition(wire.start.x, wire.start.y)
+        end_pin = PinPosition(wire.end.x, wire.end.y)
+        new_wire = Wire(start_pin, end_pin)
+
         connector_wire = Wire(
             PinPosition(wire.start.x, wire.start.y), PinPosition(wire.end.x, wire.end.y)
         )

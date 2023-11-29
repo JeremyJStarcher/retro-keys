@@ -148,11 +148,11 @@ class TestKiCadTools(unittest.TestCase):
         pcb_tool = KicadTool()
 
         parent = pcb_tool.find_footprint_by_reference(pcb, "SW266")
-        startatoms = pcb_tool.find_objects_by_atom(parent, "model", float("inf"))
+        startatoms = pcb_tool.find_objects_by_atom(parent, "model", math.inf)
         self.assertGreater(len(startatoms), 0)
 
         pcb_tool.remove_atoms(parent, "model")
-        afteratoms = pcb_tool.find_objects_by_atom(parent, "model", float("inf"))
+        afteratoms = pcb_tool.find_objects_by_atom(parent, "model", math.inf)
         self.assertEqual(len(afteratoms), 0)
 
     def test_get_get_all_symbol_value_references(self):

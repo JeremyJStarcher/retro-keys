@@ -1,10 +1,11 @@
+from dataclasses import dataclass
 from decimal import Decimal, getcontext
 import json
 import csv
 import os
 from pathlib import Path
 import re
-from typing import List
+from typing import Callable, List
 from common_key_format import CommonKeyData
 from ki_symbols import KiSymbols
 from kicad_parser import KiCadParser
@@ -31,6 +32,16 @@ PRINTER_X = 280
 PRINTER_Y = 260
 
 
+@dataclass
+class RunWrappedOptions:
+    pcb: SexpType
+    schematic: SexpType
+    tool: KicadTool
+
+
+RunWrappedType = Callable[[RunWrappedOptions], None]
+
+
 class ProcessConfiguration:
     # These paths are relative to the 'py' directory
     kle_layout_filename: Path
@@ -55,7 +66,9 @@ class ProcessConfiguration:
 
     # How much to move the diodes
     diode_offset_x = Decimal(UNIT / 2)
-    diode_offset_y = Decimal(UNIT / 8) +2 # A little breathing room for the support screws
+    diode_offset_y = (
+        Decimal(UNIT / 8) + 2
+    )  # A little breathing room for the support screws
 
 
 class KeyInfo:
@@ -232,7 +245,7 @@ class ProcessKeyboard:
             keyInfo.key_y = y + hh / 2
 
             keyInfo.diode_x = keyInfo.key_x + self.config.diode_offset_x
-            keyInfo.diode_x = keyInfo.key_x + keyInfo.w * self.config.UNIT /2
+            keyInfo.diode_x = keyInfo.key_x + keyInfo.w * self.config.UNIT / 2
 
             keyInfo.diode_y = keyInfo.key_y + self.config.diode_offset_y
 
@@ -254,11 +267,9 @@ class ProcessKeyboard:
         self.set_designators(keys)
         return keys
 
-    def add_schematic_lib_symbols(self) -> None:
-        key_sch_sexp = self.read_sexp(self.config.keyboard_sch_sheet_filename_name)
-        key_parser = KiCadParser(key_sch_sexp)
-        schematic = key_parser.to_list()
-        tool = KicadTool()
+    def add_schematic_lib_symbols(self, options: RunWrappedOptions) -> None:
+        schematic = options.schematic
+        tool = options.tool
 
         # print(schematic)
         # key_parser.print_list(schematic, 0)
@@ -279,19 +290,9 @@ class ProcessKeyboard:
             if symbol[1] in new_names:
                 schematic_lib_symbols.append(symbol)
 
-        l = key_parser.list_to_sexp(schematic)
-        out = "\r\n".join(l)
-
-        with open(self.config.keyboard_sch_sheet_filename_name, "w") as f:
-            f.write(out)
-
-    def add_keyswitches_to_schematic(self) -> None:
-        key_sch_sexp = self.read_sexp(self.config.keyboard_sch_sheet_filename_name)
-        key_parser = KiCadParser(key_sch_sexp)
-
-        key_schematic = key_parser.to_list()
-
-        tool = KicadTool()
+    def add_keyswitches_to_schematic(self, options: RunWrappedOptions) -> None:
+        key_schematic = options.schematic
+        tool = options.tool
 
         matrix: list[list[int]] = []
 
@@ -353,16 +354,8 @@ class ProcessKeyboard:
 
         tool.add_wires_to_schematic(key_schematic, matrix)
 
-        key_list = key_parser.list_to_sexp(key_schematic)
-        key_out = "\r\n".join(key_list)
-
-        with open(self.config.keyboard_sch_sheet_filename_name, "w") as f:
-            f.write(key_out)
-
-    def relocate_parts_and_draw_silkscreen(self) -> None:
-
-        # jjz
-
+    def run_wrapped(self, funcs: list[RunWrappedType]):
+        # Prepare and load data
         pcb_sexp = self.read_sexp(self.config.pcb_filename)
         pcb_parser = KiCadParser(pcb_sexp)
         pcb = pcb_parser.to_list()
@@ -372,6 +365,29 @@ class ProcessKeyboard:
         schematic = key_parser.to_list()
 
         tool = KicadTool()
+
+        options = RunWrappedOptions(pcb, schematic, tool)
+
+        for func in funcs:
+            func(options)
+
+        ## Save data
+        pcb_list = pcb_parser.list_to_sexp(pcb)
+        out = "\r\n".join(pcb_list)
+
+        with open(self.config.pcb_filename, "w") as f:
+            f.write(out)
+
+        key_list = key_parser.list_to_sexp(schematic)
+        key_out = "\r\n".join(key_list)
+
+        with open(self.config.keyboard_sch_sheet_filename_name, "w") as f:
+            f.write(key_out)
+
+    def relocate_parts_and_draw_silkscreen(self, options: RunWrappedOptions) -> None:
+        pcb = options.pcb
+        schematic = options.schematic
+        tool = options.tool
 
         bbox = BoundingBox(Decimal(-1), Decimal(-1), Decimal(-1), Decimal(-1))
 
@@ -445,12 +461,6 @@ class ProcessKeyboard:
         tool.set_object_location(pcb, "H103", bbox.x2, bbox.y1, Decimal(0))
         tool.set_object_location(pcb, "H104", bbox.x2, bbox.y2, Decimal(0))
 
-        l = pcb_parser.list_to_sexp(pcb)
-        out = "\r\n".join(l)
-
-        with open(self.config.pcb_filename, "w") as f:
-            f.write(out)
-
     def get_standoff_location(
         self, schematic: SexpType, tool: KicadTool, item: KeyInfo
     ) -> tuple[Decimal, Decimal]:
@@ -470,13 +480,9 @@ class ProcessKeyboard:
 
         return hx, hy
 
-    def calc_pick_n_place(self) -> None:
-
-        pcb_sexp = self.read_sexp(self.config.pcb_filename)
-        pcb_parser = KiCadParser(pcb_sexp)
-        pcb = pcb_parser.to_list()
-
-        tool = KicadTool()
+    def calc_pick_n_place(self, options: RunWrappedOptions) -> None:
+        pcb = options.pcb
+        tool = options.tool
 
         for item in self.layout:
 
@@ -488,7 +494,7 @@ class ProcessKeyboard:
 
             diode = tool.find_footprint_by_reference(pcb, "D" + item.designator)
 
-    def make_openscad_config_file(self) -> None:
+    def make_openscad_config_file(self, options: RunWrappedOptions) -> None:
         out = []
 
         for item in self.layout:
@@ -513,15 +519,12 @@ class ProcessKeyboard:
         with open(self.config.openscad_position_filename, "w") as f:
             f.write(outtxt)
 
-    def make_jlc_pcb_assembly_files(self) -> None:
+    def make_jlc_pcb_assembly_files(self, options: RunWrappedOptions) -> None:
         def q(s):
             return str(s)
 
-        pcb_sexp = self.read_sexp(self.config.pcb_filename)
-        pcb_parser = KiCadParser(pcb_sexp)
-        pcb = pcb_parser.to_list()
-
-        tool = KicadTool()
+        pcb = options.pcb
+        tool = options.tool
 
         diodesRefs = []
         prints = tool.find_objects_by_atom(pcb, "footprint", 1)
@@ -603,13 +606,9 @@ class ProcessKeyboard:
             # write the data
             writer.writerows(cpl_rows)
 
-    def add_3d_models_to_pcb(self) -> None:
-
-        pcb_sexp = self.read_sexp(self.config.pcb_filename)
-        pcb_parser = KiCadParser(pcb_sexp)
-        pcb = pcb_parser.to_list()
-
-        tool = KicadTool()
+    def add_3d_models_to_pcb(self, options: RunWrappedOptions) -> None:
+        pcb = options.pcb
+        tool = options.tool
 
         for item in self.layout:
             if item.designator == "":
@@ -636,13 +635,7 @@ class ProcessKeyboard:
             url = f"{self.config.kicad_keycap_vrml_path_str}/key_{item.label.lower()}_legend.wrl"
             tool.add_keycap_model(switchFootprint, url)
 
-        l = pcb_parser.list_to_sexp(pcb)
-        out = "\r\n".join(l)
-
-        with open(self.config.pcb_filename, "w") as f:
-            f.write(out)
-
-    def generate_openscad_case_file(self) -> None:
+    def generate_openscad_case_file(self, options: RunWrappedOptions) -> None:
         def bboxToPolygon(bbox: BoundingBox) -> str:
             s = f" polygon(points=[ \
                 [{bbox.x1},{bbox.y1}],\
@@ -655,15 +648,9 @@ class ProcessKeyboard:
         def bbox_to_openscad_src(label: str, bbox: BoundingBox) -> str:
             return "[" + f'"{label}", {bbox.x1}, {bbox.y1}, {bbox.x2}, {bbox.y2}' + "]"
 
-        pcb_sexp = self.read_sexp(self.config.pcb_filename)
-        pcb_parser = KiCadParser(pcb_sexp)
-        pcb = pcb_parser.to_list()
-
-        key_sch_sexp = self.read_sexp(self.config.keyboard_sch_sheet_filename_name)
-        key_parser = KiCadParser(key_sch_sexp)
-        schematic = key_parser.to_list()
-
-        tool = KicadTool()
+        pcb = options.pcb
+        schematic = options.schematic
+        tool = options.tool
 
         code: list[str] = []
         standoffLocations: List[List[Decimal]] = []

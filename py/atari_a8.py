@@ -30,12 +30,20 @@ if __name__ == "__main__":
 
     process = ProcessKeyboard(config)
 
-    # process.add_schematic_lib_symbols()
-    # process.add_keyswitches_to_schematic()
+    process.run_wrapped(
+        [
+            process.add_schematic_lib_symbols,
+            process.add_keyswitches_to_schematic,
+        ]
+    )
 
-    process.relocate_parts_and_draw_silkscreen()
-    # process.calc_pick_n_place()
-    # process.make_openscad_config_file()
-    # process.make_jlc_pcb_assembly_files()
-    process.add_3d_models_to_pcb()
-    # process.generate_openscad_case_file()
+    process.run_wrapped(
+        [
+            process.relocate_parts_and_draw_silkscreen,
+            process.calc_pick_n_place,
+            process.make_openscad_config_file,
+            process.make_jlc_pcb_assembly_files,
+            process.add_3d_models_to_pcb,
+            process.generate_openscad_case_file,
+        ]
+    )

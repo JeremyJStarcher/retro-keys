@@ -1,10 +1,10 @@
 from decimal import Decimal
 import math
 import unittest
-from kicad_tools import KicadTool
+from kicad_tools import KicadTool, QueryRecursionLevel
 from kicad_tools import Layer
 from kicad_parser import KiCadParser
-from sexptype import SexpType, makeDecimal
+from sexptype import SexpType, SexpTypeValue, makeDecimal
 from tests.test_filepaths import SAMPLE_KEYBOARD_SCH_FILENAME, SAMPLE_PCB_FILENAME
 
 
@@ -34,7 +34,7 @@ class TestKiCadTools(unittest.TestCase):
         pcb = self.read_pcb_file()
         pcb_tool = KicadTool()
 
-        l = pcb_tool.find_objects_by_foo(pcb, ["kicad_pcb"], 0)
+        l = pcb_tool.find_objects_by_foo(pcb, ["kicad_pcb"], QueryRecursionLevel.HERE)
         self.assertEqual(len(l), 1)
         self.assertIsInstance(l, list)
 
@@ -45,7 +45,9 @@ class TestKiCadTools(unittest.TestCase):
         ref = "SW201"
 
         l = pcb_tool.find_objects_by_foo(
-            pcb, ["footprint", ["fp_text", "reference", '"' + ref + '"']]
+            pcb,
+            ["footprint", ["fp_text", "reference", '"' + ref + '"']],
+            QueryRecursionLevel.HERE,
         )
         self.assertTrue(l != None)
         self.assertEqual(len(l), 1)
@@ -59,7 +61,9 @@ class TestKiCadTools(unittest.TestCase):
         ref = "SW201"
 
         l = pcb_tool.find_objects_by_foo(
-            pcb, ["footprint", ["fp_text", "reference", '"' + ref + '"', ["at"]]]
+            pcb,
+            ["footprint", ["fp_text", "reference", '"' + ref + '"', ["at"]]],
+            QueryRecursionLevel.HERE,
         )
         self.assertTrue(l != None)
         self.assertEqual(len(l), 1)
@@ -75,6 +79,7 @@ class TestKiCadTools(unittest.TestCase):
         l = pcb_tool.find_objects_by_foo(
             pcb,
             ["footprint", ["fp_text", "reference", '"' + ref + '"', ["at", "-2.54"]]],
+            QueryRecursionLevel.HERE,
         )
         self.assertTrue(l != None)
         self.assertEqual(len(l), 1)
@@ -90,30 +95,38 @@ class TestKiCadTools(unittest.TestCase):
         l = pcb_tool.find_objects_by_foo(
             pcb,
             ["footprint", ["fp_text", "reference", '"' + ref + '"', ["at", "INVALID"]]],
+            QueryRecursionLevel.HERE,
         )
         self.assertTrue(l != None)
         self.assertEqual(len(l), 0)
 
-    def test_find_object_by_fooDepth1(self):
+    def test_find_objects_by_fooDepth1(self) -> None:
         pcb = self.read_pcb_file()
         pcb_tool = KicadTool()
 
-        l = pcb_tool.find_objects_by_foo(pcb, ["version", "20211014"], 5)
-        self.assertEqual(len(l), 1)
+        query: SexpTypeValue = ["version", "20211014"]
+
+        l = pcb_tool.find_objects_by_foo(pcb, query, QueryRecursionLevel.DEEP)
         self.assertIsInstance(l, list)
+        self.assertEqual(len(l), 1)
+        self.assertIsInstance(l[0], list)
+        self.assertEqual(len(l[0]), 2)
+
+        self.assertEqual(l[0][0], query[0])
+        self.assertEqual(l[0][1], query[1])
 
     def test_find_object_by_fooByLevel1Depth0(self):
         pcb = self.read_pcb_file()
         pcb_tool = KicadTool()
 
-        l = pcb_tool.find_objects_by_atom(pcb, "level1-test", 0)
+        l = pcb_tool.find_objects_by_atom(pcb, "level1-test", QueryRecursionLevel.HERE)
         self.assertEqual(len(l), 0)
 
     def test_find_objects_by_atomByRootDepth0(self):
         pcb = self.read_pcb_file()
         pcb_tool = KicadTool()
 
-        l = pcb_tool.find_objects_by_atom(pcb, "kicad_pcb", 0)
+        l = pcb_tool.find_objects_by_atom(pcb, "kicad_pcb", QueryRecursionLevel.HERE)
         self.assertEqual(len(l), 1)
         self.assertEqual(l[0][0], "kicad_pcb")
 
@@ -121,21 +134,21 @@ class TestKiCadTools(unittest.TestCase):
         pcb = self.read_pcb_file()
         pcb_tool = KicadTool()
 
-        l = pcb_tool.find_objects_by_atom(pcb, "level1-test", 0)
+        l = pcb_tool.find_objects_by_atom(pcb, "level1-test", QueryRecursionLevel.HERE)
         self.assertEqual(len(l), 0)
 
     def test_find_objects_by_atomByLevel1Depth1(self):
         pcb = self.read_pcb_file()
         pcb_tool = KicadTool()
 
-        l = pcb_tool.find_objects_by_atom(pcb, "kicad_pcb", 1)
+        l = pcb_tool.find_objects_by_atom(pcb, "kicad_pcb", QueryRecursionLevel.HERE)
         self.assertEqual(len(l), 1)
 
     def test_find_object_by_atomByLevel1Depth1(self):
         pcb = self.read_pcb_file()
         pcb_tool = KicadTool()
 
-        l = pcb_tool.find_object_by_atom(pcb, "kicad_pcb", 1)
+        l = pcb_tool.find_object_by_atom(pcb, "kicad_pcb", QueryRecursionLevel.HERE)
         self.assertGreater(len(l), 1)
 
     def test_findFootprintByGoodReference(self):
@@ -227,11 +240,15 @@ class TestKiCadTools(unittest.TestCase):
         pcb_tool = KicadTool()
 
         parent = pcb_tool.find_footprint_by_reference(pcb, "SW266")
-        startatoms = pcb_tool.find_objects_by_atom(parent, "model", math.inf)
+        startatoms = pcb_tool.find_objects_by_atom(
+            parent, "model", QueryRecursionLevel.DEEP
+        )
         self.assertGreater(len(startatoms), 0)
 
         pcb_tool.remove_atoms(parent, "model")
-        afteratoms = pcb_tool.find_objects_by_atom(parent, "model", math.inf)
+        afteratoms = pcb_tool.find_objects_by_atom(
+            parent, "model", QueryRecursionLevel.DEEP
+        )
         self.assertEqual(len(afteratoms), 0)
 
     def test_get_get_all_symbol_value_references(self):
@@ -255,7 +272,9 @@ class TestKiCadTools(unittest.TestCase):
             fudge = Decimal(100)
             sch_tool.move_recursive(parent, offset_x, offset_y, 0)
 
-            all_at = sch_tool.find_objects_by_atom(parent, "at", math.inf)
+            all_at = sch_tool.find_objects_by_atom(
+                parent, "at", QueryRecursionLevel.DEEP
+            )
 
             for at in all_at:
                 x1 = makeDecimal(at[1])

@@ -10,7 +10,7 @@ from typing import Callable, List
 from common_key_format import CommonKeyData
 from ki_symbols import KiSymbols
 from kicad_parser import KiCadParser
-from kicad_tools import KicadTool
+from kicad_tools import KicadTool, QueryRecursionLevel
 from kicad_tools import Layer
 from kicad_tools import BoundingBox
 from kle_tools import KleTools
@@ -31,8 +31,6 @@ MOUNTING_HOLE_D = 3.2
 
 PRINTER_X = 280
 PRINTER_Y = 260
-
-INF = math.inf
 
 
 class KeyInfo:
@@ -276,14 +274,18 @@ class ProcessKeyboard:
         # print(schematic)
         # key_parser.print_list(schematic, 0)
 
-        schematic_lib_symbols = tool.find_object_by_atom(schematic, "lib_symbols")
+        schematic_lib_symbols = tool.find_object_by_atom(
+            schematic, "lib_symbols", QueryRecursionLevel.HERE
+        )
         schematic_symbols = tool.find_objects_by_atom(
-            schematic_lib_symbols, "symbol", 1
+            schematic_lib_symbols, "symbol", QueryRecursionLevel.HERE
         )
         scematic_existing_names = [x[1] for x in schematic_symbols]
 
         load_lib_symbols = KiSymbols.get_lib_symbols()
-        load_symbols = tool.find_objects_by_atom(load_lib_symbols, "symbol", 1)
+        load_symbols = tool.find_objects_by_atom(
+            load_lib_symbols, "symbol", QueryRecursionLevel.HERE
+        )
         load_incoming_names = [x[1] for x in load_symbols]
 
         new_names = list(set(load_incoming_names).difference(scematic_existing_names))
@@ -394,17 +396,19 @@ class ProcessKeyboard:
 
         bbox = BoundingBox()
 
-        zones = tool.find_objects_by_atom(pcb, "zone", 1)
+        zones = tool.find_objects_by_atom(pcb, "zone", QueryRecursionLevel.HERE)
         for zone in zones:
-            keepout_flag = tool.find_object_by_atom(zone, "keepout", 1)
+            keepout_flag = tool.find_object_by_atom(
+                zone, "keepout", QueryRecursionLevel.HERE
+            )
             if keepout_flag != None:
                 pcb.remove(zone)
 
-        shapes = tool.find_objects_by_atom(pcb, "gr_circle", 1)
+        shapes = tool.find_objects_by_atom(pcb, "gr_circle", QueryRecursionLevel.HERE)
         for shape in shapes:
             pcb.remove(shape)
 
-        shapes = tool.find_objects_by_atom(pcb, "gr_rect", 1)
+        shapes = tool.find_objects_by_atom(pcb, "gr_rect", QueryRecursionLevel.HERE)
         for shape in shapes:
             pcb.remove(shape)
 
@@ -509,10 +513,10 @@ class ProcessKeyboard:
         tool = options.tool
 
         diodesRefs = []
-        prints = tool.find_objects_by_atom(pcb, "footprint", 1)
+        prints = tool.find_objects_by_atom(pcb, "footprint", QueryRecursionLevel.HERE)
         for p in prints:
 
-            o = tool.find_objects_by_atom(p, "fp_text", INF)
+            o = tool.find_objects_by_atom(p, "fp_text", QueryRecursionLevel.DEEP)
             filtered = filter(
                 lambda fp: (isinstance(fp[2], str) and fp[1] == "reference")
                 and (fp[2].startswith('"D')),

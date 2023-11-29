@@ -1,13 +1,11 @@
 from decimal import Decimal
-from enum import Enum
+from enum import Enum, IntEnum
 import copy
 import math
 from typing import Dict, List, Optional, cast
 from attr import dataclass
 from ki_symbols import KiSymbols, PinPosition, Wire
 from sexptype import SexpListType, SexpType, SexpTypeValue, makeDecimal, makeString
-
-INF = math.inf
 
 
 @dataclass
@@ -95,13 +93,14 @@ def q_string(s: str) -> str:
     return '"' + s + '"'
 
 
+class QueryRecursionLevel(IntEnum):
+    HERE = 0
+    DEEP = 1
+
+
 class KicadTool:
-
-    # def __init__():
-    #     pass
-
     def find_objects_by_foo(
-        self, root: SexpType, query: SexpTypeValue, maxDepth=INF
+        self, root: SexpType, query: SexpTypeValue, recursionLevel: QueryRecursionLevel
     ) -> SexpListType:
         def _find_objects_by_atom_inner(
             local_root: SexpType,
@@ -136,7 +135,9 @@ class KicadTool:
                         s = str(top)
 
                         if isinstance(top, list):
-                            res = self.find_objects_by_foo(top, bit, 1)
+                            res = self.find_objects_by_foo(
+                                top, bit, QueryRecursionLevel.HERE
+                            )
                             if len(res) == 0:
                                 match = False
 
@@ -148,16 +149,20 @@ class KicadTool:
             return out
 
         out: SexpListType = []
+        maxDepth = 1 if recursionLevel == QueryRecursionLevel.HERE else math.inf
+
         _find_objects_by_atom_inner([root], query, maxDepth, 0, out)
         return out
 
     def find_objects_by_atom(
-        self, root: SexpType, atom: str, maxDepth=INF
+        self, root: SexpType, atom: str, recursionLevel: QueryRecursionLevel
     ) -> SexpListType:
-        return self.find_objects_by_foo(root, [atom], maxDepth)
+        return self.find_objects_by_foo(root, [atom], recursionLevel)
 
-    def find_object_by_atom(self, root: SexpType, atom: str, maxDepth=INF) -> SexpType:
-        objs = self.find_objects_by_atom(root, atom, maxDepth)
+    def find_object_by_atom(
+        self, root: SexpType, atom: str, recursionLevel: QueryRecursionLevel
+    ) -> SexpType:
+        objs = self.find_objects_by_atom(root, atom, recursionLevel)
         if len(objs) > 1:
             raise Exception(f"Found too many {atom}")
         if len(objs) == 0:
@@ -166,7 +171,9 @@ class KicadTool:
 
     def find_footprint_by_reference(self, root: SexpType, ref: str) -> SexpType:
         l = self.find_objects_by_foo(
-            root, ["footprint", ["fp_text", "reference", '"' + ref + '"']], 1
+            root,
+            ["footprint", ["fp_text", "reference", '"' + ref + '"']],
+            QueryRecursionLevel.HERE,
         )
         if isinstance(l, list) and len(l) > 0:
             return l[0]
@@ -177,7 +184,7 @@ class KicadTool:
 
         assert p is not None
 
-        o = self.find_objects_by_atom(p, "fp_text", INF)
+        o = self.find_objects_by_atom(p, "fp_text", QueryRecursionLevel.DEEP)
         filtered = filter(lambda fp: (fp[1] == type), o)
         obj = list(filtered)[0]
         return obj
@@ -199,7 +206,7 @@ class KicadTool:
     ) -> None:
         obj = self._get_text_obj_by_type(root, ref, type)
 
-        o = self.find_objects_by_atom(obj, "layer", INF)
+        o = self.find_objects_by_atom(obj, "layer", QueryRecursionLevel.DEEP)
 
         lst = list(o)
         lst[0][1] = layer
@@ -211,13 +218,15 @@ class KicadTool:
         obj = self._get_text_obj_by_type(root, ref, type)
         nn = copy.deepcopy(obj)
 
-        layerObject = self.find_objects_by_atom(nn, "layer", INF)
+        layerObject = self.find_objects_by_atom(nn, "layer", QueryRecursionLevel.DEEP)
 
         lst = list(layerObject)
         lst[0][1] = Layer.B_Silkscreen
         nn[1] = "user"
 
-        effectsObject = self.find_objects_by_atom(nn, "effects", INF)
+        effectsObject = self.find_objects_by_atom(
+            nn, "effects", QueryRecursionLevel.DEEP
+        )
 
         effectsList = list(effectsObject)
         effectsList[0].append(["justify", "mirror"])
@@ -227,10 +236,12 @@ class KicadTool:
     def get_all_symbol_value_references(self, root: SexpType) -> Dict[str, List[str]]:
         ret: Dict[str, List[str]] = dict()
 
-        symbols = self.find_objects_by_atom(root, "symbol", 1)
+        symbols = self.find_objects_by_atom(root, "symbol", QueryRecursionLevel.HERE)
 
         for symbol in symbols:
-            properties = self.find_objects_by_atom(symbol, "property", 1)
+            properties = self.find_objects_by_atom(
+                symbol, "property", QueryRecursionLevel.HERE
+            )
 
             value_property = next(
                 filter(lambda fp: (fp[1] == q_string("Value")), properties), "None"
@@ -255,10 +266,12 @@ class KicadTool:
     def find_symbol_by_reference(
         self, root: SexpType, ref: str, unit="1"
     ) -> SexpType | None:
-        symbols = self.find_objects_by_atom(root, "symbol", 1)
+        symbols = self.find_objects_by_atom(root, "symbol", QueryRecursionLevel.HERE)
 
         for symbol in symbols:
-            unit_objects = self.find_objects_by_atom(symbol, "property", INF)
+            unit_objects = self.find_objects_by_atom(
+                symbol, "property", QueryRecursionLevel.DEEP
+            )
 
             property_filtered = filter(
                 lambda fp: (fp[1] == q_string("Reference"))
@@ -266,7 +279,9 @@ class KicadTool:
                 unit_objects,
             )
 
-            unit_objects = self.find_objects_by_atom(symbol, "unit", INF)
+            unit_objects = self.find_objects_by_atom(
+                symbol, "unit", QueryRecursionLevel.DEEP
+            )
 
             is_unit_right = True
 
@@ -285,7 +300,7 @@ class KicadTool:
     ) -> SexpTypeValue:
         symbol = cast(list, self.find_symbol_by_reference(root, ref))
 
-        o = self.find_objects_by_atom(symbol, "property", INF)
+        o = self.find_objects_by_atom(symbol, "property", QueryRecursionLevel.DEEP)
 
         filtered = filter(lambda fp: (fp[1] == q_string(prop)), o)
         lst = list(filtered)
@@ -305,7 +320,7 @@ class KicadTool:
         footprint = self.find_footprint_by_reference(root, ref)
         assert footprint is not None
 
-        o = self.find_object_by_atom(footprint, "at", 1)
+        o = self.find_object_by_atom(footprint, "at", QueryRecursionLevel.HERE)
 
         # There are optional parameters.
         # Its harmless to fill them in and makes other code
@@ -333,7 +348,7 @@ class KicadTool:
             cat[3] = str(makeDecimal(cat[3]) - current_rot)
             self.set_object_location(root, ref, x, y, -current_rot)
 
-        all_ats = self.find_objects_by_atom(footprint, "at", INF)
+        all_ats = self.find_objects_by_atom(footprint, "at", QueryRecursionLevel.HERE)
         for at1 in all_ats:
             while len(at1) < 4:
                 at1.append("0")  # If there isn't a rotation, add it.
@@ -384,22 +399,24 @@ class KicadTool:
     ) -> BoundingBox:
         lines = []
 
-        g_lines = self.find_objects_by_atom(root, "fp_line", INF)
-        at = self.find_objects_by_atom(root, "at", 1)
+        g_lines = self.find_objects_by_atom(root, "fp_line", QueryRecursionLevel.DEEP)
+        at = self.find_objects_by_atom(root, "at", QueryRecursionLevel.HERE)
 
         origin_x = makeDecimal(at[0][1])
         origin_y = makeDecimal(at[0][2])
 
         for g_line in g_lines:
-            layers = self.find_objects_by_atom(g_line, "layer", INF)
+            layers = self.find_objects_by_atom(
+                g_line, "layer", QueryRecursionLevel.DEEP
+            )
             for layer in layers:
                 if layer[1] == layerName:
                     lines.append(g_line)
 
         box = BoundingBox()
         for line in lines:
-            start = self.find_object_by_atom(line, "start", INF)
-            end = self.find_object_by_atom(line, "end", INF)
+            start = self.find_object_by_atom(line, "start", QueryRecursionLevel.DEEP)
+            end = self.find_object_by_atom(line, "end", QueryRecursionLevel.DEEP)
 
             x1 = makeDecimal(start[1])
             y1 = makeDecimal(start[2])
@@ -432,7 +449,7 @@ class KicadTool:
         root.append(o)
 
     def move_recursive(self, root: SexpType, mx: Decimal, my: Decimal, mr: int) -> None:
-        first_at = self.find_object_by_atom(root, "at", 1)
+        first_at = self.find_object_by_atom(root, "at", QueryRecursionLevel.HERE)
         while len(first_at) < 4:
             first_at.append("0")
 
@@ -440,7 +457,7 @@ class KicadTool:
         at_y = makeDecimal(first_at[2])
         at_r = makeDecimal(first_at[3])
 
-        all_at = self.find_objects_by_atom(root, "at", math.inf)
+        all_at = self.find_objects_by_atom(root, "at", QueryRecursionLevel.DEEP)
         for atm in all_at:
             while len(atm) != 4:
                 atm.append("0")
@@ -452,22 +469,34 @@ class KicadTool:
     def get_relative_pin_position_for_schematic(
         self, schematic_root: SexpType, obj: SexpType, type: str, value: str
     ) -> list[Decimal]:
-        item_lib_id = self.find_object_by_atom(obj, "lib_id")
+        item_lib_id = self.find_object_by_atom(obj, "lib_id", QueryRecursionLevel.HERE)
 
-        lib_symbols = self.find_object_by_atom(schematic_root, "lib_symbols")
-        symbols = self.find_objects_by_atom(lib_symbols, "symbol", 1)
+        lib_symbols = self.find_object_by_atom(
+            schematic_root, "lib_symbols", QueryRecursionLevel.DEEP
+        )
+        symbols = self.find_objects_by_atom(
+            lib_symbols, "symbol", QueryRecursionLevel.HERE
+        )
 
         for symbol in symbols:
             if item_lib_id[1] == symbol[1]:
-                pins = self.find_objects_by_atom(symbol, "pin")
-                symbol_at = self.find_object_by_atom(obj, "at", 1)
+                pins = self.find_objects_by_atom(
+                    symbol, "pin", QueryRecursionLevel.DEEP
+                )
+                symbol_at = self.find_object_by_atom(
+                    obj, "at", QueryRecursionLevel.HERE
+                )
                 symbol_rotation = makeDecimal(symbol_at[3])
 
                 for pin in pins:
-                    match = self.find_object_by_atom(pin, type)
+                    match = self.find_object_by_atom(
+                        pin, type, QueryRecursionLevel.DEEP
+                    )
                     pin_value = match[1]
                     if pin_value == q_string(value):
-                        pin_at = self.find_object_by_atom(pin, "at", 1)
+                        pin_at = self.find_object_by_atom(
+                            pin, "at", QueryRecursionLevel.HERE
+                        )
 
                         dx = makeDecimal(pin_at[1])
                         dy = makeDecimal(pin_at[2])
@@ -543,8 +572,8 @@ class KicadTool:
 
         if part1_sym is not None and part2_sym is not None:
 
-            at1 = self.find_object_by_atom(part1_sym, "at", 1)
-            at2 = self.find_object_by_atom(part2_sym, "at", 1)
+            at1 = self.find_object_by_atom(part1_sym, "at", QueryRecursionLevel.HERE)
+            at2 = self.find_object_by_atom(part2_sym, "at", QueryRecursionLevel.HERE)
 
             pin_offset1 = self.get_relative_pin_position_for_schematic(
                 root, part1_sym, pin_type, pin_type_id
@@ -744,7 +773,7 @@ class KicadTool:
             ],
         ]
 
-        slot = self.find_objects_by_atom(o, "pts", INF)
+        slot = self.find_objects_by_atom(o, "pts", QueryRecursionLevel.DEEP)
 
         pts = points_in_circumference(float(r), 30)
         for point in pts:
@@ -813,7 +842,7 @@ class KicadTool:
 
     def remove_atoms(self, parent: SexpType, atom: str) -> None:
         while True:
-            atoms = self.find_objects_by_atom(parent, atom, 1)
+            atoms = self.find_objects_by_atom(parent, atom, QueryRecursionLevel.HERE)
             if len(atoms) == 0:
                 break
 

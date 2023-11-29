@@ -30,6 +30,85 @@ class TestKiCadTools(unittest.TestCase):
     def test_upper(self):
         self.assertEqual("foo".upper(), "FOO")
 
+    def test_find_object_by_fooDepth0(self):
+        pcb = self.read_pcb_file()
+        pcb_tool = KicadTool()
+
+        l = pcb_tool.find_objects_by_foo(pcb, ["kicad_pcb"], 0)
+        self.assertEqual(len(l), 1)
+        self.assertIsInstance(l, list)
+
+    def test_find_object_by_fooFootprintByGoodReference(self):
+        pcb = self.read_pcb_file()
+        pcb_tool = KicadTool()
+
+        ref = "SW201"
+
+        l = pcb_tool.find_objects_by_foo(
+            pcb, ["footprint", ["fp_text", "reference", '"' + ref + '"']]
+        )
+        self.assertTrue(l != None)
+        self.assertEqual(len(l), 1)
+        self.assertEqual(l[0][0], "footprint")
+        self.assertTrue(ref in str(l))
+
+    def test_find_object_by_fooFootprintByGoodReferenceWithAt(self):
+        pcb = self.read_pcb_file()
+        pcb_tool = KicadTool()
+
+        ref = "SW201"
+
+        l = pcb_tool.find_objects_by_foo(
+            pcb, ["footprint", ["fp_text", "reference", '"' + ref + '"', ["at"]]]
+        )
+        self.assertTrue(l != None)
+        self.assertEqual(len(l), 1)
+        self.assertEqual(l[0][0], "footprint")
+        self.assertTrue(ref in str(l))
+
+    def test_find_object_by_fooFootprintByGoodReferenceWithAtPosition(self):
+        pcb = self.read_pcb_file()
+        pcb_tool = KicadTool()
+
+        ref = "SW201"
+
+        l = pcb_tool.find_objects_by_foo(
+            pcb,
+            ["footprint", ["fp_text", "reference", '"' + ref + '"', ["at", "-2.54"]]],
+        )
+        self.assertTrue(l != None)
+        self.assertEqual(len(l), 1)
+        self.assertEqual(l[0][0], "footprint")
+        self.assertTrue(ref in str(l))
+
+    def test_find_object_by_fooFootprintByBadDeepReference(self):
+        pcb = self.read_pcb_file()
+        pcb_tool = KicadTool()
+
+        ref = "SW201"
+
+        l = pcb_tool.find_objects_by_foo(
+            pcb,
+            ["footprint", ["fp_text", "reference", '"' + ref + '"', ["at", "INVALID"]]],
+        )
+        self.assertTrue(l != None)
+        self.assertEqual(len(l), 0)
+
+    def test_find_object_by_fooDepth1(self):
+        pcb = self.read_pcb_file()
+        pcb_tool = KicadTool()
+
+        l = pcb_tool.find_objects_by_foo(pcb, ["version", "20211014"], 5)
+        self.assertEqual(len(l), 1)
+        self.assertIsInstance(l, list)
+
+    def test_find_object_by_fooByLevel1Depth0(self):
+        pcb = self.read_pcb_file()
+        pcb_tool = KicadTool()
+
+        l = pcb_tool.find_objects_by_atom(pcb, "level1-test", 0)
+        self.assertEqual(len(l), 0)
+
     def test_find_objects_by_atomByRootDepth0(self):
         pcb = self.read_pcb_file()
         pcb_tool = KicadTool()

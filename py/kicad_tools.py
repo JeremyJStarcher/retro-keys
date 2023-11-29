@@ -100,24 +100,61 @@ class KicadTool:
     # def __init__():
     #     pass
 
+    def find_objects_by_foo(
+        self, root: SexpType, query: SexpTypeValue, maxDepth=INF
+    ) -> SexpListType:
+        def _find_objects_by_atom_inner(
+            local_root: SexpType,
+            query: SexpTypeValue,
+            maxDepth,
+            depth,
+            out: SexpListType,
+        ):
+            for top in local_root:
+                if top is None or query is None:
+                    continue
+
+                # If it is too small, no way it can match
+                if len(top) < len(query):
+                    continue
+
+                match = True
+
+                for i in range(len(query)):
+                    bit = query[i]
+                    local_bit = top
+
+                    if isinstance(bit, str) and isinstance(local_bit, str):
+                        if local_bit != bit:
+                            match = False
+
+                    if isinstance(bit, str) and isinstance(local_bit, list):
+                        if bit != local_bit[i]:
+                            match = False
+
+                    if isinstance(bit, list):
+                        s = str(top)
+
+                        if isinstance(top, list):
+                            res = self.find_objects_by_foo(top, bit, 1)
+                            if len(res) == 0:
+                                match = False
+
+                if (match) and isinstance(top, list):
+                    out.append(top)
+
+                if depth < maxDepth and isinstance(top, list):
+                    _find_objects_by_atom_inner(top, query, maxDepth, depth + 1, out)
+            return out
+
+        out: SexpListType = []
+        _find_objects_by_atom_inner([root], query, maxDepth, 0, out)
+        return out
+
     def find_objects_by_atom(
         self, root: SexpType, atom: str, maxDepth=INF
     ) -> SexpListType:
-        def _find_objects_by_atom_inner(
-            array, atom, maxDepth, depth, out: SexpListType
-        ):
-            for e in array:
-                if isinstance(e, list):
-                    if (len(e) > 0) and (e[0] == atom):
-                        out.append(e)
-
-                    if depth < maxDepth:
-                        _find_objects_by_atom_inner(e, atom, maxDepth, depth + 1, out)
-                else:
-                    pass
-            return out
-
-        return _find_objects_by_atom_inner([root], atom, maxDepth, 0, [])
+        return self.find_objects_by_foo(root, [atom], maxDepth)
 
     def find_object_by_atom(self, root: SexpType, atom: str, maxDepth=INF) -> SexpType:
         objs = self.find_objects_by_atom(root, atom, maxDepth)
@@ -128,18 +165,11 @@ class KicadTool:
         return objs[0]
 
     def find_footprint_by_reference(self, root: SexpType, ref: str) -> SexpType:
-        prints = self.find_objects_by_atom(root, "footprint", 1)
-
-        for p in prints:
-            o = self.find_objects_by_atom(p, "fp_text", INF)
-            filtered = filter(
-                lambda fp: (fp[1] == "reference") and (fp[2] == q_string(ref)), o
-            )
-
-            lst = list(filtered)
-            if len(lst) > 0:
-                return p
-
+        l = self.find_objects_by_foo(
+            root, ["footprint", ["fp_text", "reference", '"' + ref + '"']], 1
+        )
+        if isinstance(l, list) and len(l) > 0:
+            return l[0]
         return []
 
     def _get_text_obj_by_type(self, root: SexpType, ref: str, type: str) -> SexpType:

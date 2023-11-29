@@ -409,6 +409,7 @@ class ProcessKeyboard:
             pcb.remove(shape)
 
         for item in options.keys:
+
             tool.set_object_location(
                 pcb, "SW" + item.designator, item.key_x, item.key_y, Decimal(0)
             )

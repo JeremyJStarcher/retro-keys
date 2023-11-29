@@ -9,6 +9,10 @@ class PinPosition:
     x: Decimal
     y: Decimal
 
+    def copy(self) -> "PinPosition":
+        """Create a copy of this PinPosition instance."""
+        return PinPosition(self.x, self.y)
+
 
 @dataclass
 class Wire:

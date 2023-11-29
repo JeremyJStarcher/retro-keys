@@ -594,11 +594,9 @@ class KicadTool:
 
         start_pin = PinPosition(wire.start.x, wire.start.y)
         end_pin = PinPosition(wire.end.x, wire.end.y)
-        new_wire = Wire(start_pin, end_pin)
+        connector_wire = Wire(wire.start, wire.end)
 
-        connector_wire = Wire(
-            PinPosition(wire.start.x, wire.start.y), PinPosition(wire.end.x, wire.end.y)
-        )
+        new_wire = Wire(start_pin.copy(), end_pin.copy())
 
         new_wire.start.x += led_x_offset
         new_wire.start.y += led_y_offset

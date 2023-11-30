@@ -17,6 +17,7 @@ class PinPosition:
         """Create a copy of this PinPosition instance."""
         return PinPosition(self.x, self.y, self.reference, self.pin_type, self.pin_id)
 
+
 class WireType(IntEnum):
     NORMAL = 0
     CONNECTOR = 1
@@ -27,6 +28,7 @@ class Wire:
     start: PinPosition
     end: PinPosition
     type: WireType
+
 
 def q_string(s: str) -> str:
     return '"' + s + '"'

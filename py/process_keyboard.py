@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from decimal import Decimal, getcontext
 import json
 import csv
-import math
 import os
 from pathlib import Path
 import re
@@ -181,9 +180,6 @@ class ProcessKeyboard:
     def __get_layout_from_kle(self) -> List[KeyInfo]:
         keys: List[KeyInfo] = []
 
-        KEYSWITCH_FIX_X = Decimal(-11.565)
-        KEYSWITCH_FIX_Y = Decimal(-3.946)
-
         for key_name in self.common_key_format.get_key_names():
             key = self.common_key_format.get_from_common_keys_or_new(key_name)
 
@@ -194,40 +190,6 @@ class ProcessKeyboard:
 
             keyInfo.w = key.w
             keyInfo.h = key.h
-
-            xfix = Decimal(-1)
-            if keyInfo.w == 1.0:
-                # print("**1.0**")
-                xfix = Decimal(0)
-
-            if keyInfo.w == 1.5:
-                # print("**1.5**")
-                xfix = Decimal(0)
-
-            if keyInfo.w == 1.25:
-                # print("**1.25**")
-                xfix = Decimal(0.125)
-
-            if keyInfo.w == 1.75:
-                # print("**1.75**")
-                xfix = Decimal(0.375)
-
-            if keyInfo.w == 2:
-                # print("**2.0**")
-                xfix = Decimal(0.5)
-
-            if keyInfo.w == 2.25:
-                # print("**2.25**")
-                xfix = Decimal(0.625)
-
-            if keyInfo.w == 6.25:
-                # print("**6.250**")
-                xfix = Decimal(2.625)
-
-            if xfix == -1:
-                raise Exception(
-                    "Unknown width of" + str(keyInfo.w) + " found " + keyInfo.label
-                )
 
             keyInfo.l_x = key.qmk_location.x
             keyInfo.l_y = key.qmk_location.y
@@ -248,16 +210,6 @@ class ProcessKeyboard:
             keyInfo.diode_x = keyInfo.key_x + keyInfo.w * self.config.UNIT / 2
 
             keyInfo.diode_y = keyInfo.key_y + self.config.diode_offset_y
-
-            # The math for figuring out the actual bounding box is off, so manually correct for
-            # various key sizes.  (By hand/trial and error)
-
-            x1 = (keyInfo.key_x - keyInfo.w / 2) - ww / 2 + KEYSWITCH_FIX_X
-            # y1 = (keyInfo.key_y - keyInfo.h / 2) - hh / 2 + KEYSWITCH_FIX_Y
-            # x2 = x1 + self.config.UNIT + ww
-            # y2 = y1 + self.config.UNIT + hh
-
-            x1 += xfix
 
             keyInfo.hole_x = keyInfo.key_x + 10
             keyInfo.hole_y = keyInfo.key_y + 10

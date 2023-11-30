@@ -731,7 +731,7 @@ class KicadTool:
         for wire in all_wires:
             pin_list.append(wire.start)
             pin_list.append(wire.end)
-            
+
             wirec = KiSymbols.get_wire(wire)
             root.append(wirec)
 

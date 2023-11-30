@@ -1,4 +1,5 @@
 from decimal import Decimal
+from enum import IntEnum
 from attr import dataclass
 
 from sexptype import SexpType
@@ -8,17 +9,24 @@ from sexptype import SexpType
 class PinPosition:
     x: Decimal
     y: Decimal
+    reference: str
+    pin_type: str
+    pin_id: str
 
     def copy(self) -> "PinPosition":
         """Create a copy of this PinPosition instance."""
-        return PinPosition(self.x, self.y)
+        return PinPosition(self.x, self.y, self.reference, self.pin_type, self.pin_id)
+
+class WireType(IntEnum):
+    NORMAL = 0
+    CONNECTOR = 1
 
 
 @dataclass
 class Wire:
     start: PinPosition
     end: PinPosition
-
+    type: WireType
 
 def q_string(s: str) -> str:
     return '"' + s + '"'

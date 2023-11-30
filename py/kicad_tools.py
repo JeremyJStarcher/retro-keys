@@ -4,7 +4,7 @@ import copy
 import math
 from typing import Dict, List, Optional, cast
 from attr import dataclass
-from ki_symbols import KiSymbols, PinPosition, Wire
+from ki_symbols import KiSymbols, PinPosition, Wire, WireType
 from sexptype import SexpListType, SexpType, SexpTypeValue, makeDecimal, makeString
 
 
@@ -588,10 +588,10 @@ class KicadTool:
             x2 = makeDecimal(at2[1]) + pin_offset2[0]
             y2 = makeDecimal(at2[2]) + pin_offset2[1]
 
-            pin1 = PinPosition(x1, y1)
-            pin2 = PinPosition(x2, y2)
+            pin1 = PinPosition(x1, y1, part1_ref, pin_type, pin_type_id)
+            pin2 = PinPosition(x2, y2, part2_ref, pin_type, pin_type_id)
 
-            w = Wire(pin1, pin2)
+            w = Wire(pin1, pin2, WireType.NORMAL)
             return w
         return None
 
@@ -651,12 +651,11 @@ class KicadTool:
         self, wire: Wire, led_x_offset: Decimal, led_y_offset: Decimal
     ) -> tuple[Wire, Wire]:
 
-        start_pin = PinPosition(wire.start.x, wire.start.y)
-        end_pin = PinPosition(wire.end.x, wire.end.y)
-        connector_wire = Wire(wire.start, wire.end)
+        start_pin = wire.start.copy()
+        end_pin = wire.end.copy()
+        connector_wire = Wire(wire.start, wire.end, WireType.CONNECTOR)
 
-        new_wire = Wire(start_pin.copy(), end_pin.copy())
-
+        new_wire = Wire(start_pin.copy(), end_pin.copy(), WireType.NORMAL)
         new_wire.start.x += led_x_offset
         new_wire.start.y += led_y_offset
 
@@ -728,9 +727,15 @@ class KicadTool:
             + led_row_connect
         )
 
+        pin_list: list[PinPosition] = []
         for wire in all_wires:
+            pin_list.append(wire.start)
+            pin_list.append(wire.end)
+            
             wirec = KiSymbols.get_wire(wire)
             root.append(wirec)
+
+        print(pin_list)
 
     def draw_keepout_zone(
         self, root: SexpType, nx: Decimal, ny: Decimal, r: Decimal

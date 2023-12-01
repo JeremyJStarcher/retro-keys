@@ -246,7 +246,7 @@ class ProcessKeyboard:
             if symbol[1] in new_names:
                 schematic_lib_symbols.append(symbol)
 
-    def add_keyswitches_to_schematic(self, options: RunWrappedOptions) -> None:
+    def add_schematic_connections(self, options: RunWrappedOptions) -> None:
         key_schematic = options.schematic
         tool = options.tool
 
@@ -600,7 +600,6 @@ class ProcessKeyboard:
 
             assert item.bounding_box is not None
 
-            # jjz
             hx, rhy = self.get_standoff_location(schematic, tool, item)
 
             # Handle the flipped y axis

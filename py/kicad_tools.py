@@ -5,7 +5,16 @@ import math
 from typing import Dict, List, Optional, cast
 from attr import dataclass
 from ki_symbols import KiSymbols, PinPosition, Wire, WireType
-from sexptype import SexpListType, SexpType, SexpTypeValue, makeDecimal, makeString
+from sexptype import (
+    PinNumber,
+    PinType,
+    SexpListType,
+    SexpType,
+    SexpTypeValue,
+    UnitNumber,
+    makeDecimal,
+    makeString,
+)
 
 
 @dataclass
@@ -264,41 +273,40 @@ class KicadTool:
         return ret
 
     def find_symbol_by_reference(
-        self, root: SexpType, ref: str, unit="1"
+        self, root: SexpType, ref: str, unit=UnitNumber.ONE
     ) -> SexpType | None:
-        symbols = self.find_objects_by_atom(root, "symbol", QueryRecursionLevel.HERE)
 
-        for symbol in symbols:
-            unit_objects = self.find_objects_by_atom(
-                symbol, "property", QueryRecursionLevel.DEEP
-            )
+        unitstr = "1"
+        if unit == UnitNumber.TWO:
+            unitstr = "2"
 
-            property_filtered = filter(
-                lambda fp: (fp[1] == q_string("Reference"))
-                and (fp[2] == q_string(ref)),
-                unit_objects,
-            )
+        z: SexpTypeValue = [
+            "symbol",
+            ["unit", unitstr],
+            [
+                "property",
+                '"Reference"',
+                q_string(ref),
+            ],
+        ]
 
-            unit_objects = self.find_objects_by_atom(
-                symbol, "unit", QueryRecursionLevel.DEEP
-            )
+        l1 = self.find_objects_by_foo(
+            root,
+            z,
+            QueryRecursionLevel.HERE,
+        )
 
-            is_unit_right = True
+        if len(l1) == 0:
+            return None
 
-            if unit_objects is None:
-                is_unit_right = True
-            else:
-                is_unit_right = unit_objects[0][1] == unit
-
-            lst = list(property_filtered)
-            if len(lst) > 0 and is_unit_right:
-                return symbol
-        return None
+        return l1[0]
 
     def get_symbol_property(
         self, root: SexpType, ref: str, prop: str, default: str
     ) -> SexpTypeValue:
-        symbol = cast(list, self.find_symbol_by_reference(root, ref))
+        symbol = self.find_symbol_by_reference(root, ref)
+        if symbol is None:
+            raise Exception("get_symbol_property: Symbol not found " + ref)
 
         o = self.find_objects_by_atom(symbol, "property", QueryRecursionLevel.DEEP)
 
@@ -466,9 +474,54 @@ class KicadTool:
             atm[2] = str(makeDecimal(atm[2]) - at_y + my)
             atm[3] = str(makeDecimal(atm[3]) - at_r + mr)
 
+    """
+    jjz    
+    """
+
+    def get_absolute_pin_position_for_schematic(
+        self,
+        root: SexpType,
+        ref: str,
+        pin_type: PinType,
+        pin_type_id: PinNumber,
+        unit: UnitNumber,
+    ) -> PinPosition:
+
+        symbol = self.find_symbol_by_reference(root, ref, unit)
+
+        if symbol is None:
+            raise Exception("Could not find " + ref)
+
+        at = self.find_object_by_atom(symbol, "at", QueryRecursionLevel.HERE)
+
+        pin_offset1 = self.get_relative_pin_position_for_schematic(
+            root, symbol, pin_type, pin_type_id
+        )
+
+        x = makeDecimal(at[1]) + pin_offset1[0]
+        y = makeDecimal(at[2]) + pin_offset1[1]
+
+        pin1 = PinPosition(x, y, ref, pin_type, pin_type_id)
+
+        return pin1
+
     def get_relative_pin_position_for_schematic(
-        self, schematic_root: SexpType, obj: SexpType, type: str, value: str
+        self, schematic_root: SexpType, obj: SexpType, type: PinType, value: PinNumber
     ) -> list[Decimal]:
+
+        pin_number = 1
+        if value == PinNumber._1:
+            pin_number = 1
+
+        if value == PinNumber._2:
+            pin_number = 2
+
+        if value == PinNumber._3:
+            pin_number = 3
+
+        if value == PinNumber._4:
+            pin_number = 4
+
         item_lib_id = self.find_object_by_atom(obj, "lib_id", QueryRecursionLevel.HERE)
 
         lib_symbols = self.find_object_by_atom(
@@ -489,11 +542,14 @@ class KicadTool:
                 symbol_rotation = makeDecimal(symbol_at[3])
 
                 for pin in pins:
+                    if type != PinType.NUMBER:
+                        raise Exception("Can only handle number pin type right now")
+
                     match = self.find_object_by_atom(
-                        pin, type, QueryRecursionLevel.DEEP
+                        pin, "number", QueryRecursionLevel.DEEP
                     )
                     pin_value = match[1]
-                    if pin_value == q_string(value):
+                    if pin_value == q_string(str(pin_number)):
                         pin_at = self.find_object_by_atom(
                             pin, "at", QueryRecursionLevel.HERE
                         )
@@ -510,7 +566,7 @@ class KicadTool:
                         if symbol_rotation == 270:
                             return [dy, dx]
 
-        return [Decimal(0), Decimal(0)]
+        raise Exception("Could not find pin offset")
 
     def _get_key_grid_info(self):
         pass
@@ -548,18 +604,15 @@ class KicadTool:
         key_root.append(symbol_diode)
         key_root.append(symbol_switch_led)
 
-    def rotate_matrix(self, m):
-        # return [[m[j][i] for j in range(len(m))] for i in range(len(m[0]) - 1, -1, -1)]
-
-        list_of_tuples = zip(*m[::-1])
-        return [list(elem) for elem in list_of_tuples]
+    def rotate_matrix(self, m: list[list[int]]):
+        return [list(row) for row in zip(*m)]
 
     def process_pin_pair(
         self,
         designator_type: str,
-        pin_type: str,
-        pin_type_id: str,
-        unit: str,
+        pin_type: PinType,
+        pin_type_id: PinNumber,
+        unit: UnitNumber,
         root: SexpType,
         designator1: int,
         designator2: int,
@@ -570,37 +623,34 @@ class KicadTool:
         part1_sym = self.find_symbol_by_reference(root, part1_ref, unit)
         part2_sym = self.find_symbol_by_reference(root, part2_ref, unit)
 
-        if part1_sym is not None and part2_sym is not None:
+        if part1_sym is None or part2_sym is None:
+            return None
 
-            at1 = self.find_object_by_atom(part1_sym, "at", QueryRecursionLevel.HERE)
-            at2 = self.find_object_by_atom(part2_sym, "at", QueryRecursionLevel.HERE)
+        pin2 = self.get_absolute_pin_position_for_schematic(
+            root,
+            part2_ref,
+            pin_type,
+            pin_type_id,
+            unit,
+        )
 
-            pin_offset1 = self.get_relative_pin_position_for_schematic(
-                root, part1_sym, pin_type, pin_type_id
-            )
-            pin_offset2 = self.get_relative_pin_position_for_schematic(
-                root, part2_sym, pin_type, pin_type_id
-            )
+        pin1 = self.get_absolute_pin_position_for_schematic(
+            root,
+            part1_ref,
+            pin_type,
+            pin_type_id,
+            unit,
+        )
 
-            x1 = makeDecimal(at1[1]) + pin_offset1[0]
-            y1 = makeDecimal(at1[2]) + pin_offset1[1]
-
-            x2 = makeDecimal(at2[1]) + pin_offset2[0]
-            y2 = makeDecimal(at2[2]) + pin_offset2[1]
-
-            pin1 = PinPosition(x1, y1, part1_ref, pin_type, pin_type_id)
-            pin2 = PinPosition(x2, y2, part2_ref, pin_type, pin_type_id)
-
-            w = Wire(pin1, pin2, WireType.NORMAL)
-            return w
-        return None
+        w = Wire(pin1, pin2, WireType.NORMAL)
+        return w
 
     def get_wire_positions_list(
         self,
         designator_type: str,
-        pin_type: str,
-        pin_type_id: str,
-        unit: str,
+        pin_type: PinType,
+        pin_type_id: PinNumber,
+        unit: UnitNumber,
         root: SexpType,
         matrix: list[list[int]],
     ) -> list[Wire]:
@@ -665,6 +715,63 @@ class KicadTool:
         connector_wire.end = new_wire.start
         return (new_wire, connector_wire)
 
+    def wires_to_pin_list(self, all_wires: list[Wire]) -> list[PinPosition]:
+        pin_list: list[PinPosition] = []
+        for wire in all_wires:
+            pin_list.append(wire.start)
+            pin_list.append(wire.end)
+
+        return pin_list
+
+    def first_positive_in_rows(self, matrix: list[list[int]]):
+        first_positives: list[int] = []
+        for row in matrix:
+            first_positive = next((num for num in row if num > 0), None)
+            if first_positive is None:
+                first_positives.append(-1)
+            else:
+                first_positives.append(first_positive)
+        return first_positives
+
+    def _add_schematic_global_labels(
+        self,
+        root: SexpType,
+        matrix_normal: list[list[int]],
+        matrix_rotated: list[list[int]],
+        wires: list[Wire],
+        key_grid_info: KeyGridInfo,
+    ):
+        new_wires: list[Wire] = []
+
+        first_in_row = self.first_positive_in_rows(matrix_normal)
+        first_in_row_diode_refs = transformed_list = [
+            "D" + str(element) for element in first_in_row
+        ]
+        first_in_row_switch_refs = transformed_list = [
+            "sw" + str(element) for element in first_in_row
+        ]
+
+        first_in_col = self.first_positive_in_rows(matrix_rotated)
+        first_in_col_refs = transformed_list = [
+            "SW" + str(element) for element in first_in_col
+        ]
+
+        for ref in first_in_row_diode_refs:
+            p1 = self.get_absolute_pin_position_for_schematic(
+                root,
+                ref,
+                PinType.NUMBER,
+                PinNumber._1,
+                UnitNumber.ONE,
+            )
+
+            p2 = p1.copy()
+            p1.x -= key_grid_info.grid_spacing
+            new_wire = Wire(p1, p2, WireType.GLOBAL)
+            new_wires.append(new_wire)
+
+        wires += new_wires
+
     def add_wires_to_schematic(self, root: SexpType, matrix: list[list[int]]) -> None:
         """
         Add all the needed wires to the schematic.  This routine also adjusts
@@ -680,22 +787,19 @@ class KicadTool:
 
         all_wires: list[Wire] = []
 
-        UNIT_1 = "1"
-        UNIT_2 = "2"
-
         switch_row_wires: list[Wire] = self.get_wire_positions_list(
-            "D", "number", "1", UNIT_1, root, matrix
+            "D", PinType.NUMBER, PinNumber._1, UnitNumber.ONE, root, matrix
         )
         switch_col_wires: list[Wire] = self.get_wire_positions_list(
-            "SW", "number", "2", UNIT_1, root, matrix_rotated
+            "SW", PinType.NUMBER, PinNumber._2, UnitNumber.ONE, root, matrix_rotated
         )
 
         led_row_wires: list[Wire] = self.get_wire_positions_list(
-            "SW", "number", "3", UNIT_2, root, matrix
+            "SW", PinType.NUMBER, PinNumber._3, UnitNumber.TWO, root, matrix
         )
 
         led_col_wires: list[Wire] = self.get_wire_positions_list(
-            "SW", "number", "4", UNIT_2, root, matrix_rotated
+            "SW", PinType.NUMBER, PinNumber._4, UnitNumber.TWO, root, matrix_rotated
         )
         led_col_connect: list[Wire] = []
         led_col_fixed: list[Wire] = []
@@ -727,15 +831,14 @@ class KicadTool:
             + led_row_connect
         )
 
-        pin_list: list[PinPosition] = []
+        self._add_schematic_global_labels(
+            root, matrix, matrix_rotated, all_wires, key_grid_info
+        )
+
         for wire in all_wires:
-            pin_list.append(wire.start)
-            pin_list.append(wire.end)
-
             wirec = KiSymbols.get_wire(wire)
+            # if wire.type == WireType.GLOBAL:
             root.append(wirec)
-
-        print(pin_list)
 
     def draw_keepout_zone(
         self, root: SexpType, nx: Decimal, ny: Decimal, r: Decimal

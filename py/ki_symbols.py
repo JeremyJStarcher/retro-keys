@@ -2,7 +2,7 @@ from decimal import Decimal
 from enum import IntEnum
 from attr import dataclass
 
-from sexptype import SexpType
+from sexptype import PinNumber, PinType, SexpType
 
 
 @dataclass
@@ -10,8 +10,8 @@ class PinPosition:
     x: Decimal
     y: Decimal
     reference: str
-    pin_type: str
-    pin_id: str
+    pin_type: PinType
+    pin_id: PinNumber
 
     def copy(self) -> "PinPosition":
         """Create a copy of this PinPosition instance."""
@@ -21,6 +21,7 @@ class PinPosition:
 class WireType(IntEnum):
     NORMAL = 0
     CONNECTOR = 1
+    GLOBAL = 2
 
 
 @dataclass

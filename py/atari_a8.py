@@ -33,7 +33,7 @@ if __name__ == "__main__":
     process.run_wrapped(
         [
             process.add_schematic_lib_symbols,
-            process.add_keyswitches_to_schematic,
+            process.add_schematic_connections,
         ]
     )
 

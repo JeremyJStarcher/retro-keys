@@ -29,6 +29,9 @@ class KeyGridInfo:
     spacing_x: Decimal = grid_spacing * 5
     spacing_y: Decimal = grid_spacing * 6
 
+    led_y_offset: Decimal = grid_spacing * 2
+    led_x_offset: Decimal = grid_spacing * 1
+
 
 class Layer(str, Enum):
     F_CU = '"F.Cu"'
@@ -316,13 +319,6 @@ class KicadTool:
             return lst[0][2]
         else:
             return default
-
-    def get_symbol_property_as_decimal(
-        self, root: SexpType, ref: str, prop: str, default
-    ) -> Decimal:
-        r = self.get_symbol_property(root, ref, prop, default)
-        r = str(r)
-        return Decimal(r.strip('"'))
 
     def find_footprint_at_by_reference(self, root: SexpType, ref: str) -> SexpType:
         footprint = self.find_footprint_by_reference(root, ref)
@@ -743,32 +739,92 @@ class KicadTool:
     ):
         new_wires: list[Wire] = []
 
-        first_in_row = self.first_positive_in_rows(matrix_normal)
-        first_in_row_diode_refs = transformed_list = [
-            "D" + str(element) for element in first_in_row
-        ]
-        first_in_row_switch_refs = transformed_list = [
-            "sw" + str(element) for element in first_in_row
-        ]
+        @dataclass
+        class XForm:
+            des_prefix: str
+            pin_number: PinNumber
+            UnitNumber: UnitNumber
+            x1_offset: Decimal
+            y1_offset: Decimal
+            x2_offset: Decimal
+            y2_offset: Decimal
 
-        first_in_col = self.first_positive_in_rows(matrix_rotated)
-        first_in_col_refs = transformed_list = [
-            "SW" + str(element) for element in first_in_col
-        ]
-
-        for ref in first_in_row_diode_refs:
-            p1 = self.get_absolute_pin_position_for_schematic(
-                root,
-                ref,
-                PinType.NUMBER,
+        xforms_row: List[XForm] = [
+            XForm(
+                "D",
                 PinNumber._1,
                 UnitNumber.ONE,
-            )
+                Decimal(0),
+                Decimal(0),
+                -key_grid_info.grid_spacing,
+                Decimal(0),
+            ),
+            XForm(
+                "SW",
+                PinNumber._3,
+                UnitNumber.TWO,
+                Decimal(0),
+                key_grid_info.led_y_offset,
+                -key_grid_info.grid_spacing,
+                Decimal(0),
+            ),
+        ]
 
-            p2 = p1.copy()
-            p1.x -= key_grid_info.grid_spacing
-            new_wire = Wire(p1, p2)
-            new_wires.append(new_wire)
+        xforms_cols: List[XForm] = [
+            XForm(
+                "SW",
+                PinNumber._2,
+                UnitNumber.ONE,
+                Decimal(0),
+                Decimal(0),
+                Decimal(0),
+                -key_grid_info.grid_spacing * 4,
+            ),
+            XForm(
+                "SW",
+                PinNumber._4,
+                UnitNumber.TWO,
+                key_grid_info.led_x_offset,
+                Decimal(0),
+                Decimal(0),
+                -key_grid_info.grid_spacing * 4,
+            ),
+        ]
+
+        def move(des: int, xforms: List[XForm]):
+            for xform in xforms:
+                ref = xform.des_prefix + str(des)
+
+                p1 = self.get_absolute_pin_position_for_schematic(
+                    root,
+                    ref,
+                    PinType.NUMBER,
+                    xform.pin_number,
+                    xform.UnitNumber,
+                )
+
+                p1.x += xform.x1_offset
+                p1.y += xform.y1_offset
+
+                p2 = p1.copy()
+                p1.x += xform.x2_offset
+                p1.y += xform.y2_offset
+                new_wire = Wire(p1, p2)
+                print("---")
+                print(new_wire)
+                new_wires.append(new_wire)
+
+        first_in_row = self.first_positive_in_rows(matrix_normal)
+        first_in_col = self.first_positive_in_rows(matrix_rotated)
+
+        for ref_num in first_in_row:
+            move(ref_num, xforms_row)
+
+        for ref_num in first_in_col:
+            move(ref_num, xforms_cols)
+
+        # while len(wires) > 0:
+        #     wires.pop()
 
         wires += new_wires
 
@@ -780,8 +836,6 @@ class KicadTool:
         """
 
         key_grid_info = KeyGridInfo()
-        led_y_offset = key_grid_info.grid_spacing * 2
-        led_x_offset = key_grid_info.grid_spacing * 1
 
         matrix_rotated = self.rotate_matrix(matrix)
 
@@ -809,14 +863,14 @@ class KicadTool:
 
         for i in led_row_wires:
             (led_row_wire, led_row_connector) = self.calculate_wire_offset(
-                i, Decimal(0), led_y_offset
+                i, Decimal(0), key_grid_info.led_y_offset
             )
             led_row_fixed.append(led_row_wire)
             led_row_connect.append(led_row_connector)
 
         for i in led_col_wires:
             (led_col_wire, led_col_connector) = self.calculate_wire_offset(
-                i, led_x_offset, Decimal(0)
+                i, key_grid_info.led_x_offset, Decimal(0)
             )
             led_col_fixed.append(led_col_wire)
             led_col_connect.append(led_col_connector)

@@ -419,16 +419,8 @@ class ProcessKeyboard:
         if item.bounding_box is None:
             raise Exception("get_standoff_location called with invalid bounding box")
 
-        hx = item.bounding_box.x1 + tool.get_symbol_property_as_decimal(
-            schematic, "SW" + item.designator, "PCB_X", 0
-        )
-        hy = (
-            item.bounding_box.y1
-            + Decimal(3.5)
-            + tool.get_symbol_property_as_decimal(
-                schematic, "SW" + item.designator, "PCB_Y", 0
-            )
-        )
+        hx = item.bounding_box.x1
+        hy = item.bounding_box.y1
 
         return hx, hy
 

@@ -215,26 +215,6 @@ class TestKiCadTools(unittest.TestCase):
         pcb_x = pcb_tool.get_symbol_property(schematic, "SW232", "PCB_X", dummy)
         self.assertNotEqual(pcb_x, dummy)
 
-    def test_get_symbol_propertyPropertyAsFloatFound(self):
-        schematic = self.read_keyboard_sch_file()
-        pcb_tool = KicadTool()
-
-        dummy_val = 99999.99
-
-        pcb_x = pcb_tool.get_symbol_property_as_decimal(
-            schematic, "SW232", "PCB_X", dummy_val
-        )
-        self.assertNotEqual(pcb_x, dummy_val)
-
-    def test_get_symbol_propertyPropertyAsFloatNotFound(self):
-        schematic = self.read_pcb_file()
-        pcb_tool = KicadTool()
-
-        pcb_x = pcb_tool.get_symbol_property_as_decimal(
-            schematic, "SW232", "XYZZY", 100
-        )
-        self.assertEqual(pcb_x, 100)
-
     def test_remove_atoms(self):
         pcb = self.read_pcb_file()
         pcb_tool = KicadTool()

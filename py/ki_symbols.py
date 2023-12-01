@@ -1,5 +1,4 @@
 from decimal import Decimal
-from enum import IntEnum
 from attr import dataclass
 
 from sexptype import PinNumber, PinType, SexpType
@@ -18,17 +17,10 @@ class PinPosition:
         return PinPosition(self.x, self.y, self.reference, self.pin_type, self.pin_id)
 
 
-class WireType(IntEnum):
-    NORMAL = 0
-    CONNECTOR = 1
-    GLOBAL = 2
-
-
 @dataclass
 class Wire:
     start: PinPosition
     end: PinPosition
-    type: WireType
 
 
 def q_string(s: str) -> str:

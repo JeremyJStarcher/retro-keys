@@ -4,7 +4,7 @@ import copy
 import math
 from typing import Dict, List, Optional, cast
 from attr import dataclass
-from ki_symbols import KiSymbols, PinPosition, Wire, WireType
+from ki_symbols import KiSymbols, PinPosition, Wire
 from sexptype import (
     PinNumber,
     PinType,
@@ -642,7 +642,7 @@ class KicadTool:
             unit,
         )
 
-        w = Wire(pin1, pin2, WireType.NORMAL)
+        w = Wire(pin1, pin2)
         return w
 
     def get_wire_positions_list(
@@ -703,9 +703,9 @@ class KicadTool:
 
         start_pin = wire.start.copy()
         end_pin = wire.end.copy()
-        connector_wire = Wire(wire.start, wire.end, WireType.CONNECTOR)
+        connector_wire = Wire(wire.start, wire.end)
 
-        new_wire = Wire(start_pin.copy(), end_pin.copy(), WireType.NORMAL)
+        new_wire = Wire(start_pin.copy(), end_pin.copy())
         new_wire.start.x += led_x_offset
         new_wire.start.y += led_y_offset
 
@@ -767,7 +767,7 @@ class KicadTool:
 
             p2 = p1.copy()
             p1.x -= key_grid_info.grid_spacing
-            new_wire = Wire(p1, p2, WireType.GLOBAL)
+            new_wire = Wire(p1, p2)
             new_wires.append(new_wire)
 
         wires += new_wires

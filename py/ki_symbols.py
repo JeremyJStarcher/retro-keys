@@ -917,19 +917,46 @@ class KiSymbols:
         return o
 
     @staticmethod
+    def get_interconnect_global_label(label: str) -> SexpType:
+        o: SexpType = [
+            "global_label",
+            q_string(label),
+            ["shape", "input"],
+            ["at", "185.42", "101.6", "90"],
+            ["fields_autoplaced"],
+            ["effects", ["font", ["size", "0.5", "0.5"]], ["justify", "left"]],
+            ["uuid", "03f8d392-d47d-4f7e-b278-f382910bcc87"],
+            [
+                "property",
+                '"Intersheetrefs"',
+                '"${INTERSHEET_REFS}"',
+                ["at", "185.42", "98.063", "90"],
+                [
+                    "effects",
+                    ["font", ["size", "1.27", "1.27"]],
+                    ["justify", "left"],
+                    "hide",
+                ],
+            ],
+        ]
+
+        return o
+
+    @staticmethod
     def get_global_label(label: str) -> SexpType:
         o: SexpType = [
             "global_label",
             q_string(label),
             ["shape", "input"],
-            ["at", "147.32", "30.48", "180"],
+            ["at", "30.48", "15.24", "180"],
             ["fields_autoplaced"],
             ["effects", ["font", ["size", "1.27", "1.27"]], ["justify", "right"]],
+            ["uuid", "eb2988e9-2949-4f98-a3f1-6f7b5804363f"],
             [
                 "property",
                 '"Intersheetrefs"',
                 '"${INTERSHEET_REFS}"',
-                ["at", "139.667", "30.48", "0"],
+                ["at", "24.1575", "15.24", "0"],
                 [
                     "effects",
                     ["font", ["size", "1.27", "1.27"]],
@@ -938,4 +965,5 @@ class KiSymbols:
                 ],
             ],
         ]
+
         return o

@@ -20,10 +20,10 @@ from sexptype import (
 @dataclass
 class KeyGridInfo:
     grid_spacing: Decimal = Decimal(2.54)
-    switch_origin_x: Decimal = grid_spacing * 60
-    switch_origin_y: Decimal = grid_spacing * 10
+    switch_origin_x: Decimal = grid_spacing * 67
+    switch_origin_y: Decimal = grid_spacing * 12
 
-    led_origin_x: Decimal = Decimal(1.27 * 3) + (grid_spacing * 8)  # grid_spacing
+    led_origin_x: Decimal = Decimal(1.27 * 3) + (grid_spacing * 13)  # grid_spacing
     led_origin_y: Decimal = switch_origin_y
 
     spacing_x: Decimal = grid_spacing * 5
@@ -740,8 +740,9 @@ class KicadTool:
         new_wires: list[Wire] = []
 
         @dataclass
-        class XForm:
+        class GlobalTagInfo:
             des_prefix: str
+            global_label_prefix: str
             pin_number: PinNumber
             UnitNumber: UnitNumber
             x1_offset: Decimal
@@ -749,9 +750,10 @@ class KicadTool:
             x2_offset: Decimal
             y2_offset: Decimal
 
-        xforms_row: List[XForm] = [
-            XForm(
+        row_global_label_info: List[GlobalTagInfo] = [
+            GlobalTagInfo(
                 "D",
+                "SW_ROW",
                 PinNumber._1,
                 UnitNumber.ONE,
                 Decimal(0),
@@ -759,8 +761,9 @@ class KicadTool:
                 -key_grid_info.grid_spacing,
                 Decimal(0),
             ),
-            XForm(
+            GlobalTagInfo(
                 "SW",
+                "LED_ROW",
                 PinNumber._3,
                 UnitNumber.TWO,
                 Decimal(0),
@@ -770,9 +773,10 @@ class KicadTool:
             ),
         ]
 
-        xforms_cols: List[XForm] = [
-            XForm(
+        column_global_label_info: List[GlobalTagInfo] = [
+            GlobalTagInfo(
                 "SW",
+                "SW_COL",
                 PinNumber._2,
                 UnitNumber.ONE,
                 Decimal(0),
@@ -780,8 +784,9 @@ class KicadTool:
                 Decimal(0),
                 -key_grid_info.grid_spacing * 4,
             ),
-            XForm(
+            GlobalTagInfo(
                 "SW",
+                "LED_COL",
                 PinNumber._4,
                 UnitNumber.TWO,
                 key_grid_info.led_x_offset,
@@ -791,40 +796,44 @@ class KicadTool:
             ),
         ]
 
-        def move(des: int, xforms: List[XForm]):
-            for xform in xforms:
-                ref = xform.des_prefix + str(des)
+        def place_global_labels(idx: int, des: int, global_labels: List[GlobalTagInfo]):
+            for global_label in global_labels:
+                ref = global_label.des_prefix + str(des)
 
                 p1 = self.get_absolute_pin_position_for_schematic(
                     root,
                     ref,
                     PinType.NUMBER,
-                    xform.pin_number,
-                    xform.UnitNumber,
+                    global_label.pin_number,
+                    global_label.UnitNumber,
                 )
 
-                p1.x += xform.x1_offset
-                p1.y += xform.y1_offset
+                p1.x += global_label.x1_offset
+                p1.y += global_label.y1_offset
 
                 p2 = p1.copy()
-                p1.x += xform.x2_offset
-                p1.y += xform.y2_offset
+                p1.x += global_label.x2_offset
+                p1.y += global_label.y2_offset
                 new_wire = Wire(p1, p2)
-                print("---")
-                print(new_wire)
                 new_wires.append(new_wire)
+
+                global_label_symbol = KiSymbols.get_global_label(
+                    f"{global_label.global_label_prefix}{idx+1}"
+                )
+                self.move_recursive(global_label_symbol, p1.x, p1.y, 180)
+                root.append(global_label_symbol)
 
         first_in_row = self.first_positive_in_rows(matrix_normal)
         first_in_col = self.first_positive_in_rows(matrix_rotated)
 
-        for ref_num in first_in_row:
-            move(ref_num, xforms_row)
+        for refnum_idx in enumerate(first_in_row):
+            (idx, ref_num) = refnum_idx
 
-        for ref_num in first_in_col:
-            move(ref_num, xforms_cols)
+            place_global_labels(idx, ref_num, row_global_label_info)
 
-        # while len(wires) > 0:
-        #     wires.pop()
+        for refnum_idx in enumerate(first_in_col):
+            (idx, ref_num) = refnum_idx
+            place_global_labels(idx, ref_num, column_global_label_info)
 
         wires += new_wires
 

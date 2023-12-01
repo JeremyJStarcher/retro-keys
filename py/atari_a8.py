@@ -32,6 +32,8 @@ if __name__ == "__main__":
 
     process.run_wrapped(
         [
+            process.log_symbols,
+            process.clear_schematic,
             process.add_schematic_lib_symbols,
             process.add_schematic_connections,
         ]

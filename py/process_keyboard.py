@@ -219,12 +219,24 @@ class ProcessKeyboard:
         self.set_designators(keys)
         return keys
 
-    def add_schematic_lib_symbols(self, options: RunWrappedOptions) -> None:
+    def log_symbols(self, options: RunWrappedOptions) -> None:
+        schematic = options.schematic
+        key_parser = KiCadParser("")
+
+        print(schematic)
+        key_parser.print_list(schematic, 0)
+
+    def clear_schematic(self, options: RunWrappedOptions) -> None:
         schematic = options.schematic
         tool = options.tool
 
-        # print(schematic)
-        # key_parser.print_list(schematic, 0)
+        tool.remove_atoms(schematic, "symbol")
+        tool.remove_atoms(schematic, "wire")
+        tool.remove_atoms(schematic, "global_label")
+
+    def add_schematic_lib_symbols(self, options: RunWrappedOptions) -> None:
+        schematic = options.schematic
+        tool = options.tool
 
         schematic_lib_symbols = tool.find_object_by_atom(
             schematic, "lib_symbols", QueryRecursionLevel.HERE
@@ -260,10 +272,6 @@ class ProcessKeyboard:
         start_base = 200
 
         base_designator = start_base
-
-        tool.remove_atoms(key_schematic, "symbol")
-        tool.remove_atoms(key_schematic, "wire")
-        tool.remove_atoms(key_schematic, "junction")
 
         for key_name in self.common_key_format.get_key_names():
             key = self.common_key_format.get_from_common_keys_or_new(key_name)

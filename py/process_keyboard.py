@@ -110,7 +110,7 @@ class ProcessConfiguration:
     diode_offset_y = (
         Decimal(UNIT / 8) + 2
     )  # A little breathing room for the support screws
-
+    diode_offset_y = 0
 
 class ProcessKeyboard:
     config: ProcessConfiguration
@@ -403,12 +403,18 @@ class ProcessKeyboard:
                 pcb, "D" + item.designator, item.diode_x, item.diode_y, Decimal(-90)
             )
 
-            hx, hy = self.get_standoff_location(schematic, tool, item)
 
-            tool.draw_keepout_zone(pcb, hx, hy, STANDOFF_HOLE_OUTER_DIAMETER)
-            tool.draw_circle(
-                pcb, Layer.Edge_Cuts, hx, hy, STANDOFF_HOLE_INNER_DIAMETER, "solid"
-            )
+            if (False):
+                hx, hy = self.get_standoff_location(schematic, tool, item)
+                """
+                    If we want screws to mount the PCB to the case with
+                    Disabled because the holes started to conflict with other
+                    components.
+                """
+                tool.draw_keepout_zone(pcb, hx, hy, STANDOFF_HOLE_OUTER_DIAMETER)
+                tool.draw_circle(
+                    pcb, Layer.Edge_Cuts, hx, hy, STANDOFF_HOLE_INNER_DIAMETER, "solid"
+                )
 
         bbox.add_border(self.config.pcb_border)
         tool.add_bounding_box(pcb, bbox, 0.3, Layer.Edge_Cuts)

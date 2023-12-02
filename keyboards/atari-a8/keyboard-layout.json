@@ -1,5 +1,8 @@
 [
   {
+    "name": "Atari 800/800XL Keyboard for use with emulators",
+    "author": "Jeremy J Starcher",
+    "notes": "https://www.retro-keys.com/\nVersion 1.3\n\nThe text in the `qmk_id` style is the cannotical name of the key and is the link between \n* The keyboard layout Editor\n* The Retro Keys build tool that arranges the PCB schematic -and- replicates the KLE on the PCB.\n* \n",
     "css": ".qmk_id {\n    color: white;\n    background-color: gray;\n    font-size: 0.75em\n}\n\n.layout-color-ctrl {\n    color: white;\n    background-color: red;\n    padding: 0.1em;\n}"
   },
   [
@@ -176,10 +179,14 @@
   [
     {
       "y": -0.75,
+      "sm": "cherry",
       "a": 4,
       "w": 2
     },
     "\n<i class=\"qmk_id\">CONTROL</i>\n\n\n\n\n\n\n\n<span class=\"layout-color-ctrl\">CONTROL<span>",
+    {
+      "sm": ""
+    },
     "\n<i class=\"qmk_id\">A</i>\n\n\n\n\n\n\n\nA",
     "\n<i class=\"qmk_id\">S</i>\n\n\n\n\n\n\n\nS",
     "\n<i class=\"qmk_id\">D</i>\n\n\n\n\n\n\n\nD",
@@ -239,9 +246,9 @@
   [
     {
       "y": -0.75,
-      "x": 0.25,
+      "x": 0.5,
       "a": 4,
-      "w": 2.25
+      "w": 2
     },
     "\n<i class=\"qmk_id\">LSHIFT</i>\n\n\n\n\n\n\n\nSHIFT",
     "\n<i class=\"qmk_id\">Z</i>\n\n\n\n\n\n\n\nZ",

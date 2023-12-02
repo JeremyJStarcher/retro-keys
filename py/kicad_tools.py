@@ -575,6 +575,7 @@ class KicadTool:
         mx: int,
         my: int,
         size: Decimal,
+        do_not_populate: bool,
     ) -> None:
         key_grid_info = KeyGridInfo()
 
@@ -582,6 +583,19 @@ class KicadTool:
         # symbol_switch = KiSymbols.get_mx_with_led("SW" + designator, name)
         symbol_switch = KiSymbols.get_mxfull_switch("SW" + designator, name, size)
         symbol_switch_led = KiSymbols.get_mxfull_led("SW" + designator, name)
+
+        if do_not_populate:
+            for sym in [symbol_diode, symbol_switch, symbol_switch_led]:
+                dnp = self.find_object_by_atom(sym, "dnp", QueryRecursionLevel.HERE)
+                dnp[1] = "yes"
+                in_bom = self.find_object_by_atom(
+                    sym, "in_bom", QueryRecursionLevel.HERE
+                )
+                in_bom[1] = "no"
+                on_board = self.find_object_by_atom(
+                    sym, "on_board", QueryRecursionLevel.HERE
+                )
+                on_board[1] = "no"
 
         cluster_x = key_grid_info.switch_origin_x + (mx * key_grid_info.spacing_x)
         cluster_y = key_grid_info.switch_origin_y + (my * key_grid_info.spacing_y)

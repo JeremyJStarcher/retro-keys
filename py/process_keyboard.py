@@ -295,9 +295,6 @@ class ProcessKeyboard:
                 for key_name in self.common_key_format.get_key_names():
                     key = self.common_key_format.get_from_common_keys_or_new(key_name)
 
-                    if key.is_decal:
-                        continue
-
                     kmx = int(float(key.matrix[1]))
                     kmy = int(float(key.matrix[0]))
 
@@ -312,6 +309,7 @@ class ProcessKeyboard:
                             x,
                             y,
                             key.w,
+                            key.is_decal,
                         )
 
                         base_designator += 1

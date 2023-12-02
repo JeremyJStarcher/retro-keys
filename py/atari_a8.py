@@ -1,10 +1,14 @@
+#!/usr/bin/env python
+
 from pathlib import Path
 from dataclasses import dataclass
+from typing import List
 from process_keyboard import ProcessConfiguration
 from process_keyboard import ProcessKeyboard
+import sys, getopt
 
 
-if __name__ == "__main__":
+def getProcessConfiguration():
     base_path = Path("../keyboards/atari-a8")
 
     config = ProcessConfiguration()
@@ -28,16 +32,25 @@ if __name__ == "__main__":
     )
     config.json_path_to_qmk_layout = "layouts.LAYOUT.layout"
 
-    process = ProcessKeyboard(config)
+    return config
 
+
+def schematic():
+    config = getProcessConfiguration()
+    process = ProcessKeyboard(config)
     process.run_wrapped(
         [
-            process.log_symbols,
+            # process.log_symbols,
             process.clear_schematic,
             process.add_schematic_lib_symbols,
             process.add_schematic_connections,
         ]
     )
+
+
+def pcb():
+    config = getProcessConfiguration()
+    process = ProcessKeyboard(config)
 
     process.run_wrapped(
         [
@@ -49,3 +62,55 @@ if __name__ == "__main__":
             process.generate_openscad_case_file,
         ]
     )
+
+
+def main(argv: List[str]):
+    config = getProcessConfiguration()
+    process = ProcessKeyboard(config)
+
+    run_schematic = False
+    run_pcb = False
+
+    opts, args = getopt.getopt(argv, "hsp", ["schematic", "pcb"])
+    for opt, arg in opts:
+        if opt == "-h":
+            print("atari_a8.py [-s|--schematic] to update the schematic")
+            print(
+                "  This places schematic symbols according to the qmk_info.json file (for the matrix)"
+            )
+            print("  and the keyboard_layout.json for the footprints and key names.")
+
+            print(
+                "atari_a8.py [-p|--pcb] arrange the footprints on the PCB (keyboard_layout.json)"
+            )
+            print(
+                "  Note: This does not ADD the footprints to the PCB.  If the schematic changes, delete all"
+            )
+            print(
+                "  all non-locked footprints and manually re-add them in kicad. THEN run this."
+            )
+            sys.exit()
+        elif opt in ("-s", "--schematic"):
+            run_schematic = True
+        elif opt in ("-p", "--pcb"):
+            run_pcb = True
+
+    if run_schematic == False and run_pcb == False:
+        print("Nothing to do")
+        sys.exit()
+
+    if run_schematic and run_pcb:
+        print("Can't do the schematic and PCB in one pass")
+        sys.exit()
+
+    if run_pcb:
+        print("Updating the PCB")
+        pcb()
+
+    if run_schematic:
+        print("Updating the schematic")
+        schematic()
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

@@ -35,12 +35,21 @@ def getProcessConfiguration():
     return config
 
 
+def dump():
+    config = getProcessConfiguration()
+    process = ProcessKeyboard(config)
+    process.run_wrapped(
+        [
+            process.log_symbols,
+        ]
+    )
+
+
 def schematic():
     config = getProcessConfiguration()
     process = ProcessKeyboard(config)
     process.run_wrapped(
         [
-            # process.log_symbols,
             process.clear_schematic,
             process.add_schematic_lib_symbols,
             process.add_schematic_connections,
@@ -64,36 +73,46 @@ def pcb():
     )
 
 
+def print_help():
+    print(
+        """
+
+atari_a8.py [-s|--schematic] to update the schematic
+This places symbols on the schematic and does the interconnected wiring
+  * qmk_info.json file (for the matrix)
+  * keyboard_layout.json (footprints and key names.
+
+atari_a8.py [-p|--pcb] arrange the footprints on the PCB (keyboard_layout.json
+Note: This does not ADD the footprints to the PCB.  If the schematic changes, delete all
+all non-locked footprints and manually re-add them in kicad. THEN run this.
+
+atari_a8.py [--dump] dump the schematic to stdout in a way that can be copy-pasted 
+into the app.
+"""
+    )
+
+
 def main(argv: List[str]):
-    config = getProcessConfiguration()
-    process = ProcessKeyboard(config)
 
     run_schematic = False
     run_pcb = False
+    run_dump_schematic = False
 
-    opts, args = getopt.getopt(argv, "hsp", ["schematic", "pcb"])
+    opts, args = getopt.getopt(argv, "hspl", ["schematic", "pcb", "dump"])
     for opt, arg in opts:
         if opt == "-h":
-            print("atari_a8.py [-s|--schematic] to update the schematic")
-            print(
-                "  This places schematic symbols according to the qmk_info.json file (for the matrix)"
-            )
-            print("  and the keyboard_layout.json for the footprints and key names.")
-
-            print(
-                "atari_a8.py [-p|--pcb] arrange the footprints on the PCB (keyboard_layout.json)"
-            )
-            print(
-                "  Note: This does not ADD the footprints to the PCB.  If the schematic changes, delete all"
-            )
-            print(
-                "  all non-locked footprints and manually re-add them in kicad. THEN run this."
-            )
+            print_help()
             sys.exit()
         elif opt in ("-s", "--schematic"):
             run_schematic = True
         elif opt in ("-p", "--pcb"):
             run_pcb = True
+        elif opt == "--dump":
+            run_dump_schematic = True
+
+    if run_dump_schematic:
+        dump()
+        sys.exit()
 
     if run_schematic == False and run_pcb == False:
         print("Nothing to do")

@@ -7,13 +7,12 @@
   },
   [
     {
-      "x": 3.25,
       "w": 1.25,
       "h": 1.25
     },
     "\n<i class=\"qmk_id\">POWER</i>\n\n\n\n\n\n\n\nPOWER",
     {
-      "x": 0.75,
+      "x": 6.75,
       "w": 1.25,
       "h": 1.25
     },
@@ -24,7 +23,7 @@
     },
     "\n<i class=\"qmk_id\">TURBO</i>\n\n\n\n\n\n\n\nTURBO",
     {
-      "x": 5,
+      "x": 2.25,
       "w": 1.25,
       "h": 1.25
     },
@@ -184,9 +183,6 @@
       "w": 2
     },
     "\n<i class=\"qmk_id\">CONTROL</i>\n\n\n\n\n\n\n\n<span class=\"layout-color-ctrl\">CONTROL<span>",
-    {
-      "sm": ""
-    },
     "\n<i class=\"qmk_id\">A</i>\n\n\n\n\n\n\n\nA",
     "\n<i class=\"qmk_id\">S</i>\n\n\n\n\n\n\n\nS",
     "\n<i class=\"qmk_id\">D</i>\n\n\n\n\n\n\n\nD",

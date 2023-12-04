@@ -470,10 +470,6 @@ class KicadTool:
             atm[2] = str(makeDecimal(atm[2]) - at_y + my)
             atm[3] = str(makeDecimal(atm[3]) - at_r + mr)
 
-    """
-    jjz    
-    """
-
     def get_absolute_pin_position_for_schematic(
         self,
         root: SexpType,
@@ -978,7 +974,7 @@ class KicadTool:
     def add_sd123_model(self, parent: SexpType, path: str) -> None:
         o: SexpType = [
             "model",
-            '"${KIPRJMOD}/' + str(path) + 'SOD-diodes/SOD-123.step"',
+            '"${KIPRJMOD}/' + str(path) + '/SOD-diodes/SOD-123.step"',
             ["offset", ["xyz", "0", "0", "0"]],
             ["scale", ["xyz", "1", "1", "1"]],
             ["rotate", ["xyz", "0", "0", "0"]],

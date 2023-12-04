@@ -18,12 +18,7 @@
       "a": 7,
       "d": true
     },
-    "<i class=\"qmk_id\">JS1_UP</i>",
-    {
-      "x": 0.25,
-      "d": true
-    },
-    "<i class=\"qmk_id\">JS2_UP</i>"
+    "<i class=\"qmk_id\">JS1_UP</i>"
   ],
   [
     {
@@ -60,24 +55,14 @@
       "a": 7,
       "d": true
     },
-    "<i class=\"qmk_id\">JS1_DOWN</i>",
-    {
-      "x": 0.25,
-      "d": true
-    },
-    "<i class=\"qmk_id\">JS2_DOWN</i>"
+    "<i class=\"qmk_id\">JS1_DOWN</i>"
   ],
   [
     {
       "x": 18.25,
       "d": true
     },
-    "<i class=\"qmk_id\">JS1_LEFT</i>",
-    {
-      "x": 0.25,
-      "d": true
-    },
-    "<i class=\"qmk_id\">JS2_LEFT</i>"
+    "<i class=\"qmk_id\">JS1_LEFT</i>"
   ],
   [
     {
@@ -116,12 +101,7 @@
       "a": 7,
       "d": true
     },
-    "<i class=\"qmk_id\">JS1_RIGHT</i>",
-    {
-      "x": 0.25,
-      "d": true
-    },
-    "<i class=\"qmk_id\">JS2_RIGHT</i>"
+    "<i class=\"qmk_id\">JS1_RIGHT</i>"
   ],
   [
     {
@@ -182,12 +162,7 @@
       "a": 7,
       "d": true
     },
-    "<i class=\"qmk_id\">JS1_TRIG</i>",
-    {
-      "x": 0.25,
-      "d": true
-    },
-    "<i class=\"qmk_id\">JS2_TRIG</i>"
+    "<i class=\"qmk_id\">JS1_TRIG</i>"
   ],
   [
     {

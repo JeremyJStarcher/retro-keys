@@ -112,11 +112,6 @@
                 { "label": "RSHIFT", "matrix": [7, 8], "w": 1.75, "x": 12.5, "y": 4.5 },
 
 
-                { "label": "JS2_UP", "matrix": [8, 0], "x": -1, "y": -1 },
-                { "label": "JS2_TRIG", "matrix": [8, 1], "x": -1, "y": -1 },
-                { "label": "JS2_DOWN", "matrix": [8, 2], "x": -1, "y": -1 },
-                { "label": "JS2_LEFT", "matrix": [8, 3], "x": -1, "y": -1 },
-                { "label": "JS2_RIGHT", "matrix": [8, 4], "x": -1, "y": -1 },
                 { "h": 1.25, "label": "INV", "matrix": [8, 5], "w": 1.25, "x": 12.75, "y": 0 },
                 { "h": 1.25, "label": "BREAK", "matrix": [8, 6], "w": 1.25, "x": 14, "y": 0 },
                 { "label": "SPACE", "matrix": [8, 7], "w": 6.25, "x": 4.75, "y": 5.5 }

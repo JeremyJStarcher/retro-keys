@@ -518,7 +518,12 @@ module key_break() {
 
 module key_power() {
     tu(KEY_POWER)
-    gridKey("POWER");
+    // gridKey("POWER");
+
+    graphicsKey(2, "PWR", "ctrl-p") {
+        gCharacter("");
+    }
+
 }
 
 

@@ -27,7 +27,6 @@ CASE_HEIGHT = 6
 MOUNTING_HOLE_OFFSET = 5
 MOUNTING_HOLE_D = 3.2
 
-
 PRINTER_X = 280
 PRINTER_Y = 260
 
@@ -104,6 +103,8 @@ class ProcessConfiguration:
     pcb_x_orig = Decimal(2 * UNIT)
     pcb_y_orig = Decimal(9 * UNIT)
     pcb_border = Decimal(UNIT / 2)
+
+    pcb_border_top = UNIT * 0
 
     # How much to move the diodes
     diode_offset_x = Decimal(UNIT / 2)
@@ -416,6 +417,11 @@ class ProcessKeyboard:
                     pcb, Layer.Edge_Cuts, hx, hy, STANDOFF_HOLE_INNER_DIAMETER, "solid"
                 )
 
+
+#jjz
+        bbox.y1 -= self.config.pcb_border_top
+        # bbox.x1 -= self.config.pcb_border_top
+        
         bbox.add_border(self.config.pcb_border)
         tool.add_bounding_box(pcb, bbox, 0.3, Layer.Edge_Cuts)
 

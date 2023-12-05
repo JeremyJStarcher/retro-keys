@@ -59,6 +59,10 @@ def schematic():
 
 def pcb():
     config = getProcessConfiguration()
+
+    config.pcb_border_top = config.UNIT * 1
+
+
     process = ProcessKeyboard(config)
 
     process.run_wrapped(

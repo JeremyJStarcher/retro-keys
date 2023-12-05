@@ -459,17 +459,16 @@ module key_gt() {
 
 module key_bs() {
     tu(KEY_BS)
-    u(2)
+    u(1)
     stabilized()
-    flegend("BACK SP", POS_TEXT_1_OF_2, half_size)
-    flegend("DELETE", POS_2_OF_2, half_size)
+    flegend("BS", POS_TEXT_1_OF_2, half_size)
+    flegend("DEL", POS_2_OF_2, half_size)
     oem_row(1)
     preKey()
     key();
 }
 
 /////////////////
-
 
 module key_reset() {
     tu(KEY_RESET)
@@ -508,22 +507,28 @@ module key_help() {
 
 module key_inv() {
     tu(KEY_INV)
-    gridKey("INV");
+    // gridKey("INV");
+
+    graphicsKey(4, "INV", "ctrl-p") {
+        gCharacter("");
+    }
 }
 
 module key_break() {
     tu(KEY_BREAK)
-    gridKey("BREAK");
-}
+//    gridKey("BREAK");
 
-module key_power() {
-    tu(KEY_POWER)
-    // gridKey("POWER");
-
-    graphicsKey(2, "PWR", "ctrl-p") {
+    graphicsKey(2, "BRK", "ctrl-p") {
         gCharacter("");
     }
 
+}
+
+
+
+module key_power() {
+    tu(KEY_POWER)
+    gridKey("POWER");
 }
 
 

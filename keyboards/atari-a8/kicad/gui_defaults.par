@@ -10,91 +10,91 @@
     (color_manager
       not_visible
       (bounds
-        0 600 1110 141
+        0 600 1120 160
       )
     )
     (layer_visibility
       not_visible
       (bounds
-        0 450 367 162
+        0 450 380 220
       )
     )
     (object_visibility
       not_visible
       (bounds
-        0 550 410 396
+        0 336 401 668
       )
     )
     (display_miscellanious
       not_visible
       (bounds
-        0 350 246 333
+        0 350 306 373
       )
     )
     (snapshots
       not_visible
       (bounds
-        0 250 237 255
+        0 250 210 305
       )
     )
     (select_parameter
       not_visible
       (bounds
-        0 0 246 467
+        0 0 243 498
       )
     )
     (route_parameter
       not_visible
       (bounds
-        0 100 265 542
+        0 100 326 599
       )
     )
     (manual_rules
       not_visible
       (bounds
-        0 32 327 196
+        0 32 326 199
       )
     )
     (route_details
       not_visible
       (bounds
-        0 32 272 240
+        0 32 326 272
       )
     )
     (move_parameter
       not_visible
       (bounds
-        0 50 313 139
+        0 50 375 151
       )
     )
     (clearance_matrix
       not_visible
       (bounds
-        0 150 570 273
+        0 150 670 298
       )
     )
     (via_rules
       not_visible
       (bounds
-        50 150 335 450
+        50 150 449 490
       )
     )
     (edit_vias
       not_visible
       (bounds
-        100 150 413 119
+        100 150 428 150
       )
     )
     (edit_net_rules
       not_visible
       (bounds
-        100 200 913 119
+        100 200 1028 150
       )
     )
     (assign_net_rules
       not_visible
       (bounds
-        100 250 228 372
+        100 250 228 377
       )
     )
     (padstack_info
@@ -138,7 +138,7 @@
     (background
       0 0 0
     )
-    (hilight 0.8
+    (hilight 1.0
       230 255 255
     )
     (incompletes 1.0
@@ -156,38 +156,38 @@
     (violations
       255 0 255
     )
-    (length_matching 0.1
+    (length_matching 1.0
       0 255 0
     )
-    (traces 0.4
+    (traces 1.0
       255 0 0
       153 255 204
     )
-    (fixed_traces 0.4
+    (fixed_traces 1.0
       255 0 0
       153 255 204
     )
-    (vias 0.6
+    (vias 1.0
       200 200 0
       200 200 0
     )
-    (fixed_vias 0.6
+    (fixed_vias 1.0
       200 200 0
       200 200 0
     )
-    (pins 0.6
+    (pins 1.0
       150 50 0
       160 80 0
     )
-    (conduction 0.2
+    (conduction 1.0
       0 150 0
       100 100 0
     )
-    (keepout 0.2
+    (keepout 1.0
       0 110 110
       0 100 160
     )
-    (via_keepout 0.2
+    (via_keepout 1.0
       100 100 100
       100 100 100
     )

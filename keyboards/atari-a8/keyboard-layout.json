@@ -7,23 +7,8 @@
   },
   [
     {
-      "x": 16.75
-    },
-    "\n<i class=\"qmk_id\">POWER</i>\n\n\n\n\n\n\n\nPOWER"
-  ],
-  [
-    {
-      "y": -0.75,
-      "x": 18.25,
-      "a": 7,
-      "d": true
-    },
-    "<i class=\"qmk_id\">JS1_UP</i>"
-  ],
-  [
-    {
-      "x": 8,
-      "a": 4,
+      "y": 1.25,
+      "x": 11.5,
       "w": 1.25,
       "h": 1.25
     },
@@ -34,39 +19,51 @@
     },
     "\n<i class=\"qmk_id\">TURBO</i>\n\n\n\n\n\n\n\nTURBO",
     {
-      "x": 2.25,
       "w": 1.25,
       "h": 1.25
     },
-    "\n<i class=\"qmk_id\">INV</i>\n\n\n\n\n\n\n\nINV",
-    {
-      "w": 1.25,
-      "h": 1.25
-    },
-    "\n<i class=\"qmk_id\">BREAK</i>\n\n\n\n\n\n\n\nBREAK",
+    "\n<i class=\"qmk_id\">POWER</i>\n\n\n\n\n\n\n\nPOWER",
     {
       "x": 1.25,
       "w": 1.25,
       "h": 1.25
     },
-    "\n<i class=\"qmk_id\">HELP</i>\n\n\n\n\n\n\n\nHELP",
+    "\n<i class=\"qmk_id\">HELP</i>\n\n\n\n\n\n\n\nHELP"
+  ],
+  [
     {
-      "x": 0.5,
+      "y": -0.75,
+      "x": 0.25,
       "a": 7,
       "d": true
     },
-    "<i class=\"qmk_id\">JS1_DOWN</i>"
-  ],
-  [
+    "<i class=\"qmk_id\">JS1_UP</i>",
     {
-      "x": 18.25,
+      "x": 0.25,
       "d": true
     },
-    "<i class=\"qmk_id\">JS1_LEFT</i>"
+    "<i class=\"qmk_id\">JS1_DOWN</i>",
+    {
+      "x": 0.25,
+      "d": true
+    },
+    "<i class=\"qmk_id\">JS1_LEFT</i>",
+    {
+      "x": 0.25,
+      "d": true
+    },
+    "<i class=\"qmk_id\">JS1_RIGHT</i>",
+    {
+      "x": 0.25,
+      "sm": "cherry",
+      "d": true
+    },
+    "<i class=\"qmk_id\">JS1_TRIG</i>"
   ],
   [
     {
-      "y": -0.5,
+      "y": 0.25,
+      "sm": "",
       "a": 4,
       "w": 1.25
     },
@@ -83,10 +80,8 @@
     "\n<i class=\"qmk_id\">0</i>\n\n\n\n\n\n\n)\n\n0",
     "\n<i class=\"qmk_id\">LT</i>\n\n\n\n\n\n\nCLEAR\n\n<",
     "\n<i class=\"qmk_id\">GT</i>\n\n\n\n\n\n\nINSERT\n\n>",
-    {
-      "w": 2
-    },
     "\n<i class=\"qmk_id\">BS</i>\n\n\n\n\n\n\nDEL\n\nBS",
+    "\n<i class=\"qmk_id\">BREAK</i>\n\n\n\n\n\n\n\nBREAK",
     {
       "x": 1.25,
       "w": 1.25,
@@ -96,17 +91,6 @@
   ],
   [
     {
-      "y": -0.5,
-      "x": 18.25,
-      "a": 7,
-      "d": true
-    },
-    "<i class=\"qmk_id\">JS1_RIGHT</i>"
-  ],
-  [
-    {
-      "y": -0.5,
-      "a": 4,
       "w": 1.75
     },
     "<span class=\"layout-color-ctrl\">CLR</span>\n\nSET\n\n\n\n\n\n\n<i class=\"qmk_id\">TAB</i>\nTAB",
@@ -156,18 +140,8 @@
   ],
   [
     {
-      "y": -0.75,
-      "x": 18.25,
+      "y": -0.25,
       "sm": "cherry",
-      "a": 7,
-      "d": true
-    },
-    "<i class=\"qmk_id\">JS1_TRIG</i>"
-  ],
-  [
-    {
-      "y": -0.5,
-      "a": 4,
       "w": 2
     },
     "\n<i class=\"qmk_id\">CONTROL</i>\n\n\n\n\n\n\n\n<span class=\"layout-color-ctrl\">CONTROL<span>",
@@ -241,12 +215,17 @@
     {
       "n": true
     },
-    "\n<i class=\"qmk_id\">C_UP</i>\n\n\n\n\n\n\n\n↑"
+    "\n<i class=\"qmk_id\">C_UP</i>\n\n\n\n\n\n\n\n↑",
+    {
+      "sm": ""
+    },
+    "\n<i class=\"qmk_id\">INV</i>\n\n\n\n\n\n\n\nINV"
   ],
   [
     {
       "y": -0.25,
       "x": 16.5,
+      "sm": "cherry",
       "w": 1.25,
       "h": 1.25
     },

@@ -66,7 +66,6 @@
                 { "label": "M", "matrix": [3, 7], "x": 8.5, "y": 4.5 },
                 { "label": "COMMA", "matrix": [3, 8], "x": 9.5, "y": 4.5 },
           
-
                 { "label": "9", "matrix": [4, 0], "x": 9.25, "y": 1.5 },
                 { "label": "0", "matrix": [4, 1], "x": 10.25, "y": 1.5 },
                 { "label": "LT", "matrix": [4, 2], "x": 11.25, "y": 1.5 },
@@ -87,7 +86,6 @@
                 { "label": "EQUAL", "matrix": [5, 7], "x": 12.75, "y": 2.5 },
                 { "label": "RETURN", "matrix": [5, 8], "w": 1.5, "x": 13.75, "y": 2.5 },
 
-
                 { "label": "SPACE", "matrix": [6, 0], "w": 6.25, "x": 4.75, "y": 5.5 },
                 { "label": "FN", "matrix": [6, 1], "x": 2, "y": 5.5 },
                 { "label": "PERIOD", "matrix": [6, 2], "x": 10.5, "y": 4.5 },
@@ -105,7 +103,6 @@
                 { "h": 1.25, "label": "MENU", "matrix": [7, 5], "w": 1.25, "x": 5.25, "y": 0 },
                 { "h": 1.25, "label": "TURBO", "matrix": [7, 6], "w": 1.25, "x": 6.5, "y": 0 },
                 { "h": 1.25, "label": "START", "matrix": [7, 7], "w": 1.25, "x": 16.5, "y": 5.25 },
-
 
                 { "label": "JS1_UP", "matrix": [8, 0], "x": -1, "y": -1 },
                 { "label": "JS1_DOWN", "matrix": [8, 1], "x": -1, "y": -1 },

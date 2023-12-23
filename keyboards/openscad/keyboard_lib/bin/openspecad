@@ -1,0 +1,199 @@
+#!/usr/bin/env python3
+
+from optparse import OptionParser
+from pathlib import Path
+from colorama import Fore, Style
+import xml.etree.ElementTree as ET
+import subprocess
+import time
+import uuid
+import re
+
+start_time = time.time()
+
+usage = "usage: %prog [options] [paths default=specs]"
+parser = OptionParser(usage=usage)
+parser.add_option("--glob", dest="glob", default="*_spec.scad",
+                  help="specify the glob used to identify test files\n (default=*_spec.scad)")
+parser.add_option("-j", "--junit", dest="junit", action="store_true", default=False,
+                  help="Output results to junit.xml file")
+parser.add_option("--junit-file", dest="junit_file", default="junit.xml",
+                  help="Output results to junit.xml file")
+parser.add_option("-o", "--openscad", dest="openscad_path",
+                  help="set the path to the openscad installation (default=/usr/bin/openscad)")
+parser.add_option("-s", "--split", dest="split", type="int", default=1,
+                  help="split specs into n groups in order to make them faster in CI")
+parser.add_option("-g", "--group", dest="split_group", type="int", default=0,
+                  help="used with --split, this indicates which group of tests to run")
+parser.add_option("-w", "--ignore-warnings", dest="ignore_warnings", action="store_true", default=False,
+                  help="do not pass --hardwarnings flag when building tests. can be added to test frontmatter")
+parser.add_option("-r", "--generate-references", dest="references", action="store_true", default=False,
+                  help="Automatically generate references. This does not check anything, just updates the references.")
+parser.add_option("--gitlab-parallel", dest="gitlab_parallel", action="store_true", default=False,
+                  help="Automatically use gitlab ci parallelization variables for splitting and junit output")
+
+(options, args) = parser.parse_args()
+
+if options.openscad_path is None:
+  result = subprocess.run(['which', "openscad"], stdout=subprocess.PIPE)
+  if result.returncode == 0:
+    options.openscad_path = result.stdout.decode('utf-8').strip()
+  else:
+    print("Unable to locate openscad, please provide the --openscad <path> option")
+    exit(2)
+
+if options.gitlab_parallel:
+  import os
+  options.split = int(os.getenv('CI_NODE_TOTAL'))
+  options.group = int(os.getenv('CI_NODE_INDEX'))
+  options.junit = True
+  options.junit_file = options.junit_file or "junit-" + os.getenv('CI_NODE_INDEX') + ".xml"
+
+file_parser = OptionParser()
+file_parser.add_option("--type", dest="type", default="stl")
+file_parser.add_option("--only-functions", dest="is_function", default=False, action="store_true")
+file_parser.add_option("--ignore-warnings", dest="ignore_warnings", default=False, action="store_true")
+
+if(len(args) == 0):
+  args = ['specs']
+
+def openscad_tmp_command(test):
+  warnings = "" if test['options'].ignore_warnings or options.ignore_warnings else "--hardwarnings"
+  return "{command} {warnings} -o {path}.reference.tmp.{type} {path}".format(command=options.openscad_path, path=test['path'], type=test['options'].type, warnings=warnings)
+
+def openscad_result_command(test, tmp_result_file):
+  warnings = "" if test['options'].ignore_warnings or options.ignore_warnings else "--hardwarnings"
+  return "{command} {warnings} -o {tmp_result_file}.reference.tmp.{type} {tmp_result_file}".format(command=options.openscad_path, warnings=warnings, type=test['options'].type, tmp_result_file=tmp_result_file)
+
+def write_tmp_test_file(tmp, reference):
+  tmp_result_file = "/tmp/openspecad/{}.scad".format(str(uuid.uuid4()))
+  Path(tmp_result_file).parent.mkdir(parents=True, exist_ok=True)
+  with open(tmp_result_file, 'w') as file:
+    file.write("difference(){{\nimport(\"{tmp}\");\nimport(\"{reference}\");\n}}"\
+      .format(tmp=Path(tmp).absolute().as_posix(), reference=Path(reference).absolute().as_posix()))
+  return tmp_result_file
+
+def run_final_test(test, tmp_result_file, tmp):
+  command = openscad_result_command(test, tmp_result_file)
+  result = subprocess.run(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  err = result.stderr.decode('utf-8')
+  non_cgal_error = re.match('ERROR: [^CGAL error in CGAL_Nef_polyhedron3]', err)
+  if(('Current top level object is empty.' in err or 'Current top level object is not a 2D object.' in err) and not non_cgal_error):
+    Path(tmp_result_file).unlink()
+    Path(tmp).unlink()
+    return True
+  else:
+    test['error_trace'] = err
+    if non_cgal_error:
+      test['error'] = "There was an error comparing the result with the reference"
+    else:
+      test['error'] = "The result did not match the reference file"
+    test['tip'] = "You can also examine the temporary result file - {}".format(tmp_result_file)
+    return False
+
+def compare_results(test):
+  tmp = "{path}.reference.tmp.{type}".format(path=test['path'], type=test['options'].type)
+  reference = "{path}.reference.{type}".format(path=test['path'], type=test['options'].type)
+  if options.references:
+    Path(tmp).rename(reference)
+    return True
+  if Path.exists(Path(reference)):
+    tmp_result_file = write_tmp_test_file(tmp, reference)
+    return run_final_test(test, tmp_result_file, tmp)
+  test['error_trace'] = "Missing reference {}".format(reference)
+  test['error'] = "Missing reference file"
+  test['tip'] = "There was no reference for {path}. To use the last generated tmp as the reference, run:\n    mv {tmp} {reference}".format(path=test['path'], tmp=tmp, reference=reference)
+  return False
+
+def run_test(test):
+  command = openscad_tmp_command(test)
+  result = subprocess.run(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  err = result.stderr.decode('utf-8')
+  if('Current top level object is empty.' in err and 'ERROR:' not in err):
+    if test['options'].is_function:
+      return True
+    else:
+      test['error'] = "Top level was empty"
+      test['tip'] = "Top level was empty and there were no errors. If you're just testing \nfunctions, try adding `// openspecad --only-functions` to the top of the file!"
+      return False
+  elif result.returncode == 0:
+    return compare_results(test)
+  else:
+    test['error_trace'] = err
+    test['error'] = "There was an error building the comparison"
+    return False
+
+paths = []
+for path in args:
+  path = Path(path)
+  if(Path.is_file(path)):
+    paths.append(path)
+  elif(Path.is_dir(path)):
+    for globber in path.rglob(options.glob):
+      paths.append(globber)
+  else:
+    print("{} was not a valid path, ignoring".format(path))
+
+if(len(paths) == 0):
+  print("No tests found")
+  exit(1)
+
+groups = {}
+for i in range(options.split):
+  groups[i] = []
+
+for index, path in enumerate(paths):
+  groups[index % options.split].append({ 'path': path })
+
+group = groups[options.split_group % options.split]
+
+if len(groups) > 1:
+  print("Running {}/{} test files".format(len(group), len(paths)))
+
+for test in group:
+  first_line = ""
+  with open(test['path']) as f:
+    first_line = f.readline()
+  test['options'], _args = file_parser.parse_args(first_line.split())
+  if run_test(test):
+    test['passed'] = True
+    print(Fore.GREEN + '.' + Style.RESET_ALL, end="", flush=True)
+  else:
+    test['passed'] = False
+    print(Fore.RED + 'X' + Style.RESET_ALL, end="", flush=True)
+
+end_time = time.time()
+
+results = {'name': "openspecad group-{}/{}".format(options.split_group, options.split), 'id': str(time.time()), 'tests': str(len(group)), 'failures': str(0), 'time': str(start_time - end_time)}
+root = ET.Element('testsuites', results)
+junit = ET.SubElement(root, 'testsuite', results)
+passed = True
+for test in group:
+  junit_test = ET.SubElement(junit, 'testcase', {'name': str(test['path'])})
+  if not test['passed']:
+    root.set('failures', str(int(root.get('failures')) + 1))
+    junit.set('failures', str(int(junit.get('failures')) + 1))
+    junit_failure = ET.SubElement(junit_test, 'failure', {'message': test['error']})
+    junit_failure.text = ""
+    passed = False
+
+    failure = "Failure: {}".format(test['path'])
+    issue = "\nIssue: {}".format(test['error'])
+    stderr = "\n\nstderr:{}\n{}".format(Style.RESET_ALL, test['error_trace']) if 'error_trace' in test else ""
+    print("\n{red}{failure}{issue}{stderr}".format(red=Fore.RED, failure=failure, issue=issue, stderr=stderr))
+    junit_failure.text = "{failure}{issue}{stderr}".format(failure=failure, issue=issue, stderr=stderr)
+  if "tip" in test:
+    tip = "\n{green}Tip:{reset}\n{tip}".format(green=Fore.GREEN, reset=Style.RESET_ALL, tip=test['tip'])
+    print(tip)
+
+print(Style.RESET_ALL, end="", flush=True)
+
+if options.junit:
+  tree = ET.ElementTree(root)
+  tree.write(options.junit_file, xml_declaration=True, encoding='utf-8')
+
+if passed:
+  print("\nTests completed successfully")
+  exit()
+else:
+  exit(1)

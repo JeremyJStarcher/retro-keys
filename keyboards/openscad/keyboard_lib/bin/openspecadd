@@ -1,0 +1,3 @@
+#! /bin/sh
+# Runs the openspsecad but inside of the container used in ci
+docker run -v "$(pwd)":"/code" -w /code -it registry.gitlab.com/alexives/keyboard_lib/tools:latest bin/openspecad $@

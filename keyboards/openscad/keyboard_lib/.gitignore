@@ -1,0 +1,8 @@
+tmp
+.DS_Store
+keyboard_lib.*.scad
+tests/base.scad
+description.txt
+gl-code-quality-report.json
+*_spec.scad.reference.tmp.*
+junit*.xml

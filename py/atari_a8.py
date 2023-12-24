@@ -14,6 +14,7 @@ def getProcessConfiguration():
     config = ProcessConfiguration()
 
     # Master input file, source of all truth.
+    config.plate_layout_filename = base_path / "case" / "case-layout.scad"
     config.kle_layout_filename = base_path / "keyboard-layout.json"
 
     config.qmk_layout_filename = base_path / "qmkinfo.json"
@@ -61,7 +62,6 @@ def pcb():
     config = getProcessConfiguration()
 
     config.pcb_border_top = config.UNIT * 1
-
 
     process = ProcessKeyboard(config)
 

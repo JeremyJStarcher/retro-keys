@@ -84,6 +84,7 @@ RunWrappedType = Callable[[RunWrappedOptions], None]
 
 class ProcessConfiguration:
     # These paths are relative to the 'py' directory
+    plate_layout_filename: Path
     kle_layout_filename: Path
     qmk_layout_filename: Path
     pcb_filename: Path
@@ -111,7 +112,8 @@ class ProcessConfiguration:
     diode_offset_y = (
         Decimal(UNIT / 8) + 2
     )  # A little breathing room for the support screws
-    diode_offset_y = 0
+    diode_offset_y = Decimal(0)
+
 
 class ProcessKeyboard:
     config: ProcessConfiguration
@@ -404,8 +406,7 @@ class ProcessKeyboard:
                 pcb, "D" + item.designator, item.diode_x, item.diode_y, Decimal(-90)
             )
 
-
-            if (False):
+            if False:
                 hx, hy = self.get_standoff_location(schematic, tool, item)
                 """
                     If we want screws to mount the PCB to the case with
@@ -417,11 +418,10 @@ class ProcessKeyboard:
                     pcb, Layer.Edge_Cuts, hx, hy, STANDOFF_HOLE_INNER_DIAMETER, "solid"
                 )
 
-
-#jjz
+        # jjz
         bbox.y1 -= self.config.pcb_border_top
         # bbox.x1 -= self.config.pcb_border_top
-        
+
         bbox.add_border(self.config.pcb_border)
         tool.add_bounding_box(pcb, bbox, 0.3, Layer.Edge_Cuts)
 
@@ -578,16 +578,19 @@ class ProcessKeyboard:
             url = f"{self.config.kicad_keycap_vrml_path_str}/key_{item.label.lower()}_legend.wrl"
             tool.add_keycap_model(switchFootprint, url)
 
-    def generate_openscad_case_file(self, options: RunWrappedOptions) -> None:
-        def bboxToPolygon(bbox: BoundingBox) -> str:
-            s = f" polygon(points=[ \
-                [{bbox.x1},{bbox.y1}],\
-                [{bbox.x1},{bbox.y2}],\
-                [{bbox.x2},{bbox.y2}],\
-                [{bbox.x2},{bbox.y1}]\
-            ]);"
-            return s
+    def key_position_to_scad(self, code: list[str], options: RunWrappedOptions) -> None:
+        code.append("")
+        code.append("")
 
+        code.append("key_positions = [")
+        for key in options.keys:
+            s = f'    ["{key.label}", {str(key.key_x)}, {str(key.key_y)}, {str(key.w)}],'
+            code.append(s)
+        code.append("];")
+        code.append("")
+        code.append("")
+
+    def generate_openscad_case_file(self, options: RunWrappedOptions) -> None:
         def bbox_to_openscad_src(label: str, bbox: BoundingBox) -> str:
             return "[" + f'"{label}", {bbox.x1}, {bbox.y1}, {bbox.x2}, {bbox.y2}' + "]"
 
@@ -655,15 +658,17 @@ class ProcessKeyboard:
 
         code.append("keyStandoffs = [")
         for x, y in standoffLocations:
-            code.append(f"[{x},{y}],")
+            code.append(f"    [{x},{y}],")
         code.append("];")
 
         code.append("keyBoundingBoxes = [")
         for bb in bboxes:
-            code.append(bb + ",")
+            code.append("    " + bb + ",")
         code.append("];")
 
-        code.append("main(BOARD_WIDTH, BOARD_LEN, CASE_PIECES, CASE_PIECE);")
+        self.key_position_to_scad(code, options)
+
+        # code.append("main(BOARD_WIDTH, BOARD_LEN, CASE_PIECES, CASE_PIECE);")
 
         out = os.linesep.join(code)
 

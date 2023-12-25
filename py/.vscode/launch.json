@@ -11,7 +11,7 @@
             "program": "atari_a8.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["-p"]
+            "args": ["-c"]
         },
         {
             "name": "Python: Current File",

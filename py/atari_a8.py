@@ -14,7 +14,7 @@ def getProcessConfiguration():
     config = ProcessConfiguration()
 
     # Master input file, source of all truth.
-    config.plate_layout_filename = base_path / "case" / "case-layout.scad"
+    config.plate_layout_path = base_path / "case" / "plate"
     config.kle_layout_filename = base_path / "keyboard-layout.json"
 
     config.qmk_layout_filename = base_path / "qmkinfo.json"
@@ -60,9 +60,7 @@ def schematic():
 
 def pcb():
     config = getProcessConfiguration()
-
     config.pcb_border_top = config.UNIT * 1
-
     process = ProcessKeyboard(config)
 
     process.run_wrapped(
@@ -72,7 +70,19 @@ def pcb():
             process.make_openscad_config_file,
             process.make_jlc_pcb_assembly_files,
             process.add_3d_models_to_pcb,
+        ]
+    )
+
+
+def case():
+    config = getProcessConfiguration()
+    config.pcb_border_top = config.UNIT * 1
+    process = ProcessKeyboard(config)
+
+    process.run_wrapped(
+        [
             process.generate_openscad_case_file,
+            process.run_board_builder,
         ]
     )
 
@@ -90,6 +100,8 @@ atari_a8.py [-p|--pcb] arrange the footprints on the PCB (keyboard_layout.json
 Note: This does not ADD the footprints to the PCB.  If the schematic changes, delete all
 all non-locked footprints and manually re-add them in kicad. THEN run this.
 
+atari_a8.py [-c|--case] Generage the files needed for the case and plate.
+
 atari_a8.py [--dump] dump the schematic to stdout in a way that can be copy-pasted 
 into the app.
 """
@@ -101,8 +113,9 @@ def main(argv: List[str]):
     run_schematic = False
     run_pcb = False
     run_dump_schematic = False
+    run_case = False
 
-    opts, args = getopt.getopt(argv, "hspl", ["schematic", "pcb", "dump"])
+    opts, args = getopt.getopt(argv, "hcspl", ["schematic", "pcb", "case", "dump"])
     for opt, arg in opts:
         if opt == "-h":
             print_help()
@@ -111,6 +124,8 @@ def main(argv: List[str]):
             run_schematic = True
         elif opt in ("-p", "--pcb"):
             run_pcb = True
+        elif opt in ("-c", "--case"):
+            run_case = True
         elif opt == "--dump":
             run_dump_schematic = True
 
@@ -118,7 +133,7 @@ def main(argv: List[str]):
         dump()
         sys.exit()
 
-    if run_schematic == False and run_pcb == False:
+    if run_schematic == False and run_pcb == False and run_case == False:
         print("Nothing to do")
         sys.exit()
 
@@ -133,6 +148,10 @@ def main(argv: List[str]):
     if run_schematic:
         print("Updating the schematic")
         schematic()
+
+    if run_case:
+        print("Updating the case")
+        case()
 
 
 if __name__ == "__main__":

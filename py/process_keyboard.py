@@ -5,6 +5,7 @@ import csv
 import os
 from pathlib import Path
 import re
+import subprocess
 from typing import Callable, List
 from common_key_format import CommonKeyData
 from ki_symbols import KiSymbols
@@ -84,7 +85,7 @@ RunWrappedType = Callable[[RunWrappedOptions], None]
 
 class ProcessConfiguration:
     # These paths are relative to the 'py' directory
-    plate_layout_filename: Path
+    plate_layout_path: Path
     kle_layout_filename: Path
     qmk_layout_filename: Path
     pcb_filename: Path
@@ -589,6 +590,27 @@ class ProcessKeyboard:
         code.append("];")
         code.append("")
         code.append("")
+
+    def run_board_builder(self, options: RunWrappedOptions) -> None:
+        output_dir = self.config.plate_layout_path
+
+        directory = Path(output_dir).parent
+        directory.mkdir(parents=True, exist_ok=True)
+
+        file = Path("..") / "py-unchecked" / "BoardBuilder/BoardBuilder.py"
+        result = subprocess.run(
+            [
+                "python",
+                file,
+                f"--json={self.config.kle_layout_filename}",
+                "--stabs=cherry",
+                f"-o={output_dir}",
+            ]
+        )
+
+        # Check if the subprocess exited with a non-zero (error) status code
+        if result.returncode != 0:
+            print("Script failed with return code:", result.returncode)
 
     def generate_openscad_case_file(self, options: RunWrappedOptions) -> None:
         def bbox_to_openscad_src(label: str, bbox: BoundingBox) -> str:

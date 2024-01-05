@@ -2,8 +2,10 @@
 
 CWD=`pwd`
 
+PCB_DIR="./kicad/pcb"
+
 java -jar ~/bin/./layout/opt/layout/bin/freeRouting.jar \
--dl -de ./kicad/router.dsn -do ./kicad/router.ses
+-dl -de ${PCB_DIR}/router.dsn -do ${PCB_DIR}/router.ses
 
 #cd ../../bin/FreeRoutingNew/deploy/
 # ./run.sh \

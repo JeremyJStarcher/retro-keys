@@ -10,6 +10,7 @@ import sys, getopt
 
 def getProcessConfiguration():
     base_path = Path("../keyboards/atari-a8")
+    kicad_base = base_path / "kicad" / "pcb" 
 
     config = ProcessConfiguration()
 
@@ -19,17 +20,17 @@ def getProcessConfiguration():
 
     config.qmk_layout_filename = base_path / "qmkinfo.json"
 
-    config.pcb_filename = base_path / "kicad" / "atari-keyboard.kicad_pcb"
-    config.keyboard_sch_sheet_filename_name = base_path / "kicad" / "keyboard.kicad_sch"
+    config.pcb_filename = kicad_base / "atari-keyboard.kicad_pcb"
+    config.keyboard_sch_sheet_filename_name = kicad_base / "keyboard.kicad_sch"
 
     config.openscad_position_filename = base_path / "keycaps" / "keyboard-position.scad"
     config.case_filename = base_path / "case" / "case-position.scad"
-    config.jlc_bom_filename = base_path / "kicad" / "gerbers" / "jlc_bom.csv"
-    config.jlc_cpl_filename = base_path / "kicad" / "gerbers" / "jlc_cpl.csv"
+    config.jlc_bom_filename = kicad_base / "gerbers" / "jlc_bom.csv"
+    config.jlc_cpl_filename = kicad_base / "gerbers" / "jlc_cpl.csv"
 
-    config.kicad_3dmodel_path_str = str(Path("..") / ".." / "kicad-lib" / "3d-models")
+    config.kicad_3dmodel_path_str = str(Path("..") / ".." / ".." / "kicad-lib" / "3d-models")
     config.kicad_keycap_vrml_path_str = str(
-        Path("..") / "keycaps" / "keycap-models" / "vrml"
+        Path("..") / ".." / "keycaps" / "keycap-models" / "vrml"
     )
     config.json_path_to_qmk_layout = "layouts.LAYOUT.layout"
 
@@ -60,7 +61,7 @@ def schematic():
 
 def pcb():
     config = getProcessConfiguration()
-    config.pcb_border_top = config.UNIT * 1
+    config.pcb_border_top = config.UNIT * 0
     process = ProcessKeyboard(config)
 
     process.run_wrapped(
@@ -76,7 +77,7 @@ def pcb():
 
 def case():
     config = getProcessConfiguration()
-    config.pcb_border_top = config.UNIT * 1
+    config.pcb_border_top = config.UNIT * 0
     process = ProcessKeyboard(config)
 
     process.run_wrapped(

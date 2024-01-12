@@ -417,7 +417,7 @@
     "classes": [
       {
         "bus_width": 12,
-        "clearance": 0.5,
+        "clearance": 0.2,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,
@@ -427,7 +427,7 @@
         "name": "Default",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.5,
+        "track_width": 0.2,
         "via_diameter": 0.8,
         "via_drill": 0.4,
         "wire_width": 6
@@ -455,7 +455,24 @@
     },
     "net_colors": null,
     "netclass_assignments": null,
-    "netclass_patterns": []
+    "netclass_patterns": [
+      {
+        "netclass": "Default",
+        "pattern": ""
+      },
+      {
+        "netclass": "PWR",
+        "pattern": "VCC"
+      },
+      {
+        "netclass": "PWR",
+        "pattern": "GND"
+      },
+      {
+        "netclass": "PWR",
+        "pattern": "/VCC_RAW"
+      }
+    ]
   },
   "pcbnew": {
     "last_paths": {
@@ -516,10 +533,6 @@
     [
       "f6a334f3-ee33-4c56-a7bb-b961693d3d0e",
       ""
-    ],
-    [
-      "7ce608c9-579d-47fb-84c9-158fdf17ec91",
-      "Keyboard Matrix"
     ]
   ],
   "text_variables": {}

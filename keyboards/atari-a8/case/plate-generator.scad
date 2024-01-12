@@ -38,6 +38,7 @@ module void(l, w) {
 
 module frame() {
     difference() {
+        color("black")
         square([BOARD_LEN, BOARD_WIDTH ]);
         h();        
         #void(227, 35);

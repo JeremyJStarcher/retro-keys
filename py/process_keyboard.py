@@ -211,7 +211,7 @@ class ProcessKeyboard:
             keyInfo.key_y = y + hh / 2
 
             keyInfo.diode_x = keyInfo.key_x + self.config.diode_offset_x
-            keyInfo.diode_x = keyInfo.key_x + keyInfo.w * self.config.UNIT / 2
+            keyInfo.diode_x = (keyInfo.key_x + keyInfo.w * self.config.UNIT / 2) - self.config.UNIT / 16
 
             keyInfo.diode_y = keyInfo.key_y + self.config.diode_offset_y
 

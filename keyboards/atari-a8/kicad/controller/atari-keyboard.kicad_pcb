@@ -1455,7 +1455,7 @@
       (net 53 "unconnected-(J105-Pin_8-Pad8)") (pinfunction "Pin_8") (pintype "passive+no_connect") (tstamp 9d16bdb8-0b0d-4443-a481-def047b8b503))
     (pad "9" thru_hole oval (at 0 -10.16 180) (size 1.7 1.7) (drill 1) (layers "*.Cu" "*.Mask")
       (net 54 "unconnected-(J105-Pin_9-Pad9)") (pinfunction "Pin_9") (pintype "passive+no_connect") (tstamp efb95cbf-eee4-4767-8be8-ab665c9335d1))
-    (pad "10" thru_hole oval locked (at 2.54 -10.16 180) (size 1.7 1.7) (drill 1) (layers "*.Cu" "*.Mask")
+    (pad "10" thru_hole oval (at 2.54 -10.16 180) (size 1.7 1.7) (drill 1) (layers "*.Cu" "*.Mask")
       (net 55 "unconnected-(J105-Pin_10-Pad10)") (pinfunction "Pin_10") (pintype "passive+no_connect") (tstamp b8dbbfcf-0f15-40ec-a2a4-fb796c308488))
     (pad "11" thru_hole oval (at 0 -12.7 180) (size 1.7 1.7) (drill 1) (layers "*.Cu" "*.Mask")
       (net 56 "unconnected-(J105-Pin_11-Pad11)") (pinfunction "Pin_11") (pintype "passive+no_connect") (tstamp 2f241070-2beb-4d82-bba1-390bf3dc4496))

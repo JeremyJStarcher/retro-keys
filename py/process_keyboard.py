@@ -24,6 +24,11 @@ BASE_THICKNESS = 3
 STANDOFF_HOLE_INNER_DIAMETER = Decimal(1.5)
 STANDOFF_HOLE_OUTER_DIAMETER = Decimal(3)
 STANDOFF_HOLE_HEIGHT = Decimal(3)
+
+# If a mounting hole interfers with something else on the board, skip it
+STANDOFF_HOLES_DO_NOT_POPULATE: List[str] = ['255', '227']
+
+
 CASE_HEIGHT = 6
 MOUNTING_HOLE_OFFSET = 5
 MOUNTING_HOLE_D = 3.2
@@ -386,11 +391,6 @@ class ProcessKeyboard:
                 pcb, "SW" + item.designator, "value", False
             )
 
-            tool.move_text_to_layer(
-                pcb, "SW" + item.designator, "value", Layer.F_Silkscreen
-            )
-            tool.copy_to_back_silkscreen(pcb, "SW" + item.designator, "value")
-
             item.bounding_box = tool.get_bounding_box_of_layer_lines(
                 switch, Layer.User_Drawings
             )
@@ -404,10 +404,19 @@ class ProcessKeyboard:
             bbox.update_xy(item.bounding_box.x2, item.bounding_box.y2)
 
             tool.set_object_location(
-                pcb, "D" + item.designator, item.diode_x, item.diode_y, Decimal(-90)
+                pcb, "D" + item.designator, item.diode_x, item.diode_y, Decimal(-90), Decimal(90)
             )
 
-            if False:
+            tool.copy_to_back_silkscreen(pcb, "D" + item.designator, "reference")
+            tool.copy_to_back_silkscreen(pcb, "SW" + item.designator, "reference")
+
+            tool.move_text_to_layer(
+                pcb, "SW" + item.designator, "value", Layer.F_Silkscreen
+            )
+            tool.copy_to_back_silkscreen(pcb, "SW" + item.designator, "value")
+
+            populate_standoff = not item.designator in STANDOFF_HOLES_DO_NOT_POPULATE
+            if True and populate_standoff:
                 hx, hy = self.get_standoff_location(schematic, tool, item)
                 """
                     If we want screws to mount the PCB to the case with

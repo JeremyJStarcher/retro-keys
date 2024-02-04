@@ -341,6 +341,7 @@ class KicadTool:
         x: Decimal,
         y: Decimal,
         rot: Decimal = Decimal(0),
+        ref_rot: Decimal | None =  None,
     ) -> None:
         footprint = self.find_footprint_by_reference(root, ref)
 
@@ -350,7 +351,11 @@ class KicadTool:
         # If the object is already rotated, then un-rotate it
         if current_rot != 0:
             cat[3] = str(makeDecimal(cat[3]) - current_rot)
-            self.set_object_location(root, ref, x, y, -current_rot)
+            rrot2 = None
+            if ref_rot is not None:
+                rrot2 = - ref_rot
+                
+            self.set_object_location(root, ref, x, y, -current_rot, rrot2)
 
         all_ats = self.find_objects_by_atom(footprint, "at", QueryRecursionLevel.HERE)
         for at1 in all_ats:
@@ -369,20 +374,39 @@ class KicadTool:
             at1.append(str(at1_y))
             at1.append(str(at1_rot + rot))
 
+
+        if (ref_rot is not None):
+            obj = self.find_footprint_by_reference(root, ref)
+            if obj is None:
+                raise Exception("Could not find" + ref)
+            
+            reference_scode = self.find_objects_by_atom(obj, "fp_text", QueryRecursionLevel.HERE)
+            for s in reference_scode:
+                if(s[1] == 'reference'):
+                    # print(s)
+                    text_at = self.find_object_by_atom(s, "at", QueryRecursionLevel.HERE)
+                    if isinstance(text_at, list): 
+                        print(text_at)
+                        while len(text_at) < 4:
+                            text_at.append('0')
+                        text_at[3] = str(ref_rot)
+                        print(text_at)
+
+
         # Set the primary location and rotation
         at = self.find_footprint_at_by_reference(root, ref)
         if at is None:
             raise Exception("Could not find" + ref)
-        else:
-            at.append("0")
-            old_rot = at[3]
-            while len(at) > 0:
-                at.pop()
 
-            at.append("at")
-            at.append(str(x))
-            at.append(str(y))
-            at.append(str(rot))
+        at.append("0")
+        old_rot = at[3]
+        while len(at) > 0:
+            at.pop()
+
+        at.append("at")
+        at.append(str(x))
+        at.append(str(y))
+        at.append(str(rot))
 
     def add_bounding_box(
         self, root: SexpType, box: BoundingBox, width: float, layer: Layer

@@ -410,7 +410,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "atari-keyboard.kicad_pro",
+    "filename": "keyswitch_pcb.kicad_pro",
     "version": 1
   },
   "net_settings": {
@@ -470,10 +470,10 @@
     "last_paths": {
       "gencad": "",
       "idf": "",
-      "netlist": "atari-keyboard.net",
+      "netlist": "keyswitch_pcb.net",
       "specctra_dsn": "router.dsn",
       "step": "",
-      "vrml": "atari-keyboard.wrl"
+      "vrml": "keyswitch_pcb.wrl"
     },
     "page_layout_descr_file": ""
   },

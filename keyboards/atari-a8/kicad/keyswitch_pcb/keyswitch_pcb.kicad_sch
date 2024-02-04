@@ -2737,7 +2737,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "H101") (unit 1)
         )
@@ -2761,7 +2761,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "H102") (unit 1)
         )
@@ -2785,7 +2785,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "H103") (unit 1)
         )
@@ -2809,7 +2809,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "H104") (unit 1)
         )
@@ -2843,7 +2843,7 @@
     (pin "8" (uuid 9413ebbc-04df-4566-962f-73009924e2e1))
     (pin "9" (uuid 1f8e0e43-f216-4b91-9d7f-5c8a8c0c0063))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "J101") (unit 1)
         )
@@ -2869,7 +2869,7 @@
     (pin "1" (uuid 362b3bbf-31c1-4ed1-908e-ec190b6a287a))
     (pin "2" (uuid 97537e2f-7856-4315-8091-c75c1db688a2))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "D102") (unit 1)
         )
@@ -2895,7 +2895,7 @@
     (pin "1" (uuid b3d85e72-e5b2-41d4-936f-b7a65e757d31))
     (pin "2" (uuid 0a36cdfa-6f02-4dee-9229-ab63259640e2))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "D103") (unit 1)
         )
@@ -2921,7 +2921,7 @@
     (pin "1" (uuid da62a8af-a60e-4da4-92bf-77afdc969035))
     (pin "2" (uuid 7762502f-ac21-4d0f-9ea1-a6ad913e9e63))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "D104") (unit 1)
         )
@@ -2947,7 +2947,7 @@
     (pin "1" (uuid 464c7928-32f2-4532-a9b3-b9d118eb6472))
     (pin "2" (uuid 718dc356-3703-421f-8628-8ab2722604f3))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "D105") (unit 1)
         )
@@ -2973,7 +2973,7 @@
     (pin "1" (uuid 9e3093fc-7a03-4b91-b210-fc4b2846d9e8))
     (pin "2" (uuid 8fab1a49-132b-4899-a6a4-313d1e34d1d2))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "D101") (unit 1)
         )
@@ -2999,7 +2999,7 @@
     (pin "2" (uuid aef8b564-015a-4133-a6c8-bb1e662ddc11))
     (pin "1" (uuid f46749b8-10c5-4d2e-94f9-1bb2286bbb7a))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "C102") (unit 1)
         )
@@ -3063,7 +3063,7 @@
     (pin "9" (uuid b9af3e43-1ae9-43bf-a4a6-7b24a6202cb9))
     (pin "36" (uuid f17974f6-68d0-49f4-9ed5-cedb8af8513e))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "J102") (unit 1)
         )
@@ -3111,7 +3111,7 @@
     (pin "20" (uuid cffd6b74-41d2-44d9-be29-afdf794ad6a0))
     (pin "1" (uuid 19a5c49e-2364-400b-8222-89db84db6c43))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "U102") (unit 1)
         )
@@ -3137,7 +3137,7 @@
     (pin "1" (uuid 92a4c85a-4da2-474f-a59a-0810411aadc0))
     (pin "2" (uuid 83e58d75-6451-455e-8296-328b95ca1c69))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "D106") (unit 1)
         )
@@ -3163,7 +3163,7 @@
     (pin "1" (uuid d4b785e0-7d28-4ae4-960c-4389f7ca3ba0))
     (pin "2" (uuid e9084e94-82c1-4edc-bcc1-e615053fc966))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "R102") (unit 1)
         )
@@ -3189,7 +3189,7 @@
     (pin "1" (uuid 4fbec49d-ad20-404f-a969-37d547a0348e))
     (pin "2" (uuid b779ee10-aaba-42f8-86cc-4cc9f987225e))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "R103") (unit 1)
         )
@@ -3215,7 +3215,7 @@
     (pin "1" (uuid 41e587e2-8e64-47f2-bf8c-e84dab3f6165))
     (pin "2" (uuid cd1d66fa-b436-4c0e-b8d1-e18f60aa7c80))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "R101") (unit 1)
         )
@@ -3263,7 +3263,7 @@
     (pin "20" (uuid ea18319f-ccc3-4aad-a5cc-1772ad5fdade))
     (pin "1" (uuid 3fb7ef4d-b086-46d5-a07d-4dbfdaec9306))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "U101") (unit 1)
         )
@@ -3291,7 +3291,7 @@
     (pin "3" (uuid 772f8da5-2c11-4a7a-b244-8971a40a603d))
     (pin "4" (uuid ec39e17c-63db-4792-a3ee-6129c889d2fc))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "J103") (unit 1)
         )
@@ -3331,7 +3331,7 @@
     (pin "2" (uuid a34d5df9-39c8-4cd1-bc28-f858586dbd80))
     (pin "3" (uuid 31f168e3-d650-4fd6-82f9-c9ec5d659bf6))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "J104") (unit 1)
         )
@@ -3357,7 +3357,7 @@
     (pin "2" (uuid 843fa0d1-e6f6-4807-a0d0-2c72e08a8c9a))
     (pin "1" (uuid 87af7308-6971-4fec-ba46-5ba15f66b872))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "SW101") (unit 1)
         )
@@ -3383,7 +3383,7 @@
     (pin "2" (uuid 83f3f0de-ed5c-4484-9cbc-2aaa95879f3a))
     (pin "1" (uuid c47ee604-a252-4b42-b3fb-19b1d462b9df))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "C101") (unit 1)
         )
@@ -3409,7 +3409,7 @@
     (pin "2" (uuid 97877c2c-972a-4de2-98a9-ddd4dcff26f1))
     (pin "1" (uuid 05d90784-472a-4675-aea6-948e80d40658))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "C103") (unit 1)
         )
@@ -3473,7 +3473,7 @@
     (pin "9" (uuid 7cf8ece8-48ac-4ab8-b3d0-c7f3c0cc87d5))
     (pin "36" (uuid d724bc3a-2d7f-4bd8-b59d-35af41bfa7bf))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "J105") (unit 1)
         )
@@ -3499,7 +3499,7 @@
     (pin "2" (uuid e1dbd1f9-c9da-4307-ba3d-058d80800773))
     (pin "1" (uuid 4e37a934-9965-42fe-b2e9-eae0a095f76a))
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "C104") (unit 1)
         )
@@ -3518,7 +3518,7 @@
       (effects (font (size 1.27 1.27)) (justify left top))
     )
     (instances
-      (project "atari-keyboard"
+      (project "keyswitch_pcb"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e" (page "3"))
       )
     )

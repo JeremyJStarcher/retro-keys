@@ -7,3 +7,5 @@
 # Ignore the coverage map
 .coverage
 
+
+**/*pcb-backups/

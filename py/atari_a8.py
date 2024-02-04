@@ -10,7 +10,7 @@ import sys, getopt
 
 def getProcessConfiguration():
     base_path = Path("../keyboards/atari-a8")
-    kicad_base = base_path / "kicad" / "pcb" 
+    kicad_base = base_path / "kicad" / "keyswitch_pcb" 
 
     config = ProcessConfiguration()
 
@@ -20,7 +20,7 @@ def getProcessConfiguration():
 
     config.qmk_layout_filename = base_path / "qmkinfo.json"
 
-    config.pcb_filename = kicad_base / "atari-keyboard.kicad_pcb"
+    config.pcb_filename = kicad_base / "keyswitch_pcb.kicad_pcb"
     config.keyboard_sch_sheet_filename_name = kicad_base / "keyboard.kicad_sch"
 
     config.openscad_position_filename = base_path / "keycaps" / "keyboard-position.scad"

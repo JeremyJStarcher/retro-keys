@@ -10,7 +10,7 @@ import sys, getopt
 
 def getProcessConfiguration():
     base_path = Path("../keyboards/atari-a8")
-    kicad_base = base_path / "kicad" / "keyswitch_pcb" 
+    kicad_base = base_path / "kicad" / "keyswitch_pcb"
 
     config = ProcessConfiguration()
 
@@ -28,7 +28,9 @@ def getProcessConfiguration():
     config.jlc_bom_filename = kicad_base / "gerbers" / "jlc_bom.csv"
     config.jlc_cpl_filename = kicad_base / "gerbers" / "jlc_cpl.csv"
 
-    config.kicad_3dmodel_path_str = str(Path("..") / ".." / ".." / "kicad-lib" / "3d-models")
+    config.kicad_3dmodel_path_str = str(
+        Path("..") / ".." / ".." / "kicad-lib" / "3d-models"
+    )
     config.kicad_keycap_vrml_path_str = str(
         Path("..") / ".." / "keycaps" / "keycap-models" / "vrml"
     )

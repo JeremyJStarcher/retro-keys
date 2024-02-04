@@ -26,7 +26,7 @@ STANDOFF_HOLE_OUTER_DIAMETER = Decimal(3)
 STANDOFF_HOLE_HEIGHT = Decimal(3)
 
 # If a mounting hole interfers with something else on the board, skip it
-STANDOFF_HOLES_DO_NOT_POPULATE: List[str] = ['255', '227']
+STANDOFF_HOLES_DO_NOT_POPULATE: List[str] = ["255", "227"]
 
 
 CASE_HEIGHT = 6
@@ -78,11 +78,20 @@ class KeyInfo:
 
 
 @dataclass
+class MountingHole:
+    x: Decimal
+    y: Decimal
+    r1: Decimal
+    r2: Decimal
+
+
+@dataclass
 class RunWrappedOptions:
     pcb: SexpType
     schematic: SexpType
     tool: KicadTool
     keys: List[KeyInfo]
+    mounting_holes: List[MountingHole]
 
 
 RunWrappedType = Callable[[RunWrappedOptions], None]
@@ -216,7 +225,9 @@ class ProcessKeyboard:
             keyInfo.key_y = y + hh / 2
 
             keyInfo.diode_x = keyInfo.key_x + self.config.diode_offset_x
-            keyInfo.diode_x = (keyInfo.key_x + keyInfo.w * self.config.UNIT / 2) - self.config.UNIT / 16
+            keyInfo.diode_x = (
+                keyInfo.key_x + keyInfo.w * self.config.UNIT / 2
+            ) - self.config.UNIT / 16
 
             keyInfo.diode_y = keyInfo.key_y + self.config.diode_offset_y
 
@@ -336,9 +347,10 @@ class ProcessKeyboard:
         schematic = key_parser.to_list()
 
         tool = KicadTool()
+        mounting_holes: List[MountingHole] = []
 
         filtered_list = [obj for obj in self.layout if obj.designator != ""]
-        options = RunWrappedOptions(pcb, schematic, tool, filtered_list)
+        options = RunWrappedOptions(pcb, schematic, tool, filtered_list, mounting_holes)
 
         for func in funcs:
             func(options)
@@ -355,6 +367,8 @@ class ProcessKeyboard:
 
         with open(self.config.keyboard_sch_sheet_filename_name, "w") as f:
             f.write(key_out)
+
+        print(mounting_holes)
 
     def relocate_parts_and_draw_silkscreen(self, options: RunWrappedOptions) -> None:
         pcb = options.pcb
@@ -404,7 +418,12 @@ class ProcessKeyboard:
             bbox.update_xy(item.bounding_box.x2, item.bounding_box.y2)
 
             tool.set_object_location(
-                pcb, "D" + item.designator, item.diode_x, item.diode_y, Decimal(-90), Decimal(90)
+                pcb,
+                "D" + item.designator,
+                item.diode_x,
+                item.diode_y,
+                Decimal(-90),
+                Decimal(90),
             )
 
             tool.copy_to_back_silkscreen(pcb, "D" + item.designator, "reference")
@@ -428,6 +447,10 @@ class ProcessKeyboard:
                     pcb, Layer.Edge_Cuts, hx, hy, STANDOFF_HOLE_INNER_DIAMETER, "solid"
                 )
 
+                hole = MountingHole(
+                    hx, hy, STANDOFF_HOLE_INNER_DIAMETER, STANDOFF_HOLE_OUTER_DIAMETER
+                )
+                options.mounting_holes.append(hole)
         # jjz
         bbox.y1 -= self.config.pcb_border_top
         # bbox.x1 -= self.config.pcb_border_top
@@ -440,6 +463,16 @@ class ProcessKeyboard:
         tool.set_object_location(pcb, "H102", bbox.x1, bbox.y2, Decimal(0))
         tool.set_object_location(pcb, "H103", bbox.x2, bbox.y1, Decimal(0))
         tool.set_object_location(pcb, "H104", bbox.x2, bbox.y2, Decimal(0))
+
+        hole1 = MountingHole(bbox.x1, bbox.y1, Decimal(5), Decimal(5))
+        hole2 = MountingHole(bbox.x1, bbox.y2, Decimal(5), Decimal(5))
+        hole3 = MountingHole(bbox.x2, bbox.y1, Decimal(5), Decimal(5))
+        hole4 = MountingHole(bbox.x2, bbox.y2, Decimal(5), Decimal(5))
+
+        options.mounting_holes.append(hole1)
+        options.mounting_holes.append(hole2)
+        options.mounting_holes.append(hole3)
+        options.mounting_holes.append(hole4)
 
     def get_standoff_location(
         self, schematic: SexpType, tool: KicadTool, item: KeyInfo

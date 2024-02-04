@@ -1,0 +1,1251 @@
+<html>
+<head><script type="text/javascript" src="https://web-static.archive.org/_static/js/bundle-playback.js?v=t1Bf4PY_" charset="utf-8"></script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script>window.RufflePlayer=window.RufflePlayer||{};window.RufflePlayer.config={"autoplay":"on","unmuteOverlay":"hidden"};</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/ruffle.js"></script>
+<script type="text/javascript">
+  __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://www.beyondlogic.org:80/keyboard/keylst.htm","20050209005431","https://web.archive.org/","web","https://web-static.archive.org/_static/",
+	      "1107910471");
+</script>
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/banner-styles.css?v=S1zqJCYt" />
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/iconochive.css?v=qtvMKcIJ" />
+<!-- End Wayback Rewrite JS Include -->
+
+   <meta name="description" content="List File for IBM Keyboard Decoder (68HC705J1A Version)">
+   <meta name="keywords" content="Keyboard, 101 key, HC705J1A, HC11">
+   <title>Interfacing the PC's Keyboard.</title>
+</head>
+<body leftmargin="0" topmargin="0" marginheight="0" marginwidth="0" background="https://web.archive.org/web/20050209005431im_/http://www.beyondlogic.org/bgyellow.gif" basefont face="ARIAL">
+
+<style type="text/css">
+#TITLEBLOCK { text-decoration: none; color:#FFFFFF }
+</style>
+
+<script language="javascript" src="https://web.archive.org/web/20050209005431js_/http://www.beyondlogic.org/menu/beyondmenu.js"></script>
+
+<br>
+<center><font size="+2" face="ARIAL" color="GREEN"><b>Interfacing the PC's keyboard - Source Code Listing. </b></font></center>
+<br>
+<ul>
+<center>
+<table width="90%">
+<tr><td>
+<pre>
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 1
+
+
+
+                   1  *****************************************************
+                   2  *                                                   *
+                   3  *   101 Key, IBM Keyboard Decoder for 68HC705J1A.   *
+                   4  *                                                   *
+                   5  *      Craig Peacock (cpeacock@senet.com.au)        *
+                   6  *                    6th May 1998                   *
+                   7  *                                                   *
+                   8  *        Includes ALTDEC &amp; CTRLHEX Routines         *
+                   9  *                                                   *
+                  10  *****************************************************
+                  11  
+                  12  ; Port A
+                  13  
+ 0300             14  nreset  equ     5       ; Reset Output (Open Drain)
+ 0300             15  clk     equ     6       ; Clock I/O
+ 0300             16  data    equ     7       ; Data I/O
+                  17  
+                  18  ; Port B
+                  19  
+ 0300             20  TXD     equ     5       ; Transmit Data
+                  21  
+                  22  ; Equates for LED Byte
+                  23  
+ 0300             24  pscrlck equ     4       ; If true, Scroll Lock Pressed
+ 0300             25  pnumlck equ     3       ; If true, Num Lock Pressed
+ 0300             26  caplock equ     2       ; If true, Caps Lock is On (Active)
+ 0300             27  numlock equ     1       ; If true, Num Lock is On (Active)
+ 0300             28  scrlock equ     0       ; If true, Scroll Lock is On (Active)
+                  29  
+                  30  ; Equates for Status Flag, Byte
+                  31  
+ 0300             32  rctrl   equ     7       ; If true, Right Ctrl Pressed
+ 0300             33  lctrl   equ     6       ; If true, Left Ctrl Pressed
+ 0300             34  ralt    equ     5       ; If true, Right Alt Pressed
+ 0300             35  lalt    equ     4       ; If true, Left Alt Pressed
+                  36  
+ 0300             37  caploc  equ     2       ; If true, Caps Lock Pressed
+ 0300             38  rshift  equ     1       ; If true, Right Shift Key Pressed
+ 0300             39  lshift  equ     0       ; If true, Left Shift Key Pressed
+                  40  
+ 00C0             41          org     ram
+                  42  
+ 00C0             43  byte    rmb     1       ; Used to hold byte, during Trans &amp; Rec
+ 00C1             44  status  rmb     1       ; Status Flags
+ 00C2             45  LED     rmb     1       ; LED Flags
+ 00C3             46  asc     rmb     3       ; Used for altdec &amp; ctrlhex
+ 00C6             47  PAR     rmb     1       ; Used during receive for Parity Tracking
+                  48  
+ 07F8             49          org     $7F8
+                  50  
+ 07F8 0300        51          dw      start   ; Timer Interrupt Vector
+ 07FA 0300        52          dw      start   ; IRQ Vector
+ 07FC 0300        53          dw      start   ; Software Interrupt Vector
+ 07FE 0300        54          dw      start   ; Reset Vector
+                  55  
+ 07F1             56          org     $7F1    ; Mask Option Register (MOR)
+ 07F1 20          57          db      $20     ; Osc Internal Res Enabled
+                  58  
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 2
+
+
+
+ 0300             59          org     rom
+                  60  
+ 0300 A600        61  start   lda     #%00000000      ;PORTA - Inputs
+ 0302 B704        62          sta     ddra            ;Set Data Direction Register
+ 0304 B710        63          sta     pdra            ;Enable Pull Downs
+ 0306 B700        64          sta     PORTA           ;Set nReset, Clk &amp; Data low
+                  65  
+ 0308 A627        66          lda     #%00100111      ;PORTB - I/O
+ 030A B705        67          sta     ddrb            ;Set Data Direction Register
+ 030C B711        68          sta     pdrb            ;Dis/enable Pull Downs
+ 030E A620        69          lda       #%00100000      ;Transmit Idle
+ 0310 B701        70    sta     PORTB
+                  71  
+ 0312 CC031C      72          jmp     rstflag         ;No Attempt to Reset Keyboard made
+                  73                                  ;as keyboard would still be in POST
+                  74                                  ;or BAT Tests, if power applied at
+                  75                                  ;the same time than the HC705.
+                  76  
+                  77  *****************************************************
+                  78  *                                                   *
+                  79  * reset - Sends a Reset Command to the Keyboard.    *
+                  80  *         Not a very good effort to reset keyboard, *
+                  81  *         as it doesn't check for ACK or BAT        *
+                  82  *         Completion Code. I.e. Reset may not of    *
+                  83  *         even Worked!                              *
+                  84  *                                                   *
+                  85  *****************************************************
+                  86  
+ 0315 A6FF        87  reset   lda     #$FF            ;Reset Keyboard
+ 0317 B7C0        88          sta     byte
+ 0319 CD0497      89          jsr     transmit
+                  90  
+                  91  *****************************************************
+                  92  *                                                   *
+                  93  * rstflag - Resets Status and LED Flags. Used when  *
+                  94  *           a successful Bat Completion code is     *
+                  95  *           sent to sync keyboard's LED's to 705's  *
+                  96  *           status register                         *
+                  97  *                                                   *
+                  98  *****************************************************
+                  99  
+ 031C 3FC1       100  rstflag clr     status
+ 031E 3FC2       101          clr     LED
+                 102  
+                 103  *****************************************************
+                 104  *                                                   *
+                 105  * main - Main Keyboard Decoding Routine. Once key   *
+                 106  *        been decoded, program should return here   *
+                 107  *                                                   *
+                 108  *****************************************************
+                 109  
+ 0320 CD04DE     110  main    jsr     Receive ;Get's a Single Byte from the Keyboard.
+ 0323 B6C0       111          lda     byte
+                 112  
+ 0325 A1F0       113          cmp     #$F0    ;A Key has been Released
+ 0327 2603       114          bne     main1
+ 0329 CC0427     115          jmp     release
+                 116  
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 3
+
+
+
+ 032C A1AA       117  main1   cmp     #$AA    ;Successful Completion of BAT
+ 032E 2603       118          bne     main2
+ 0330 CC031C     119          jmp     rstflag
+                 120  
+ 0333 A1E0       121  main2   cmp     #$E0    ;Extended Keys
+ 0335 2603       122          bne     main3
+ 0337 CC03D4     123          jmp     extend
+                 124  
+ 033A A112       125  main3   cmp     #$12    ;Left Shift Key Pressed
+ 033C 2602       126          bne     main4
+ 033E 10C1       127          bset    lshift,status
+                 128  
+ 0340 A159       129  main4   cmp     #$59    ;Right Shift Key Pressed
+ 0342 2602       130          bne     main5
+ 0344 12C1       131          bset    rshift,status
+                 132  
+ 0346 A114       133  main5   cmp     #$14    ;Left Ctrl
+ 0348 2605       134          bne     main6
+ 034A 1CC1       135          bset    lctrl,status
+ 034C CC058A     136          jmp     clrasc
+                 137  
+ 034F A111       138  main6   cmp     #$11    ;Left Alt
+ 0351 2605       139          bne     main7
+ 0353 18C1       140          bset    lalt,status
+ 0355 CC058A     141          jmp     clrasc
+                 142  
+ 0358 A158       143  main7   cmp     #$58    ;Caps Lock Pressed
+ 035A 2605       144          bne     main8
+ 035C 05C154     145          brclr   caploc,status,caps
+ 035F 14C1       146          bset    caploc,status
+                 147  
+ 0361 A17E       148  main8   cmp     #$7E    ;Scroll Lock Pressed
+ 0363 2605       149          bne     main9
+ 0365 09C161     150          brclr   pscrlck,status,scrl
+ 0368 18C1       151          bset    pscrlck,status
+                 152  
+ 036A A177       153  main9   cmp     #$77    ;Num Lock Pressed
+ 036C 2605       154          bne     main10
+ 036E 07C14D     155          brclr   pnumlck,status,nums
+ 0371 16C1       156          bset    pnumlck,status
+                 157  
+ 0373 A18F       158  main10  cmp     #$8F    ;Last Value in Look-Up Table
+ 0375 2503       159          blo     main11
+ 0377 CC0320     160          jmp     main    ;Out of Bounds
+                 161  
+ 037A 97         162  main11  tax
+ 037B 04C20C     163          brset   caplock,LED,caps_on
+ 037E 02C10F     164          brset   rshift,status,shifton
+ 0381 00C10C     165          brset   lshift,status,shifton
+                 166  
+ 0384 D605C8     167  cancel  lda     noshift,x               ;Load Lower Case Values
+ 0387 CC0393     168          jmp     main12
+                 169  
+ 038A 02C1F7     170  caps_on brset   rshift,status,cancel    ;If ShiftLock &amp; Shift, Cancel
+ 038D 00C1F4     171          brset   lshift,status,cancel
+                 172  
+ 0390 D60658     173  shifton lda     shift,x                 ;Load Upper Case Values
+                 174  
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 4
+
+
+
+ 0393 271B       175  main12  beq     return                  ;Scan Code not in Lookup Table.
+                 176  
+ 0395 97         177          tax
+ 0396 B6C1       178          lda     status
+ 0398 A430       179          and     #$30                    ;Either Alt Key Pressed
+ 039A 2704       180          beq     main13
+ 039C 9F         181          txa
+ 039D CC053F     182          jmp     altdec
+                 183  
+ 03A0 B6C1       184  main13  lda     status
+ 03A2 A4C0       185          and     #$C0                    ;Either CTRL Key Pressed
+ 03A4 2704       186          beq     main14
+ 03A6 9F         187          txa
+ 03A7 CC0525     188          jmp     ctrlhex
+                 189  
+ 03AA 9F         190  main14  txa
+ 03AB B7C0       191          sta     byte
+ 03AD CD0593     192          jsr     RS232T                  ;Send to RS232
+                 193  
+ 03B0 CC0320     194  return  jmp     main
+                 195  
+                 196  *****************************************************
+                 197  *                                                   *
+                 198  * caps - Toggle Status of Caps lock and Echo to     *
+                 199  *        Keyboard                                   *
+                 200  *                                                   *
+                 201  *****************************************************
+                 202  
+ 03B3 14C1       203  caps    bset    caploc,status   ; Set caploc flag to prevent routine being
+                 204                                  ; called again
+ 03B5 B6C2       205          lda     LED
+ 03B7 A804       206          eor     #$04            ; Toggle Shift Lock Flag
+ 03B9 B7C2       207          sta     LED
+ 03BB CC0479     208          jmp     LEDshow
+                 209  
+                 210  *****************************************************
+                 211  *                                                   *
+                 212  * nums - Toggle Status of Nums lock and Echo to     *
+                 213  *        Keyboard                                   *
+                 214  *                                                   *
+                 215  *****************************************************
+                 216  
+ 03BE 16C1       217  nums    bset    pnumlck,status
+                 218  
+ 03C0 B6C2       219          lda     LED
+ 03C2 A802       220          eor     #$02
+ 03C4 B7C2       221          sta     LED
+ 03C6 CC0479     222          jmp     LEDshow
+                 223  
+                 224  *****************************************************
+                 225  *                                                   *
+                 226  * scrl - Toggle Status of Scroll lock and Echo to   *
+                 227  *        Keyboard                                   *
+                 228  *                                                   *
+                 229  *****************************************************
+                 230  
+ 03C9 18C1       231  scrl    bset    pscrlck,status
+                 232  
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 5
+
+
+
+ 03CB B6C2       233          lda     LED
+ 03CD A801       234          eor     #$01
+ 03CF B7C2       235          sta     LED
+ 03D1 CC0479     236          jmp     LEDshow
+                 237  
+                 238  *****************************************************
+                 239  *                                                   *
+                 240  * extend - An Extended Key has been Pressed         *
+                 241  *                                                   *
+                 242  *****************************************************
+                 243  
+ 03D4 CD04DE     244  extend  jsr     Receive ;Get Next byte
+ 03D7 B6C0       245          lda     byte
+                 246  
+ 03D9 A1F0       247          cmp     #$F0    ;An Extended Key Has been Released
+ 03DB 2603       248          bne     extend1
+ 03DD CC045F     249          jmp     rel_ext
+                 250  
+ 03E0 A111       251  extend1 cmp     #$11    ;Right Alt Pressed
+ 03E2 2605       252          bne     extend2
+ 03E4 1AC1       253          bset    ralt,status
+ 03E6 CC058A     254          jmp     clrasc
+                 255  
+ 03E9 A114       256  extend2 cmp     #$14    ;Right Ctrl Pressed
+ 03EB 2605       257          bne     extend3
+ 03ED 1EC1       258          bset    rctrl,status
+ 03EF CC058A     259          jmp     clrasc
+                 260  
+ 03F2 A171       261  extend3 cmp     #$71    ;Delete
+ 03F4 2618       262          bne     extend4
+ 03F6 B6C1       263          lda     status
+ 03F8 A4C0       264          and     #$C0    ;Either Alt Key Pressed?
+ 03FA 2712       265          beq     extend4
+ 03FC B6C1       266          lda     status
+ 03FE A430       267          and     #$30    ;Either Ctrl Key Pressed?
+ 0400 270C       268          beq     extend4
+ 0402 1A04       269          bset    nreset,DDRA
+ 0404 A6FF       270          lda     #$FF
+ 0406 CD05C4     271          jsr     delay
+ 0409 1B04       272          bclr    nreset,DDRA
+ 040B CC0315     273          jmp     reset
+                 274  
+ 040E A15A       275  extend4 cmp     #$5A    ;Enter Key on Num Keypad
+ 0410 2607       276          bne     extend5
+ 0412 A60D       277          lda     #$0D
+ 0414 B7C0       278          sta     byte
+ 0416 CD0593     279          jsr     RS232T
+                 280  
+ 0419 A14A       281  extend5 cmp     #$4A    ; '/' Key on Num Keypad
+ 041B 2607       282          bne     extend6
+ 041D A62F       283          lda     #'/'
+ 041F B7C0       284          sta     byte
+ 0421 CD0593     285          jsr     RS232T
+                 286  
+ 0424 CC0320     287  extend6 jmp     main    ;Return to main
+                 288  
+                 289  *****************************************************
+                 290  *                                                   *
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 6
+
+
+
+                 291  * release - A Key has been Released                 *
+                 292  *                                                   *
+                 293  *****************************************************
+                 294  
+ 0427 CD04DE     295  release jsr     Receive ;Release - Next Byte Garbage in many cases
+ 042A B6C0       296          lda     byte
+                 297  
+ 042C A112       298  releas3 cmp     #$12    ;Left Shift Key Released
+ 042E 2602       299          bne     releas4
+ 0430 11C1       300          bclr    lshift,status
+                 301  
+ 0432 A159       302  releas4 cmp     #$59    ;Right Shift Key Released
+ 0434 2602       303          bne     releas5
+ 0436 13C1       304          bclr    rshift,status
+                 305  
+ 0438 A114       306  releas5 cmp     #$14    ;Left Ctrl Released
+ 043A 2605       307          bne     releas6
+ 043C 1DC1       308          bclr    lctrl,status
+ 043E CC0574     309          jmp     ctrl_re
+                 310  
+ 0441 A111       311  releas6 cmp     #$11    ;Left Alt Released
+ 0443 2605       312          bne     releas7
+ 0445 19C1       313          bclr    lalt,status
+ 0447 CC0556     314          jmp     alt_rel
+                 315  
+ 044A A158       316  releas7 cmp     #$58     ;Caps Lock Released
+ 044C 2602       317          bne     releas8
+ 044E 15C1       318          bclr    caploc,status
+                 319  
+ 0450 A17E       320  releas8 cmp     #$7E     ;Scroll Lock Released
+ 0452 2602       321          bne     releas9
+ 0454 19C1       322          bclr    pscrlck,status
+                 323  
+ 0456 A177       324  releas9 cmp     #$77     ;Num Lock Released
+ 0458 2602       325          bne     relea10
+ 045A 17C1       326          bclr    pnumlck,status
+                 327  
+ 045C CC0320     328  relea10 jmp     main     ;Return to Main
+                 329  
+                 330  *****************************************************
+                 331  *                                                   *
+                 332  * rel_ext - An Extended Key has been Released       *
+                 333  *                                                   *
+                 334  *****************************************************
+                 335  
+ 045F CD04DE     336  rel_ext jsr     Receive  ;Get Next byte
+ 0462 B6C0       337          lda     byte
+                 338  
+ 0464 A111       339          cmp     #$11    ;Right Alt Released
+ 0466 2605       340          bne     rel_ex2
+ 0468 1BC1       341          bclr    ralt,status
+ 046A CC0556     342          jmp     alt_rel
+                 343  
+ 046D A114       344  rel_ex2 cmp     #$14    ;Right Ctrl Released
+ 046F 2605       345          bne     rel_ex3
+ 0471 1FC1       346          bclr    rctrl,status
+ 0473 CC0574     347          jmp     ctrl_re
+                 348  
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 7
+
+
+
+ 0476 CC0320     349  rel_ex3 jmp     main    ;Return to main
+                 350  
+                 351  *****************************************************
+                 352  *                                                   *
+                 353  * LEDshow - Copies the 3 LSB of the LED register to *
+                 354  *           keyboard for the keyboards Status LED's *
+                 355  *           E.g. Num Lock, Caps Lock, Scroll Lock   *
+                 356  *           Also makes their status present on      *
+                 357  *           PORTB                                   *
+                 358  *                                                   *
+                 359  *****************************************************
+                 360  
+ 0479 B6C2       361  LEDshow lda     LED
+ 047B AA20       362          ora     #$20    ;Set TXD High
+ 047D A427       363          and     #$27
+ 047F B701       364          sta     PORTB   ;Made Status Avalible at PORTB
+ 0481 A6ED       365          lda     #$ED
+ 0483 B7C0       366          sta     byte
+ 0485 CD0497     367          jsr     transmit
+ 0488 CD04DE     368          jsr     Receive
+ 048B B6C2       369          lda     LED
+ 048D A407       370          and     #$07
+ 048F B7C0       371          sta     byte
+ 0491 CD0497     372          jsr     transmit
+ 0494 CC0320     373          jmp     main
+                 374  
+                 375  *****************************************************
+                 376  *                                                   *
+                 377  * Transmit - Send Data stored at Byte to the        *
+                 378  *            Keyboard. Result                       *
+                 379  *                                                   *
+                 380  *****************************************************
+                 381  
+                 382  transmit
+ 0497 AE08       383          ldx     #$08                    ;8 Data Bits
+ 0499 1C04       384          bset    clk,DDRA                ;Set Clock Low
+ 049B A613       385          lda     #$13                    ;Delay 64uS
+ 049D CD05C4     386          jsr     delay
+ 04A0 4F         387          clra                            ;Clear Parity Register
+ 04A1 1E04       388          bset    data,DDRA               ;Set Data Low
+ 04A3 1D04       389          bclr    clk,DDRA                ;Release Clock Line
+ 04A5 CD051E     390          jsr     highlow
+                 391  
+ 04A8 36C0       392  loop    ror     byte
+ 04AA 2505       393          bcs     mark
+                 394  
+ 04AC 1E04       395  space   bset    data,DDRA               ;Clear Bit
+ 04AE CC04B4     396          jmp     next
+                 397  
+ 04B1 1F04       398  mark    bclr    data,DDRA               ;Clear Bit
+ 04B3 4C         399          inca                            ;Parity Calculation
+                 400  
+ 04B4 CD051E     401  next    jsr     highlow                 ;Wait for high to low transition
+                 402  
+ 04B7 5A         403          decx
+ 04B8 26EE       404          bne     loop
+                 405  
+ 04BA A401       406          and     #$01
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 8
+
+
+
+ 04BC 2605       407          bne     clr_par
+ 04BE 1F04       408  set_par bclr    data,DDRA
+ 04C0 CC04C5     409          jmp     tr_ackn
+ 04C3 1E04       410  clr_par bset    data,DDRA
+ 04C5 CD051E     411  tr_ackn jsr     highlow
+                 412  
+ 04C8 1F04       413          bclr    data,DDRA               ;Release Data Line
+ 04CA CD051E     414          jsr     highlow
+ 04CD 0E0006     415          brset   data,PORTA,error        ;Check for Ack
+ 04D0 0D00FD     416          brclr   clk,PORTA,*             ;Wait for idle line
+                 417  
+ 04D3 1C04       418          bset    clk,DDRA                ;Prevent Keyboard from sending data
+                 419                                          ;(Clear to Send)
+ 04D5 81         420          rts
+                 421  
+ 04D6 A6FF       422  error   lda     #$FF      ;Reset
+ 04D8 B7C0       423          sta     byte
+ 04DA CD0497     424          jsr     transmit
+ 04DD 81         425          rts
+                 426  
+                 427  *****************************************************
+                 428  *                                                   *
+                 429  * Receive - Get a Byte from the Keyboard. Result    *
+                 430  *           stored in byte.                         *
+                 431  *                                                   *
+                 432  *****************************************************
+                 433  
+ 04DE AE08       434  Receive ldx     #08                     ;Number of Bits
+ 04E0 3FC6       435          clr     PAR                     ;Clear Parity Register
+ 04E2 1D04       436          bclr    clk,DDRA                ;Clear to Send
+                 437  
+ 04E4 0C00FD     438          brset   clk,PORTA,*             ;wait for idle Clock
+ 04E7 0E00F4     439          brset   data,PORTA,Receive      ;False Start Bit, Restart
+                 440  
+ 04EA 36C0       441  Recdata ror     byte
+ 04EC CD051E     442          jsr     highlow                 ;Wait for high to low Transision
+ 04EF 0E0005     443          brset   data,PORTA,Recset
+                 444  
+ 04F2 1FC0       445          bclr    7,byte
+ 04F4 CC04FB     446          jmp     Recnext
+                 447  
+ 04F7 1EC0       448  Recset  bset    7,byte
+ 04F9 3CC6       449          inc     PAR
+                 450  
+ 04FB 5A         451  Recnext decx
+ 04FC 26EC       452          bne     Recdata                 ;Loop until 8 bits been received
+                 453  
+ 04FE CD051E     454          jsr     highlow
+                 455  
+ 0501 B600       456          lda     PORTA                   ;Read Parity Bit
+ 0503 49         457          rola                            ;Place in LSbit
+ 0504 49         458          rola
+ 0505 B8C6       459          eor     PAR                     ;Parity Bit Detection
+ 0507 A401       460          and     #$01
+ 0509 2709       461          beq     r_error
+                 462  
+ 050B CD051E     463          jsr     highlow
+ 050E 0F0003     464          brclr   data,PORTA,r_error      ;Stop Bit Detection
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 9
+
+
+
+                 465  
+ 0511 1C04       466          bset    clk,DDRA                ;Prevent Keyboard from sending data
+                 467                                          ;(Clear to Send)
+ 0513 81         468          rts
+                 469  
+ 0514 A6FE       470  r_error lda     #$FE                    ;Resend
+ 0516 B7C0       471          sta     byte
+ 0518 CD0497     472          jsr     Transmit
+ 051B CC04DE     473          jmp     Receive                 ;Try again
+                 474  
+                 475  *****************************************************
+                 476  *                                                   *
+                 477  * highlow - Waits for next High to Low Transistion  *
+                 478  *           on the Clock Line                       *
+                 479  *                                                   *
+                 480  *****************************************************
+                 481  
+                 482  
+ 051E 0D00FD     483  highlow brclr   clk,PORTA,*         ;Loop until Clk High
+ 0521 0C00FD     484          brset   clk,PORTA,*         ;Loop until Clk Low
+ 0524 81         485          rts
+                 486  
+                 487  *****************************************************
+                 488  *                                                   *
+                 489  * ctrlhex &amp; althex - Make sure keys pressed are     *
+                 490  * valid. If not, don't store them. Also converts    *
+                 491  * ASCII to binary and stores them in the ASCII      *
+                 492  * Storage Location                                  *
+                 493  *                                                   *
+                 494  *****************************************************
+                 495  
+ 0525 A161       496  ctrlhex cmp     #'a'            ;Convert 'a' - 'f' to binary
+ 0527 2509       497          blo     he1_ran
+ 0529 A166       498          cmp     #'f'
+ 052B 2226       499          bhi     outrang
+ 052D A057       500          sub     #$57
+ 052F CC0549     501          jmp     store
+                 502  
+ 0532 A141       503  he1_ran cmp     #'A'            ;Convert 'A' - 'F' to binary
+ 0534 2509       504          blo     altdec
+ 0536 A146       505          cmp     #'F'
+ 0538 2219       506          bhi     outrang
+ 053A A037       507          sub     #$37
+ 053C CC0549     508          jmp     store
+                 509  
+ 053F A130       510  altdec  cmp     #'0'            ;Convert '0' - '9' to binary
+ 0541 2510       511          blo     outrang
+ 0543 A139       512          cmp     #'9'
+ 0545 220C       513          bhi     outrang
+ 0547 A030       514          sub     #$30
+                 515  
+ 0549 BEC4       516  store   ldx     asc+1           ;Shift Bytes Left
+ 054B BFC3       517          stx     asc+0
+ 054D BEC5       518          ldx     asc+2
+ 054F BFC4       519          stx     asc+1
+ 0551 B7C5       520          sta     asc+2           ;Store as Binary
+ 0553 CC0320     521  outrang jmp     main
+                 522  
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 10
+
+
+
+                 523  *****************************************************
+                 524  *                                                   *
+                 525  * alt_rel Alt Released. (Decimal Enter Routine)     *
+                 526  *         Once both the ALT keys have been released *
+                 527  *         a calculation must be made to convert the *
+                 528  *         bytes found in ASCII Storage to binary    *
+                 529  *         for transmission.                         *
+                 530  *                                                   *
+                 531  *****************************************************
+                 532  
+ 0556 B6C1       533  alt_rel lda     status          ;Decimal Calculation
+ 0558 A430       534          and     #$30
+ 055A 262B       535          bne     complet         ;One of the Alt Keys Still Pressed
+                 536  
+ 055C B6C3       537          lda     asc
+ 055E AE64       538          ldx     #$64    ;x 100
+ 0560 42         539          mul
+ 0561 B7C0       540          sta     byte
+                 541  
+ 0563 B6C4       542          lda     asc+1
+ 0565 AE0A       543          ldx     #$0A    ;x 10
+ 0567 42         544          mul
+ 0568 BBC5       545          add     asc+2   ;Add Units
+ 056A BBC0       546          add     byte    ;Add hundreds
+ 056C B7C0       547          sta     byte
+                 548  
+ 056E CD0593     549          jsr     RS232T  ;Transmit number
+                 550  
+ 0571 CC0320     551          jmp     main    ;Return to Main.
+                 552  
+                 553  *****************************************************
+                 554  *                                                   *
+                 555  * ctrl_re Ctrl Released.(Hexadecimal Enter Routine) *
+                 556  *         Once both the CTRL keys have been released*
+                 557  *         a calculation must be made to convert the *
+                 558  *         bytes found in ASCII Storage to binary    *
+                 559  *         for transmission.                         *
+                 560  *                                                   *
+                 561  *****************************************************
+                 562  
+ 0574 B6C1       563  ctrl_re lda     status
+ 0576 A4C0       564          and     #$C0
+ 0578 260D       565          bne     complet         ;One of the Ctrl Keys Still Pressed
+                 566  
+ 057A B6C4       567          lda     asc+1
+ 057C 48         568          lsla
+ 057D 48         569          lsla
+ 057E 48         570          lsla
+ 057F 48         571          lsla
+ 0580 BBC5       572          add     asc+2
+ 0582 B7C0       573          sta     byte
+                 574  
+ 0584 CD0593     575          jsr     RS232T          ;Transmit Number
+                 576  
+ 0587 CC0320     577  complet jmp     main            ;Return to Main
+                 578  
+                 579  *****************************************************
+                 580  *                                                   *
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 11
+
+
+
+                 581  * clrasc - Clear ASCII Storage Locations (3 Bytes)  *
+                 582  *        - These storage bytes are used for the     *
+                 583  *          ALTDEC &amp; CTRLHEX Routines.               *
+                 584  *                                                   *
+                 585  *****************************************************
+                 586  
+ 058A 3FC3       587  clrasc  clr     asc+0
+ 058C 3FC4       588          clr     asc+1
+ 058E 3FC5       589          clr     asc+2
+ 0590 CC0320     590          jmp     main
+                 591  
+                 592  *****************************************************
+                 593  *                                                   *
+                 594  * RS-232 NRZ 8N1 Transmit Routine.                  *
+                 595  *                                                   *
+                 596  * Uses a 4.00 Mhz Crystal (2 Mhz Bus Speed)         *
+                 597  * to obtain a transmission speed of 9600 BPS        *
+                 598  *                                                   *
+                 599  *****************************************************
+                 600  
+ 0593 AE08       601  RS232T  ldx     #8        ; Number of Bits (8)
+ 0595 1B01       602          bclr    TXD,PORTB ; Start Bit (0)
+ 0597 A61D       603          lda     #$1D      ; 29 Cycles 6[29] + 6
+ 0599 CD05C4     604          jsr     delay
+ 059C 21FE       605          brn     *
+ 059E 9D         606          nop
+ 059F 9D         607          nop
+ 05A0 36C0       608  nextbit ror     byte
+ 05A2 2505       609          bcs     rsmark
+ 05A4 1B01       610          bclr    TXD,PORTB ; Space (Logic 0)
+ 05A6 CC05AD     611          jmp     rsnext
+ 05A9 1A01       612  rsmark  bset    TXD,PORTB ; Mark (Logic 1)
+ 05AB 21FE       613          brn     *
+ 05AD A61C       614  rsnext  lda     #$1C      ; 28 Cycles 6[28] + 6
+ 05AF CD05C4     615          jsr     delay
+ 05B2 9D         616          nop
+ 05B3 9D         617          nop
+ 05B4 5A         618          decx
+ 05B5 26E9       619          bne     nextbit
+ 05B7 21FE       620          brn     *
+ 05B9 21FE       621          brn     *
+ 05BB 9D         622          nop
+ 05BC 1A01       623          bset    TXD,PORTB ; Stop Bit (Logic 1)
+ 05BE A61F       624          lda     #$1F      ; 31 Cycles 6[31] + 6
+ 05C0 CD05C4     625          jsr     delay
+ 05C3 81         626          rts
+                 627  
+ 05C4 4A         628  delay   deca              ; Delay = 6[A] + 6
+ 05C5 26FD       629          bne     delay
+ 05C7 81         630          rts
+                 631  
+                 632  *****************************************************
+                 633  *                                                   *
+                 634  *   No-Shift - Lookup Table when Shift not Pressed  *
+                 635  *                                                   *
+                 636  *****************************************************
+                 637  
+ 05C8 00         638  noshift fcb      $00     ; 00
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 12
+
+
+
+ 05C9 00         639          fcb      $00     ; 01  F9
+ 05CA 00         640          fcb      $00     ; 02
+ 05CB 00         641          fcb      $00     ; 03  F5
+ 05CC 00         642          fcb      $00     ; 04  F3
+ 05CD 00         643          fcb      $00     ; 05  F1
+ 05CE 00         644          fcb      $00     ; 06  F2
+ 05CF 00         645          fcb      $00     ; 07  F12
+ 05D0 00         646          fcb      $00     ; 08
+ 05D1 00         647          fcb      $00     ; 09  F10
+ 05D2 00         648          fcb      $00     ; 0A  F8
+ 05D3 00         649          fcb      $00     ; 0B  F6
+ 05D4 00         650          fcb      $00     ; 0C  F4
+ 05D5 09         651          fcb      $09     ; 0D  TAB
+ 05D6 60         652          fcb      '`'     ; 0E  ` or ~
+ 05D7 00         653          fcb      $00     ; 0F
+                 654  
+ 05D8 00         655          fcb      $00     ; 10
+ 05D9 00         656          fcb      $00     ; 11  Left ALT
+ 05DA 00         657          fcb      $00     ; 12  Left SHIFT
+ 05DB 00         658          fcb      $00     ; 13
+ 05DC 00         659          fcb      $00     ; 14  Left Ctrl
+ 05DD 71         660          fcb      'q'     ; 15  Q
+ 05DE 31         661          fcb      '1'     ; 16  1 or !
+ 05DF 00         662          fcb      $00     ; 17
+ 05E0 00         663          fcb      $00     ; 18
+ 05E1 00         664          fcb      $00     ; 19
+ 05E2 7A         665          fcb      'z'     ; 1A  Z
+ 05E3 73         666          fcb      's'     ; 1B  S
+ 05E4 61         667          fcb      'a'     ; 1C  A
+ 05E5 77         668          fcb      'w'     ; 1D  W
+ 05E6 32         669          fcb      '2'     ; 1E  2 or @
+ 05E7 00         670          fcb      $00     ; 1F
+                 671  
+ 05E8 00         672          fcb      $00     ; 20
+ 05E9 63         673          fcb      'c'     ; 21  C
+ 05EA 78         674          fcb      'x'     ; 22  X
+ 05EB 64         675          fcb      'd'     ; 23  D
+ 05EC 65         676          fcb      'e'     ; 24  E
+ 05ED 34         677          fcb      '4'     ; 25  4 or $
+ 05EE 33         678          fcb      '3'     ; 26  3 or #
+ 05EF 00         679          fcb      $00     ; 27
+ 05F0 00         680          fcb      $00     ; 28
+ 05F1 20         681          fcb      ' '     ; 29  Space
+ 05F2 76         682          fcb      'v'     ; 2A  V
+ 05F3 66         683          fcb      'f'     ; 2B  F
+ 05F4 74         684          fcb      't'     ; 2C  T
+ 05F5 72         685          fcb      'r'     ; 2D  R
+ 05F6 35         686          fcb      '5'     ; 2E  5 or %
+ 05F7 00         687          fcb      $00     ; 2F
+                 688  
+ 05F8 00         689          fcb      $00     ; 30
+ 05F9 6E         690          fcb      'n'     ; 31  N
+ 05FA 62         691          fcb      'b'     ; 32  B
+ 05FB 68         692          fcb      'h'     ; 33  H
+ 05FC 67         693          fcb      'g'     ; 34  G
+ 05FD 79         694          fcb      'y'     ; 35  Y
+ 05FE 36         695          fcb      '6'     ; 36  6 or ^
+ 05FF 00         696          fcb      $00     ; 37
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 13
+
+
+
+ 0600 00         697          fcb      $00     ; 38
+ 0601 00         698          fcb      $00     ; 39
+ 0602 6D         699          fcb      'm'     ; 3A  M
+ 0603 6A         700          fcb      'j'     ; 3B  J
+ 0604 75         701          fcb      'u'     ; 3C  U
+ 0605 37         702          fcb      '7'     ; 3D  7 or &amp;
+ 0606 38         703          fcb      '8'     ; 3E  8 or *
+ 0607 00         704          fcb      $00     ; 3F
+                 705  
+ 0608 00         706          fcb      $00     ; 40
+ 0609 2C         707          fcb      ','     ; 41  , or &lt;
+ 060A 6B         708          fcb      'k'     ; 42  K
+ 060B 69         709          fcb      'i'     ; 43  I
+ 060C 6F         710          fcb      'o'     ; 44  O
+ 060D 30         711          fcb      '0'     ; 45  0 or )
+ 060E 39         712          fcb      '9'     ; 46  9 or (
+ 060F 00         713          fcb      $00     ; 47
+ 0610 00         714          fcb      $00     ; 48
+ 0611 2E         715          fcb      '.'     ; 49  . or &gt;
+ 0612 2F         716          fcb      '/'     ; 4A  / or ?
+ 0613 6C         717          fcb      'l'     ; 4B  L
+ 0614 3B         718          fcb      ';'     ; 4C  ; or :
+ 0615 70         719          fcb      'p'     ; 4D  P
+ 0616 2D         720          fcb      '-'     ; 4E  - or _
+ 0617 00         721          fcb      $00     ; 4F
+                 722  
+ 0618 00         723          fcb      $00     ; 50
+ 0619 00         724          fcb      $00     ; 51
+ 061A 27         725          fcb      $27     ; 52  ' or "
+ 061B 00         726          fcb      $00     ; 53
+ 061C 5B         727          fcb      '['     ; 54  [ or {
+ 061D 3D         728          fcb      '='     ; 55  = OR +
+ 061E 00         729          fcb      $00     ; 56
+ 061F 00         730          fcb      $00     ; 57
+ 0620 00         731          fcb      $00     ; 58  Caps Lock
+ 0621 00         732          fcb      $00     ; 59  Right Shift
+ 0622 0D         733          fcb      $0D     ; 5A  Enter
+ 0623 5D         734          fcb      ']'     ; 5B  ] or }
+ 0624 00         735          fcb      $00     ; 5C
+ 0625 5C         736          fcb      '\'     ; 5D  \ or |
+ 0626 00         737          fcb      $00     ; 5E
+ 0627 00         738          fcb      $00     ; 5F
+                 739  
+ 0628 00         740          fcb      $00     ; 60
+ 0629 00         741          fcb      $00     ; 61
+ 062A 00         742          fcb      $00     ; 62
+ 062B 00         743          fcb      $00     ; 63
+ 062C 00         744          fcb      $00     ; 64
+ 062D 00         745          fcb      $00     ; 65
+ 062E 08         746          fcb      $08     ; 66  Backspace
+ 062F 00         747          fcb      $00     ; 67
+ 0630 00         748          fcb      $00     ; 68
+ 0631 31         749          fcb      '1'     ; 69  NUM - 1 or END
+ 0632 00         750          fcb      $00     ; 6A
+ 0633 34         751          fcb      '4'     ; 6B  NUM - 4 or LEFT
+ 0634 37         752          fcb      '7'     ; 6C  NUM - 7 or HOME
+ 0635 00         753          fcb      $00     ; 6D
+ 0636 00         754          fcb      $00     ; 6E
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 14
+
+
+
+ 0637 00         755          fcb      $00     ; 6F
+                 756  
+ 0638 30         757          fcb      '0'     ; 70  NUM - 0 or INS
+ 0639 2E         758          fcb      '.'     ; 71  NUM - . or DEL
+ 063A 32         759          fcb      '2'     ; 72  NUM - 2 or DOWN
+ 063B 35         760          fcb      '5'     ; 73  NUM - 5
+ 063C 36         761          fcb      '6'     ; 74  NUM - 6 or RIGHT
+ 063D 38         762          fcb      '8'     ; 75  NUM - 8 or UP
+ 063E 1B         763          fcb      $1B     ; 76  ESC
+ 063F 00         764          fcb      $00     ; 77  NUM LOCK
+ 0640 00         765          fcb      $00     ; 78  F11
+ 0641 2B         766          fcb      '+'     ; 79  NUM - + (Plus)
+ 0642 33         767          fcb      '3'     ; 7A  NUM 3 or PAGE DOWN
+ 0643 2D         768          fcb      '-'     ; 7B  NUM - - (Minus)
+ 0644 2A         769          fcb      '*'     ; 7C  NUM - *
+ 0645 39         770          fcb      '9'     ; 7D  NUM - 9 or PAGE UP
+ 0646 00         771          fcb      $00     ; 7E  SCROLL LOCK
+ 0647 00         772          fcb      $00     ; 7F
+                 773  
+ 0648 00         774          fcb      $00     ; 80
+ 0649 00         775          fcb      $00     ; 81
+ 064A 00         776          fcb      $00     ; 82
+ 064B 00         777          fcb      $00     ; 83  F7
+ 064C 00         778          fcb      $00     ; 84
+ 064D 00         779          fcb      $00     ; 85
+ 064E 00         780          fcb      $00     ; 86
+ 064F 00         781          fcb      $00     ; 87
+ 0650 00         782          fcb      $00     ; 88
+ 0651 00         783          fcb      $00     ; 89
+ 0652 00         784          fcb      $00     ; 8A
+ 0653 00         785          fcb      $00     ; 8B
+ 0654 00         786          fcb      $00     ; 8C
+ 0655 00         787          fcb      $00     ; 8D
+ 0656 00         788          fcb      $00     ; 8E
+ 0657 00         789          fcb      $00     ; 8F
+                 790  
+                 791  *****************************************************
+                 792  *                                                   *
+                 793  *   Shift - Lookup Table Used when Shift Pressed    *
+                 794  *                                                   *
+                 795  *****************************************************
+                 796  
+ 0658 00         797  shift   fcb      $00     ; 00
+ 0659 00         798          fcb      $00     ; 01  F9
+ 065A 00         799          fcb      $00     ; 02
+ 065B 00         800          fcb      $00     ; 03  F5
+ 065C 00         801          fcb      $00     ; 04  F3
+ 065D 00         802          fcb      $00     ; 05  F1
+ 065E 00         803          fcb      $00     ; 06  F2
+ 065F 00         804          fcb      $00     ; 07  F12
+ 0660 00         805          fcb      $00     ; 08
+ 0661 00         806          fcb      $00     ; 09  F10
+ 0662 00         807          fcb      $00     ; 0A  F8
+ 0663 00         808          fcb      $00     ; 0B  F6
+ 0664 00         809          fcb      $00     ; 0C  F4
+ 0665 09         810          fcb      $09     ; 0D  TAB
+ 0666 7E         811          fcb      '~'     ; 0E  ` or ~
+ 0667 00         812          fcb      $00     ; 0F
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 15
+
+
+
+                 813  
+ 0668 00         814          fcb      $00     ; 10
+ 0669 00         815          fcb      $00     ; 11  Left ALT
+ 066A 00         816          fcb      $00     ; 12  Left SHIFT
+ 066B 00         817          fcb      $00     ; 13
+ 066C 00         818          fcb      $00     ; 14  Left Ctrl
+ 066D 51         819          fcb      'Q'     ; 15  Q
+ 066E 21         820          fcb      '!'     ; 16  1 or !
+ 066F 00         821          fcb      $00     ; 17
+ 0670 00         822          fcb      $00     ; 18
+ 0671 00         823          fcb      $00     ; 19
+ 0672 5A         824          fcb      'Z'     ; 1A  Z
+ 0673 53         825          fcb      'S'     ; 1B  S
+ 0674 41         826          fcb      'A'     ; 1C  A
+ 0675 57         827          fcb      'W'     ; 1D  W
+ 0676 40         828          fcb      '@'     ; 1E  2 or @
+ 0677 00         829          fcb      $00     ; 1F
+                 830  
+ 0678 00         831          fcb      $00     ; 20
+ 0679 43         832          fcb      'C'     ; 21  C
+ 067A 58         833          fcb      'X'     ; 22  X
+ 067B 44         834          fcb      'D'     ; 23  D
+ 067C 45         835          fcb      'E'     ; 24  E
+ 067D 24         836          fcb      '$'     ; 25  4 or $
+ 067E 23         837          fcb      '#'     ; 26  3 or #
+ 067F 00         838          fcb      $00     ; 27
+ 0680 00         839          fcb      $00     ; 28
+ 0681 20         840          fcb      ' '     ; 29  Space
+ 0682 56         841          fcb      'V'     ; 2A  V
+ 0683 46         842          fcb      'F'     ; 2B  F
+ 0684 54         843          fcb      'T'     ; 2C  T
+ 0685 52         844          fcb      'R'     ; 2D  R
+ 0686 25         845          fcb      '%'     ; 2E  5 or %
+ 0687 00         846          fcb      $00     ; 2F
+                 847  
+ 0688 00         848          fcb      $00     ; 30
+ 0689 4E         849          fcb      'N'     ; 31  N
+ 068A 42         850          fcb      'B'     ; 32  B
+ 068B 48         851          fcb      'H'     ; 33  H
+ 068C 47         852          fcb      'G'     ; 34  G
+ 068D 59         853          fcb      'Y'     ; 35  Y
+ 068E 5E         854          fcb      '^'     ; 36  6 or ^
+ 068F 00         855          fcb      $00     ; 37
+ 0690 00         856          fcb      $00     ; 38
+ 0691 00         857          fcb      $00     ; 39
+ 0692 4D         858          fcb      'M'     ; 3A  M
+ 0693 4A         859          fcb      'J'     ; 3B  J
+ 0694 55         860          fcb      'U'     ; 3C  U
+ 0695 26         861          fcb      '&amp;'     ; 3D  7 or &amp;
+ 0696 2A         862          fcb      '*'     ; 3E  8 or *
+ 0697 00         863          fcb      $00     ; 3F
+                 864  
+ 0698 00         865          fcb      $00     ; 40
+ 0699 3C         866          fcb      '&lt;'     ; 41  , or &lt;
+ 069A 4B         867          fcb      'K'     ; 42  K
+ 069B 49         868          fcb      'I'     ; 43  I
+ 069C 4F         869          fcb      'O'     ; 44  O
+ 069D 29         870          fcb      ')'     ; 45  0 or )
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 16
+
+
+
+ 069E 28         871          fcb      '('     ; 46  9 or (
+ 069F 00         872          fcb      $00     ; 47
+ 06A0 00         873          fcb      $00     ; 48
+ 06A1 3E         874          fcb      '&gt;'     ; 49  &gt; or .
+ 06A2 3F         875          fcb      '?'     ; 4A  / or ?
+ 06A3 4C         876          fcb      'L'     ; 4B  L
+ 06A4 3A         877          fcb      ':'     ; 4C  ; or :
+ 06A5 50         878          fcb      'P'     ; 4D  P
+ 06A6 5F         879          fcb      '_'     ; 4E  - or _
+ 06A7 00         880          fcb      $00     ; 4F
+                 881  
+ 06A8 00         882          fcb      $00     ; 50
+ 06A9 00         883          fcb      $00     ; 51
+ 06AA 22         884          fcb      $22     ; 52  ' or "
+ 06AB 00         885          fcb      $00     ; 53
+ 06AC 7B         886          fcb      '{'     ; 54  [ or {
+ 06AD 2B         887          fcb      '+'     ; 55  = OR +
+ 06AE 00         888          fcb      $00     ; 56
+ 06AF 00         889          fcb      $00     ; 57
+ 06B0 00         890          fcb      $00     ; 58  Caps Lock
+ 06B1 00         891          fcb      $00     ; 59  Right Shift
+ 06B2 0D         892          fcb      $0D     ; 5A  Enter
+ 06B3 7D         893          fcb      '}'     ; 5B  ] or }
+ 06B4 00         894          fcb      $00     ; 5C
+ 06B5 7C         895          fcb      '|'     ; 5D  \ or |
+ 06B6 00         896          fcb      $00     ; 5E
+ 06B7 00         897          fcb      $00     ; 5F
+                 898  
+ 06B8 00         899          fcb      $00     ; 60
+ 06B9 00         900          fcb      $00     ; 61
+ 06BA 00         901          fcb      $00     ; 62
+ 06BB 00         902          fcb      $00     ; 63
+ 06BC 00         903          fcb      $00     ; 64
+ 06BD 00         904          fcb      $00     ; 65
+ 06BE 08         905          fcb      $08     ; 66  Backspace
+ 06BF 00         906          fcb      $00     ; 67
+ 06C0 00         907          fcb      $00     ; 68
+ 06C1 31         908          fcb      '1'     ; 69  NUM - 1 or END
+ 06C2 00         909          fcb      $00     ; 6A
+ 06C3 34         910          fcb      '4'     ; 6B  NUM - 4 or LEFT
+ 06C4 37         911          fcb      '7'     ; 6C  NUM - 7 or HOME
+ 06C5 00         912          fcb      $00     ; 6D
+ 06C6 00         913          fcb      $00     ; 6E
+ 06C7 00         914          fcb      $00     ; 6F
+                 915  
+ 06C8 30         916          fcb      '0'     ; 70  NUM - 0 or INS
+ 06C9 2E         917          fcb      '.'     ; 71  NUM - . or DEL
+ 06CA 32         918          fcb      '2'     ; 72  NUM - 2 or DOWN
+ 06CB 35         919          fcb      '5'     ; 73  NUM - 5
+ 06CC 36         920          fcb      '6'     ; 74  NUM - 6 or RIGHT
+ 06CD 38         921          fcb      '8'     ; 75  NUM - 8 or UP
+ 06CE 1B         922          fcb      $1B     ; 76  ESC
+ 06CF 00         923          fcb      $00     ; 77  NUM LOCK
+ 06D0 00         924          fcb      $00     ; 78  F11
+ 06D1 2B         925          fcb      '+'     ; 79  NUM - + (Plus)
+ 06D2 33         926          fcb      '3'     ; 7A  NUM 3 or PAGE DOWN
+ 06D3 2D         927          fcb      '-'     ; 7B  NUM - - (Minus)
+ 06D4 2A         928          fcb      '*'     ; 7C  NUM - *
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 17
+
+
+
+ 06D5 39         929          fcb      '9'     ; 7D  NUM - 9 or PAGE UP
+ 06D6 00         930          fcb      $00     ; 7E  SCROLL LOCK
+ 06D7 00         931          fcb      $00     ; 7F
+                 932  
+ 06D8 00         933          fcb      $00     ; 80
+ 06D9 00         934          fcb      $00     ; 81
+ 06DA 00         935          fcb      $00     ; 82
+ 06DB 00         936          fcb      $00     ; 83  F7
+ 06DC 00         937          fcb      $00     ; 84
+ 06DD 00         938          fcb      $00     ; 85
+ 06DE 00         939          fcb      $00     ; 86
+ 06DF 00         940          fcb      $00     ; 87
+ 06E0 00         941          fcb      $00     ; 88
+ 06E1 00         942          fcb      $00     ; 89
+ 06E2 00         943          fcb      $00     ; 8A
+ 06E3 00         944          fcb      $00     ; 8B
+ 06E4 00         945          fcb      $00     ; 8C
+ 06E5 00         946          fcb      $00     ; 8D
+ 06E6 00         947          fcb      $00     ; 8E
+ 06E7 00         948          fcb      $00     ; 8F
+                 949  
+ 06E8            950          end
+                 951  
+                 952  
+                 953  
+                 954   
+
+ Symbol Table 
+
+ALTDEC           053F
+ALT_REL          0556
+ASC              00C3
+BYTE             00C0
+CANCEL           0384
+CAPLOC           0002
+CAPLOCK          0002
+CAPS             03B3
+CAPS_ON          038A
+CLK              0006
+CLRASC           058A
+CLR_PAR          04C3
+COMPLET          0587
+CTRLHEX          0525
+CTRL_RE          0574
+DATA             0007
+DELAY            05C4
+ERROR            04D6
+EXTEND           03D4
+EXTEND1          03E0
+EXTEND2          03E9
+EXTEND3          03F2
+EXTEND4          040E
+EXTEND5          0419
+EXTEND6          0424
+HE1_RAN          0532
+HIGHLOW          051E
+LALT             0004
+LCTRL            0006
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 18
+
+
+
+LED              00C2
+LEDSHOW          0479
+LOOP             04A8
+LSHIFT           0000
+MAIN             0320
+MAIN1            032C
+MAIN10           0373
+MAIN11           037A
+MAIN12           0393
+MAIN13           03A0
+MAIN14           03AA
+MAIN2            0333
+MAIN3            033A
+MAIN4            0340
+MAIN5            0346
+MAIN6            034F
+MAIN7            0358
+MAIN8            0361
+MAIN9            036A
+MARK             04B1
+NEXT             04B4
+NEXTBIT          05A0
+NOSHIFT          05C8
+NRESET           0005
+NUMLOCK          0001
+NUMS             03BE
+OUTRANG          0553
+PAR              00C6
+PNUMLCK          0003
+PSCRLCK          0004
+RALT             0005
+RCTRL            0007
+RECDATA          04EA
+RECEIVE          04DE
+RECNEXT          04FB
+RECSET           04F7
+RELEA10          045C
+RELEAS3          042C
+RELEAS4          0432
+RELEAS5          0438
+RELEAS6          0441
+RELEAS7          044A
+RELEAS8          0450
+RELEAS9          0456
+RELEASE          0427
+REL_EX2          046D
+REL_EX3          0476
+REL_EXT          045F
+RESET            0315
+RETURN           03B0
+RS232T           0593
+RSHIFT           0001
+RSMARK           05A9
+RSNEXT           05AD
+RSTFLAG          031C
+R_ERROR          0514
+SCRL             03C9
+SCRLOCK          0000
+
+
+
+KEY05R2.ASM            Assembled with CASM   05/06/1998  18:19  PAGE 19
+
+
+
+SET_PAR          04BE
+SHIFT            0658
+SHIFTON          0390
+SPACE            04AC
+START            0300
+STATUS           00C1
+STORE            0549
+TRANSMIT         0497
+TR_ACKN          04C5
+TXD              0005
+</pre>
+</td></tr>
+</table>
+</ul>
+<br>
+<br>
+<center>
+<font size="2" face="ARIAL"> Copyright 1999-2001 <a href="https://web.archive.org/web/20050209005431/mailto:Craig.Peacock@beyondlogic.org">Craig Peacock</a> - 19th August 2001.</font>
+</center>
+<br>
+<br>
+</body>
+</html>
+<!--
+     FILE ARCHIVED ON 00:54:31 Feb 09, 2005 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 05:17:44 Jan 14, 2024.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 156.609
+  exclusion.robots: 0.108
+  exclusion.robots.policy: 0.095
+  cdx.remote: 0.069
+  esindex: 0.01
+  LoadShardBlock: 103.012 (3)
+  PetaboxLoader3.datanode: 290.81 (4)
+  load_resource: 240.333
+  PetaboxLoader3.resolve: 49.011
+-->

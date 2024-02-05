@@ -14,6 +14,8 @@ def getProcessConfiguration():
 
     config = ProcessConfiguration()
 
+    config.save_mountinghole_filename = base_path / "mounting-hold-data.pkl"
+
     # Master input file, source of all truth.
     config.plate_layout_path = base_path / "case" / "plate"
     config.kle_layout_filename = base_path / "keyboard-layout.json"

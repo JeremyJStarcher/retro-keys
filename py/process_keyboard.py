@@ -4,6 +4,7 @@ import json
 import csv
 import os
 from pathlib import Path
+import pickle
 import re
 import subprocess
 from typing import Callable, List
@@ -109,6 +110,7 @@ class ProcessConfiguration:
     jlc_bom_filename: Path
     jlc_cpl_filename: Path
     json_path_to_qmk_layout: str
+    save_mountinghole_filename: Path
 
     # These paths are relative to the KiCad project directory
     kicad_3dmodel_path_str: str
@@ -368,7 +370,15 @@ class ProcessKeyboard:
         with open(self.config.keyboard_sch_sheet_filename_name, "w") as f:
             f.write(key_out)
 
-        print(mounting_holes)
+
+
+        if len(options.mounting_holes) > 0:
+            with open(self.config.save_mountinghole_filename, 'wb') as f:
+                pickle.dump(options.mounting_holes, f)
+
+
+
+        # print(mounting_holes)
 
     def relocate_parts_and_draw_silkscreen(self, options: RunWrappedOptions) -> None:
         pcb = options.pcb
@@ -658,6 +668,10 @@ class ProcessKeyboard:
         def bbox_to_openscad_src(label: str, bbox: BoundingBox) -> str:
             return "[" + f'"{label}", {bbox.x1}, {bbox.y1}, {bbox.x2}, {bbox.y2}' + "]"
 
+        loaded_points: List[MountingHole] = []
+        with open(self.config.save_mountinghole_filename, 'rb') as f:
+            loaded_points = pickle.load(f)
+
         pcb = options.pcb
         schematic = options.schematic
         tool = options.tool
@@ -728,6 +742,11 @@ class ProcessKeyboard:
         code.append("keyBoundingBoxes = [")
         for bb in bboxes:
             code.append("    " + bb + ",")
+        code.append("];")
+
+        code.append("loadedPoints = [")
+        for bb in loaded_points:
+            code.append(f" [{bb.x}, {bb.y}, {bb.r1}, {bb.r2}],")
         code.append("];")
 
         self.key_position_to_scad(code, options)

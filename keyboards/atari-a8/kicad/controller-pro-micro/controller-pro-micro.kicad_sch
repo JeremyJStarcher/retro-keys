@@ -1914,25 +1914,9 @@
     (uuid f9475e95-19ea-4138-8d73-06ec1334642b)
   )
 
-  (no_connect (at 226.06 93.345) (uuid 0003aa7f-6895-4802-9efa-a9a447486711))
-  (no_connect (at 238.76 108.585) (uuid 17a7b992-b048-4f1d-8e3f-0bb5191aaa22))
-  (no_connect (at 226.06 106.045) (uuid 43b81fec-fb14-4bc8-a6d6-d9b389975ba4))
-  (no_connect (at 238.76 103.505) (uuid 46a2d06b-70f7-41b9-892c-2f0e5219763f))
-  (no_connect (at 226.06 95.885) (uuid 5dc6397f-973b-4caf-8e1f-32f1d9666173))
   (no_connect (at 89.535 146.05) (uuid 6252e722-6cbc-4483-9d18-a6ea7141be7e))
-  (no_connect (at 226.06 103.505) (uuid 731b522d-4f73-48ad-91ac-07155fef94c5))
-  (no_connect (at 238.76 100.965) (uuid 82c07db3-f5e8-4a05-985c-a0b2fb0b5975))
-  (no_connect (at 226.06 108.585) (uuid 93d9d3ed-6cff-4924-8189-38961db7b1fb))
   (no_connect (at 89.535 167.005) (uuid a63d998d-4410-46e3-b24f-13994eca496b))
-  (no_connect (at 238.76 93.345) (uuid ae41e225-e5ed-486e-9d09-4c7de7e15a0d))
-  (no_connect (at 238.76 98.425) (uuid be8c5295-bb73-436e-9a15-d85d49a415ab))
-  (no_connect (at 226.06 100.965) (uuid c3f57b6d-f534-4f6a-bb57-a3ca6dc6a86a))
-  (no_connect (at 238.76 106.045) (uuid ccbbaa57-93f8-4146-8344-d8fa18eedd37))
-  (no_connect (at 238.76 111.125) (uuid d2f66d53-f285-464a-95f8-58b6b5aaa32d))
-  (no_connect (at 238.76 95.885) (uuid d7c5f52e-8409-42ff-a4db-4c4dacad031a))
-  (no_connect (at 226.06 98.425) (uuid d8ae1e89-8a27-4b1c-87d2-33c5e623e782))
   (no_connect (at 78.74 35.56) (uuid f57df774-cf7b-4ae4-b5f8-6a0692235a0c))
-  (no_connect (at 226.06 111.125) (uuid fc5ce6ff-268c-47e2-8db9-bbc30d7dcda9))
 
   (wire (pts (xy 37.465 146.05) (xy 53.975 146.05))
     (stroke (width 0) (type default))
@@ -1945,6 +1929,10 @@
   (wire (pts (xy 142.113 44.704) (xy 153.543 44.704))
     (stroke (width 0) (type default))
     (uuid 0340d7d8-efab-4acf-acbf-6a903be65ffa)
+  )
+  (wire (pts (xy 223.52 111.76) (xy 236.22 111.76))
+    (stroke (width 0) (type default))
+    (uuid 04568cd8-a77c-44e2-8891-6cd6f7d92cf8)
   )
   (wire (pts (xy 214.63 34.925) (xy 220.98 34.925))
     (stroke (width 0) (type default))
@@ -2021,6 +2009,10 @@
   (wire (pts (xy 214.63 73.025) (xy 220.98 73.025))
     (stroke (width 0) (type default))
     (uuid 24c5c6b0-e231-46da-985b-8418bbb312a9)
+  )
+  (wire (pts (xy 223.52 101.6) (xy 236.22 101.6))
+    (stroke (width 0) (type default))
+    (uuid 24cb0a8d-d42e-4e1a-829d-96b1f72fe52d)
   )
   (wire (pts (xy 243.205 46.355) (xy 248.92 46.355))
     (stroke (width 0) (type default))
@@ -2133,6 +2125,10 @@
   (wire (pts (xy 261.62 64.135) (xy 266.7 64.135))
     (stroke (width 0) (type default))
     (uuid 4c9cf2e0-371c-44a7-885e-16214274f4f7)
+  )
+  (wire (pts (xy 223.52 93.98) (xy 236.22 93.98))
+    (stroke (width 0) (type default))
+    (uuid 4df7323f-58bf-4778-a79a-7fd3ef4143be)
   )
   (wire (pts (xy 214.63 40.005) (xy 220.98 40.005))
     (stroke (width 0) (type default))
@@ -2306,6 +2302,10 @@
     (stroke (width 0) (type default))
     (uuid 8cf020cd-a455-4e71-8217-3f69e1ebcb3b)
   )
+  (wire (pts (xy 223.52 104.14) (xy 236.22 104.14))
+    (stroke (width 0) (type default))
+    (uuid 8cffbd69-ec90-4b15-b4f5-d0bda0856ab4)
+  )
   (wire (pts (xy 261.62 76.835) (xy 266.7 76.835))
     (stroke (width 0) (type default))
     (uuid 8e0282be-9938-4e38-8a0b-89ccbc477014)
@@ -2438,9 +2438,17 @@
     (stroke (width 0) (type default))
     (uuid b8096c9b-1716-4257-b715-2afd1d68e7fc)
   )
+  (wire (pts (xy 223.52 99.06) (xy 236.22 99.06))
+    (stroke (width 0) (type default))
+    (uuid bada2ca7-a4d8-4de7-813d-f87c90ff1d75)
+  )
   (wire (pts (xy 196.215 73.025) (xy 201.93 73.025))
     (stroke (width 0) (type default))
     (uuid bd56e5c0-6bcd-45aa-88d6-da72785447a8)
+  )
+  (wire (pts (xy 223.52 96.52) (xy 236.22 96.52))
+    (stroke (width 0) (type default))
+    (uuid beb3682e-0c81-4836-899e-c6e3ca3018c2)
   )
   (wire (pts (xy 118.11 157.48) (xy 118.11 160.655))
     (stroke (width 0) (type default))
@@ -2522,6 +2530,10 @@
     (stroke (width 0) (type default))
     (uuid da5d7a19-d690-4a9d-8f45-7e7fd0a4e5ce)
   )
+  (wire (pts (xy 223.52 106.68) (xy 236.22 106.68))
+    (stroke (width 0) (type default))
+    (uuid daf261d6-d293-4e29-84ea-bb7198d16352)
+  )
   (wire (pts (xy 243.205 59.055) (xy 248.92 59.055))
     (stroke (width 0) (type default))
     (uuid db3031e8-7394-4d6f-8550-0d82e5eaa0bf)
@@ -2589,6 +2601,10 @@
   (wire (pts (xy 196.215 37.465) (xy 201.93 37.465))
     (stroke (width 0) (type default))
     (uuid f5f17c60-32ce-4f00-a8b6-4ee447632209)
+  )
+  (wire (pts (xy 223.52 109.22) (xy 236.22 109.22))
+    (stroke (width 0) (type default))
+    (uuid f8d4c906-a835-43f1-a263-20cb47cb5513)
   )
   (wire (pts (xy 27.94 63.5) (xy 35.56 63.5))
     (stroke (width 0) (type default))
@@ -3556,7 +3572,7 @@
     (pin "2" (uuid a1709df6-fa0f-479a-b526-bb1493d9f3c1))
     (pin "1" (uuid cb089678-bf88-4135-b473-4aa03ed791f9))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "SW102") (unit 1)
         )
@@ -3580,7 +3596,7 @@
       (effects (font (size 1.524 1.524)) hide)
     )
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "H102") (unit 1)
         )
@@ -3618,7 +3634,7 @@
     (pin "6" (uuid 3eb59006-644a-4b6a-8f78-7edd1ff6897e))
     (pin "2" (uuid 0e515fc6-5e90-4e6b-8e31-450454feb621))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "U103") (unit 5)
         )
@@ -3642,7 +3658,7 @@
       (effects (font (size 1.524 1.524)) hide)
     )
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "H105") (unit 1)
         )
@@ -3680,7 +3696,7 @@
     (pin "6" (uuid 3eb59006-644a-4b6a-8f78-7edd1ff6897b))
     (pin "2" (uuid 0e515fc6-5e90-4e6b-8e31-450454feb61e))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "U103") (unit 3)
         )
@@ -3688,19 +3704,19 @@
     )
   )
 
-  (symbol (lib_id "Connector_Generic:Conn_02x08_Odd_Even") (at 231.14 100.965 0) (unit 1)
+  (symbol (lib_id "Connector_Generic:Conn_02x08_Odd_Even") (at 228.6 101.6 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 31a4809a-13d5-4316-a2be-bd3e9fa2cb15)
-    (property "Reference" "J105" (at 232.41 86.995 0)
+    (property "Reference" "J105" (at 229.87 87.63 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Value" "Jumper Connector" (at 232.41 89.535 0)
+    (property "Value" "Jumper Connector" (at 229.87 90.17 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_2x08_P2.54mm_Vertical" (at 231.14 100.965 0)
+    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_2x08_P2.54mm_Vertical" (at 228.6 101.6 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "~" (at 231.14 100.965 0)
+    (property "Datasheet" "~" (at 228.6 101.6 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "11" (uuid 6989d309-5822-437f-bd2a-0b234fb27b53))
@@ -3720,7 +3736,7 @@
     (pin "2" (uuid ccd2f724-afd0-4450-b108-339e6faea376))
     (pin "3" (uuid 14a16dfa-6456-4745-94f5-2827b30f4c9f))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "J105") (unit 1)
         )
@@ -3744,7 +3760,7 @@
       (effects (font (size 1.524 1.524)) hide)
     )
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "H104") (unit 1)
         )
@@ -3770,7 +3786,7 @@
     (pin "1" (uuid 92a4c85a-4da2-474f-a59a-0810411aadc0))
     (pin "2" (uuid 83e58d75-6451-455e-8296-328b95ca1c69))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "D101") (unit 1)
         )
@@ -3808,7 +3824,7 @@
     (pin "14" (uuid b94c2804-22b9-4c21-9cf4-3e4d72e24af3))
     (pin "5" (uuid d7884c42-fa0e-46f1-8d07-5ff8d2075a30))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "U102") (unit 5)
         )
@@ -3834,7 +3850,7 @@
     (pin "2" (uuid 8a0841d8-1023-42ed-90a4-58c8da86968b))
     (pin "1" (uuid d6940d2e-b370-4987-8866-08c15c5fbdcb))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "C102") (unit 1)
         )
@@ -3872,7 +3888,7 @@
     (pin "14" (uuid 5fdd58bd-990e-4d59-a958-a2fa27dec5d3))
     (pin "5" (uuid d7884c42-fa0e-46f1-8d07-5ff8d2075a2f))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "U102") (unit 1)
         )
@@ -3910,7 +3926,7 @@
     (pin "6" (uuid 3eb59006-644a-4b6a-8f78-7edd1ff6897d))
     (pin "2" (uuid 90fe012a-9aa4-4286-8aaf-f6a7229e64ad))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "U103") (unit 1)
         )
@@ -3936,7 +3952,7 @@
     (pin "1" (uuid 4fbec49d-ad20-404f-a969-37d547a0348e))
     (pin "2" (uuid b779ee10-aaba-42f8-86cc-4cc9f987225e))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "R101") (unit 1)
         )
@@ -3974,7 +3990,7 @@
     (pin "6" (uuid 3eb59006-644a-4b6a-8f78-7edd1ff6897a))
     (pin "2" (uuid 0e515fc6-5e90-4e6b-8e31-450454feb61d))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "U103") (unit 4)
         )
@@ -3998,7 +4014,7 @@
       (effects (font (size 1.524 1.524)) hide)
     )
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "H101") (unit 1)
         )
@@ -4046,7 +4062,7 @@
     (pin "9" (uuid 7728da6f-608e-462f-9938-286dc87c7b1e))
     (pin "20" (uuid e2bed081-eef1-4f44-b912-c05383f1ec35))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "U101") (unit 1)
         )
@@ -4070,7 +4086,7 @@
       (effects (font (size 1.524 1.524)) hide)
     )
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "H103") (unit 1)
         )
@@ -4098,7 +4114,7 @@
     (pin "3" (uuid 772f8da5-2c11-4a7a-b244-8971a40a603d))
     (pin "4" (uuid ec39e17c-63db-4792-a3ee-6129c889d2fc))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "J104") (unit 1)
         )
@@ -4136,7 +4152,7 @@
     (pin "14" (uuid 5fdd58bd-990e-4d59-a958-a2fa27dec5d1))
     (pin "5" (uuid d7884c42-fa0e-46f1-8d07-5ff8d2075a2d))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "U102") (unit 4)
         )
@@ -4162,7 +4178,7 @@
     (pin "2" (uuid 28efefcc-6052-4a8c-a273-09f7a3a7a3fc))
     (pin "1" (uuid c6d8a835-cae6-4a61-afc3-4f9aec16c6a2))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "C101") (unit 1)
         )
@@ -4200,7 +4216,7 @@
     (pin "14" (uuid 5fdd58bd-990e-4d59-a958-a2fa27dec5d2))
     (pin "5" (uuid d7884c42-fa0e-46f1-8d07-5ff8d2075a2e))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "U102") (unit 3)
         )
@@ -4238,7 +4254,7 @@
     (pin "6" (uuid ac3301ce-05c6-4085-80a3-bd2f0f55e620))
     (pin "2" (uuid 0e515fc6-5e90-4e6b-8e31-450454feb61f))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "U103") (unit 2)
         )
@@ -4262,7 +4278,7 @@
       (effects (font (size 1.524 1.524)) hide)
     )
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "H106") (unit 1)
         )
@@ -4326,7 +4342,7 @@
     (pin "9" (uuid a32ed4a3-42e3-4a0b-acd2-3b6be26b5459))
     (pin "36" (uuid 6a6c00c4-d19f-427f-b0c5-49ebc0b79116))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "J102") (unit 1)
         )
@@ -4352,7 +4368,7 @@
     (pin "2" (uuid 843fa0d1-e6f6-4807-a0d0-2c72e08a8c9a))
     (pin "1" (uuid 87af7308-6971-4fec-ba46-5ba15f66b872))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "SW101") (unit 1)
         )
@@ -4382,7 +4398,7 @@
     (pin "1" (uuid 4ec0175b-e35e-451b-809f-d54d03ffafa9))
     (pin "5" (uuid c1786b91-4b66-4d91-abe5-8ca19c7c5719))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "J106") (unit 1)
         )
@@ -4420,7 +4436,7 @@
     (pin "14" (uuid 5fdd58bd-990e-4d59-a958-a2fa27dec5d5))
     (pin "5" (uuid 32c703bd-a1e3-493e-ae8a-568e7937bdc9))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "U102") (unit 2)
         )
@@ -4484,7 +4500,7 @@
     (pin "9" (uuid 22dd70a7-7478-4568-af18-6cbb75b9b4d7))
     (pin "36" (uuid f1388867-a528-400c-9621-377a80251994))
     (instances
-      (project "atari-keyboard"
+      (project "controller-pro-micro"
         (path "/f6a334f3-ee33-4c56-a7bb-b961693d3d0e"
           (reference "J103") (unit 1)
         )

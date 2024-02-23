@@ -449,12 +449,25 @@ module key_0() {
 
 module key_lt() {
     tu(KEY_LT)
-    graphicsKey2(1, "<", "CLR", "ctrl-comma");
+      u(1)
+    stabilized()
+    flegend("<", POS_TEXT_1_OF_2, half_size)
+    flegend("CLR", POS_N, half_size)
+    oem_row(1)
+    preKey()
+    key();
 }
 
 module key_gt() {
     tu(KEY_GT)
-    graphicsKey2(1, ">", "INS", "ctrl-comma");
+
+      u(1)
+    stabilized()
+    flegend(">", POS_TEXT_1_OF_2, half_size)
+    flegend("INS", POS_N, half_size)
+    oem_row(1)
+    preKey()
+    key();
 }
 
 module key_bs() {
@@ -462,7 +475,7 @@ module key_bs() {
     u(1)
     stabilized()
     flegend("BS", POS_TEXT_1_OF_2, half_size)
-    flegend("DEL", POS_2_OF_2, half_size)
+    flegend("DEL", POS_N, half_size)
     oem_row(1)
     preKey()
     key();
@@ -568,7 +581,7 @@ module key_c_right() {
 
 module key_fn() {
     tu(KEY_FN)
-    graphicsKey2(1, "FN", "", "ctrl-y");
+    graphicsKey(1, "FN", "ctrl-y");
 }
 
 

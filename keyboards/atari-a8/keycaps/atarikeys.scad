@@ -228,7 +228,7 @@ module graphicsKey2(row, legendBottom, legendTop, svg)
     difference()
     {
         u(1) flegend(legendBottom, POS_1_OF_2, half_size) 
-        flegend(legendTop, POS_2_OF_2, half_size) oem_row(row) preKey()
+        flegend(legendTop, POS_N, half_size) oem_row(row) preKey()
             key();
 
         frontGraphicCutout() children();

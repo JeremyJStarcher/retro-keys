@@ -2,7 +2,7 @@
 
 print_target = "fdm"; // "fdm"; // "resin"
 print_sideways = false;
-atari_front_graphic_outset = false;
+atari_front_graphic_outset = true;
 $stem_support_type = "disable";
 
 // How far to rotate the keys when they are generated
@@ -17,14 +17,14 @@ support_r2 = 0.5;
 
 // Font size of one-letter per key
 // full_size = 9;
-full_size = 7;
+full_size = 5;
 
 // Font size of words written on a key
 long_size = 4;
 // Font size if there are multiple lines on a key.
-half_size = 7; // print_target == "fdm" ? 5 : 4;
+half_size = 5; // print_target == "fdm" ? 5 : 4;
 grid_key_size = 4;
-arrow_size = 8;
+arrow_size = 5;
 
 
 base_height = 0.4;

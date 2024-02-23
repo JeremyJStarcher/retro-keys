@@ -370,13 +370,9 @@ class ProcessKeyboard:
         with open(self.config.keyboard_sch_sheet_filename_name, "w") as f:
             f.write(key_out)
 
-
-
         if len(options.mounting_holes) > 0:
             with open(self.config.save_mountinghole_filename, 'wb') as f:
                 pickle.dump(options.mounting_holes, f)
-
-
 
         # print(mounting_holes)
 
@@ -474,10 +470,10 @@ class ProcessKeyboard:
         tool.set_object_location(pcb, "H103", bbox.x2, bbox.y1, Decimal(0))
         tool.set_object_location(pcb, "H104", bbox.x2, bbox.y2, Decimal(0))
 
-        hole1 = MountingHole(bbox.x1, bbox.y1, Decimal(5), Decimal(5))
-        hole2 = MountingHole(bbox.x1, bbox.y2, Decimal(5), Decimal(5))
-        hole3 = MountingHole(bbox.x2, bbox.y1, Decimal(5), Decimal(5))
-        hole4 = MountingHole(bbox.x2, bbox.y2, Decimal(5), Decimal(5))
+        hole1 = MountingHole(bbox.x1, bbox.y1, Decimal(5/2), Decimal(5/2))
+        hole2 = MountingHole(bbox.x1, bbox.y2, Decimal(5/2), Decimal(5/2))
+        hole3 = MountingHole(bbox.x2, bbox.y1, Decimal(5/2), Decimal(5/2))
+        hole4 = MountingHole(bbox.x2, bbox.y2, Decimal(5/2), Decimal(5/2))
 
         options.mounting_holes.append(hole1)
         options.mounting_holes.append(hole2)
@@ -668,9 +664,9 @@ class ProcessKeyboard:
         def bbox_to_openscad_src(label: str, bbox: BoundingBox) -> str:
             return "[" + f'"{label}", {bbox.x1}, {bbox.y1}, {bbox.x2}, {bbox.y2}' + "]"
 
-        loaded_points: List[MountingHole] = []
+        mounting_holes: List[MountingHole] = []
         with open(self.config.save_mountinghole_filename, 'rb') as f:
-            loaded_points = pickle.load(f)
+            mounting_holes = pickle.load(f)
 
         pcb = options.pcb
         schematic = options.schematic
@@ -744,9 +740,9 @@ class ProcessKeyboard:
             code.append("    " + bb + ",")
         code.append("];")
 
-        code.append("loadedPoints = [")
-        for bb in loaded_points:
-            code.append(f" [{bb.x}, {bb.y}, {bb.r1}, {bb.r2}],")
+        code.append("mountingHoles = [")
+        for bb in mounting_holes:
+            code.append(f" [{bb.x}, {-bb.y}, {bb.r1}, {bb.r2}],")
         code.append("];")
 
         self.key_position_to_scad(code, options)

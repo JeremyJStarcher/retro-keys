@@ -42,6 +42,11 @@ class StlMode(Enum):
     TWO_COLOR = 3
 
 
+class SlicerTarget(Enum):
+    CURA = 1
+    BAMBU = 2
+
+
 class KeyType(Enum):
     STD = 1
     SPECIAL = 2
@@ -174,7 +179,9 @@ class KeyConverter:
     #     zip_delete_file2(tmp_file_name, src, file_to_delete)
     #     os.remove(tmp_file_name)
 
-    def process_two_color_pair(self, idx: int, keyInfo: KeyInfo) -> None:
+    def process_two_color_pair(
+        self, idx: int, keyInfo: KeyInfo, slicerTarget: SlicerTarget
+    ) -> None:
         if self.openscad_model_output == "3mf":
 
             threeFm = ThreeMfTool()
@@ -203,14 +210,15 @@ class KeyConverter:
                 StlMode.TWO_COLOR,
             )
 
-            threeFm.convert_to_two_color(
-                idx,
-                legend_file_name,
-                keycap_file_name,
-                twocolor_file_name,
-                Path("empty-cura.3mf"),
-                keyInfo.has_legend,
-            )
+            if slicerTarget == SlicerTarget.CURA:
+                threeFm.cura_convert_to_two_color(
+                    idx,
+                    legend_file_name,
+                    keycap_file_name,
+                    twocolor_file_name,
+                    Path("empty-cura.3mf"),
+                    keyInfo.has_legend,
+                )
 
     def openscad_to_model(self, keyInfo: KeyInfo) -> None:
         if keyInfo.has_legend:
@@ -227,11 +235,11 @@ class KeyConverter:
             process1 = Popen(cmd1, shell=True)
             process1.wait()
 
-    def make_two_color(self) -> None:
+    def make_two_color(self, slicerTarget: SlicerTarget) -> None:
         self._create_dir(self.DEST_DIR)
 
         for idx, keyInfo in enumerate(key_list):
-            self.process_two_color_pair(idx, keyInfo)
+            self.process_two_color_pair(idx, keyInfo, slicerTarget)
             self.incrementTypeCount(keyInfo.key_type)
 
     def make_openscad_models(self) -> None:
@@ -315,75 +323,75 @@ class KeyConverter:
 key_list = [
     KeyInfo("key_0", KeyType.STD, True),
     KeyInfo("key_1", KeyType.STD, True),
-    KeyInfo("key_2", KeyType.STD, True),
-    KeyInfo("key_3", KeyType.STD, True),
-    KeyInfo("key_4", KeyType.STD, True),
-    KeyInfo("key_5", KeyType.STD, True),
-    KeyInfo("key_6", KeyType.STD, True),
-    KeyInfo("key_7", KeyType.STD, True),
-    KeyInfo("key_8", KeyType.STD, True),
-    KeyInfo("key_9", KeyType.STD, True),
-    KeyInfo("key_a", KeyType.STD, True),
-    KeyInfo("key_astrix", KeyType.STD, True),
-    KeyInfo("key_b", KeyType.STD, True),
-    KeyInfo("key_break", KeyType.X2, True),
-    KeyInfo("key_bs", KeyType.SPECIAL, True),
-    KeyInfo("key_c", KeyType.STD, True),
-    KeyInfo("key_c_down", KeyType.CURSOR, True),
-    KeyInfo("key_c_left", KeyType.CURSOR, True),
-    KeyInfo("key_c_right", KeyType.CURSOR, True),
-    KeyInfo("key_c_up", KeyType.CURSOR, True),
-    KeyInfo("key_caps", KeyType.SPECIAL, True),
-    KeyInfo("key_comma", KeyType.STD, True),
-    KeyInfo("key_control", KeyType.SPECIAL, True),
-    KeyInfo("key_d", KeyType.STD, True),
-    KeyInfo("key_dash", KeyType.STD, True),
-    KeyInfo("key_e", KeyType.STD, True),
-    KeyInfo("key_equal", KeyType.STD, True),
-    KeyInfo("key_esc", KeyType.SPECIAL, True),
-    KeyInfo("key_f", KeyType.STD, True),
-    KeyInfo("key_fn", KeyType.SPECIAL, True),
-    KeyInfo("key_g", KeyType.STD, True),
-    KeyInfo("key_gt", KeyType.STD, True),
-    KeyInfo("key_h", KeyType.STD, True),
-    KeyInfo("key_help", KeyType.X2, True),
-    KeyInfo("key_i", KeyType.STD, True),
-    KeyInfo("key_inv", KeyType.X2, True),
-    KeyInfo("key_j", KeyType.STD, True),
-    KeyInfo("key_k", KeyType.STD, True),
-    KeyInfo("key_l", KeyType.STD, True),
-    KeyInfo("key_lshift", KeyType.SPECIAL, True),
-    KeyInfo("key_lt", KeyType.STD, True),
-    KeyInfo("key_m", KeyType.STD, True),
-    KeyInfo("key_menu", KeyType.X2, True),
-    KeyInfo("key_n", KeyType.STD, True),
-    KeyInfo("key_o", KeyType.STD, True),
-    KeyInfo("key_option", KeyType.X2, True),
-    KeyInfo("key_p", KeyType.STD, True),
-    KeyInfo("key_period", KeyType.STD, True),
-    KeyInfo("key_plus", KeyType.STD, True),
-    KeyInfo("key_power", KeyType.X2, True),
-    KeyInfo("key_q", KeyType.STD, True),
-    KeyInfo("key_r", KeyType.STD, True),
-    KeyInfo("key_reset", KeyType.X2, True),
-    KeyInfo("key_return", KeyType.SPECIAL, True),
-    KeyInfo("key_rshift", KeyType.SPECIAL, True),
-    KeyInfo("key_s", KeyType.STD, True),
-    KeyInfo("key_select", KeyType.X2, True),
-    KeyInfo("key_semi", KeyType.STD, True),
-    KeyInfo("key_slash", KeyType.STD, True),
-    KeyInfo("key_space", KeyType.STD, False),
-    KeyInfo("key_start", KeyType.X2, True),
-    KeyInfo("key_t", KeyType.STD, True),
-    KeyInfo("key_tab", KeyType.SPECIAL, True),
-    KeyInfo("key_turbo", KeyType.X2, True),
-    KeyInfo("key_u", KeyType.STD, True),
-    KeyInfo("key_v", KeyType.STD, True),
-    KeyInfo("key_w", KeyType.STD, True),
-    KeyInfo("key_x", KeyType.STD, True),
-    KeyInfo("key_y", KeyType.STD, True),
-    KeyInfo("key_z", KeyType.STD, True),
-    # KeyInfo("layout", KeyType.LAYOUT, True),
+    # KeyInfo("key_2", KeyType.STD, True),
+    # KeyInfo("key_3", KeyType.STD, True),
+    # KeyInfo("key_4", KeyType.STD, True),
+    # KeyInfo("key_5", KeyType.STD, True),
+    # KeyInfo("key_6", KeyType.STD, True),
+    # KeyInfo("key_7", KeyType.STD, True),
+    # KeyInfo("key_8", KeyType.STD, True),
+    # KeyInfo("key_9", KeyType.STD, True),
+    # KeyInfo("key_a", KeyType.STD, True),
+    # KeyInfo("key_astrix", KeyType.STD, True),
+    # KeyInfo("key_b", KeyType.STD, True),
+    # KeyInfo("key_break", KeyType.X2, True),
+    # KeyInfo("key_bs", KeyType.SPECIAL, True),
+    # KeyInfo("key_c", KeyType.STD, True),
+    # KeyInfo("key_c_down", KeyType.CURSOR, True),
+    # KeyInfo("key_c_left", KeyType.CURSOR, True),
+    # KeyInfo("key_c_right", KeyType.CURSOR, True),
+    # KeyInfo("key_c_up", KeyType.CURSOR, True),
+    # KeyInfo("key_caps", KeyType.SPECIAL, True),
+    # KeyInfo("key_comma", KeyType.STD, True),
+    # KeyInfo("key_control", KeyType.SPECIAL, True),
+    # KeyInfo("key_d", KeyType.STD, True),
+    # KeyInfo("key_dash", KeyType.STD, True),
+    # KeyInfo("key_e", KeyType.STD, True),
+    # KeyInfo("key_equal", KeyType.STD, True),
+    # KeyInfo("key_esc", KeyType.SPECIAL, True),
+    # KeyInfo("key_f", KeyType.STD, True),
+    # KeyInfo("key_fn", KeyType.SPECIAL, True),
+    # KeyInfo("key_g", KeyType.STD, True),
+    # KeyInfo("key_gt", KeyType.STD, True),
+    # KeyInfo("key_h", KeyType.STD, True),
+    # KeyInfo("key_help", KeyType.X2, True),
+    # KeyInfo("key_i", KeyType.STD, True),
+    # KeyInfo("key_inv", KeyType.X2, True),
+    # KeyInfo("key_j", KeyType.STD, True),
+    # KeyInfo("key_k", KeyType.STD, True),
+    # KeyInfo("key_l", KeyType.STD, True),
+    # KeyInfo("key_lshift", KeyType.SPECIAL, True),
+    # KeyInfo("key_lt", KeyType.STD, True),
+    # KeyInfo("key_m", KeyType.STD, True),
+    # KeyInfo("key_menu", KeyType.X2, True),
+    # KeyInfo("key_n", KeyType.STD, True),
+    # KeyInfo("key_o", KeyType.STD, True),
+    # KeyInfo("key_option", KeyType.X2, True),
+    # KeyInfo("key_p", KeyType.STD, True),
+    # KeyInfo("key_period", KeyType.STD, True),
+    # KeyInfo("key_plus", KeyType.STD, True),
+    # KeyInfo("key_power", KeyType.X2, True),
+    # KeyInfo("key_q", KeyType.STD, True),
+    # KeyInfo("key_r", KeyType.STD, True),
+    # KeyInfo("key_reset", KeyType.X2, True),
+    # KeyInfo("key_return", KeyType.SPECIAL, True),
+    # KeyInfo("key_rshift", KeyType.SPECIAL, True),
+    # KeyInfo("key_s", KeyType.STD, True),
+    # KeyInfo("key_select", KeyType.X2, True),
+    # KeyInfo("key_semi", KeyType.STD, True),
+    # KeyInfo("key_slash", KeyType.STD, True),
+    # KeyInfo("key_space", KeyType.STD, False),
+    # KeyInfo("key_start", KeyType.X2, True),
+    # KeyInfo("key_t", KeyType.STD, True),
+    # KeyInfo("key_tab", KeyType.SPECIAL, True),
+    # KeyInfo("key_turbo", KeyType.X2, True),
+    # KeyInfo("key_u", KeyType.STD, True),
+    # KeyInfo("key_v", KeyType.STD, True),
+    # KeyInfo("key_w", KeyType.STD, True),
+    # KeyInfo("key_x", KeyType.STD, True),
+    # KeyInfo("key_y", KeyType.STD, True),
+    # KeyInfo("key_z", KeyType.STD, True),
+    # # KeyInfo("layout", KeyType.LAYOUT, True),
 ]
 
 
@@ -396,10 +404,11 @@ def run_main():
 
     converter = KeyConverter()
 
-    SIDEWAYS_3MF_PATH = Path(f"{THREE_D_ROOT}/3mfs")
-    SIDEWAYS_2COLOR_3MF_PATH = Path(f"{THREE_D_ROOT}/two-color")
+    SIDEWAYS_3MF_PATH = Path(f"{THREE_D_ROOT}/3mfs-openscad")
+    CURA_SIDEWAYS_2COLOR_3MF_PATH = Path(f"{THREE_D_ROOT}/two-color-cura")
+    BAMBU_SIDEWAYS_2COLOR_3MF_PATH = Path(f"{THREE_D_ROOT}/two-color-bambu")
 
-    FLAT_3MF_PATH = Path(f"{THREE_D_ROOT}/3mfs-flat")
+    FLAT_3MF_PATH = Path(f"{THREE_D_ROOT}/3mfs-flat-openscad")
     FLAT_2COLOR_3MF_PATH = Path(f"{THREE_D_ROOT}/two-color-flat")
     FLAT_STL_PATH = Path(f"{THREE_D_ROOT}/flat-stl")
     VMRL_PATH = Path(f"{THREE_D_ROOT}/vrml")
@@ -412,11 +421,11 @@ def run_main():
     converter.make_openscad_models()
 
     converter.reset()
-    converter.DEST_DIR = SIDEWAYS_2COLOR_3MF_PATH
+    converter.DEST_DIR = CURA_SIDEWAYS_2COLOR_3MF_PATH
     converter.pocket_dest = True
     converter.SRC_DIR = SIDEWAYS_3MF_PATH
     converter.pocket_src = True
-    converter.make_two_color()
+    converter.make_two_color(SlicerTarget.CURA)
 
     converter.reset()
     converter.openscad_model_output = "3mf"

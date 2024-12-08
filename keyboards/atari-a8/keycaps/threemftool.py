@@ -83,7 +83,7 @@ class ThreeMfTool:
             data = zip.read(model_file_name)
             return BeautifulSoup(data, "xml")
 
-    def convert_to_two_color(
+    def cura_convert_to_two_color(
         self,
         idx: int,
         legend_file_name: Path,

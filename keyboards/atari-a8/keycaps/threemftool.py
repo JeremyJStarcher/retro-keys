@@ -27,7 +27,7 @@ class ThreeMfTool:
             el = cast(Tag, xml_data.find("metadata", {"name": name}))
             self.set_contents(el, value)
 
-    def create_object(self, id: str, name: str) -> Tag:
+    def cura_create_object(self, id: str, name: str) -> Tag:
         """Method to create an XML object with given ID and name, of type "model." """
 
         new_element = Tag(
@@ -41,7 +41,23 @@ class ThreeMfTool:
 
         return new_element
 
-    def add_extruder(self, extruder: int, object: Tag) -> None:
+    def bambu_create_object(self, id: str, name: str) -> Tag:
+        """Method to create an XML object with given ID and name, of type "model." """
+
+        new_element = Tag(
+            name="object",
+            attrs={
+                "id": id,
+              #  "name": name,
+                "type": "model",
+            },
+        )
+
+        return new_element
+
+
+
+    def cura_add_extruder(self, extruder: int, object: Tag) -> None:
         """Method to add an extruder metadata to an object. Extruder determines which material is used."""
         metadatagroup_element = Tag(name="metadatagroup", attrs={})
         metadata_element = Tag(name="metadata", attrs={"name": "cura:extruder_nr"})
@@ -50,7 +66,7 @@ class ThreeMfTool:
 
         object.append(metadatagroup_element)
 
-    def make_mesh_object(
+    def cura_make_mesh_object(
         self,
         file_name: Path,  # file_name, gets embedded in the XML
         src_xml: Tag,  # The XML to take the mesh from
@@ -61,9 +77,25 @@ class ThreeMfTool:
         Method to create a mesh object from a given file and XML source, with specified ID and extruder.
         """
         base_name = Path(file_name).name
-        object1 = cast(Tag, self.create_object(object_id, base_name))
+        object1 = cast(Tag, self.cura_create_object(object_id, base_name))
         mesh = cast(Tag, src_xml.find("mesh"))
-        self.add_extruder(extruder, object1)
+        self.cura_add_extruder(extruder, object1)
+        object1.append(mesh)
+        return object1
+
+    def bambu_make_mesh_object(
+        self,
+        file_name: Path,  # file_name, gets embedded in the XML
+        src_xml: Tag,  # The XML to take the mesh from
+        object_id: str,  # The object_id for our current object
+        extruder: int,  # Which extruder to use
+    ) -> Tag:
+        """
+        Method to create a mesh object from a given file and XML source, with specified ID and extruder.
+        """
+        base_name = Path(file_name).name
+        object1 = cast(Tag, self.bambu_create_object(object_id, base_name))
+        mesh = cast(Tag, src_xml.find("mesh"))
         object1.append(mesh)
         return object1
 
@@ -82,6 +114,90 @@ class ThreeMfTool:
         with ZipFile(file_name, "r") as zip:
             data = zip.read(model_file_name)
             return BeautifulSoup(data, "xml")
+
+    def bambu_convert_to_two_color(
+        self,
+        idx: int,
+        legend_file_name: Path,
+        keycap_file_name: Path,
+        twocolor_file_name: Path,
+        template_file_name: Path,
+        has_legend: bool,
+    ) -> None:
+        legend_index = str((idx * 1) + 1)
+        keycap_index = str((idx * 1) + 2)
+        merged_index = str((idx * 1) + 3)
+
+        legend_index = 1
+        keycap_index = 2
+        merged_index = 3
+
+        model_file_name = "3D/3dmodel.model"
+
+        Bs_legend_data = (
+            self.read_xml_from_zip(legend_file_name, model_file_name)
+            if has_legend
+            else BeautifulSoup("")
+        )
+        Bs_keycap_data = self.read_xml_from_zip(keycap_file_name, model_file_name)
+        Bs_twocolor_data = self.read_xml_from_zip(template_file_name, model_file_name)
+
+        resources = cast(Tag, Bs_twocolor_data.find("resources"))
+        build = cast(Tag, Bs_twocolor_data.find("build"))
+
+        for child in resources.findChildren():
+            child.extract()
+
+        if has_legend:
+            mesh_object1 = self.bambu_make_mesh_object(
+                legend_file_name, Bs_legend_data, legend_index, 1
+            )
+            resources.append(mesh_object1)
+
+        mesh_object2 = self.bambu_make_mesh_object(
+            keycap_file_name, Bs_keycap_data, keycap_index, 0
+        )
+        resources.append(mesh_object2)
+
+        ss = BeautifulSoup(f"""
+                <object id="{merged_index}" type="model">
+                    <components>
+                        <component objectid="1" transform="1 0 0 0 1 0 0 0 1 0 0 0" />
+                        <component objectid="2" transform="1 0 0 0 1 0 0 0 1 0 0 0" />
+                  </components>
+                </object>
+                """, features="lxml")
+        resources.append(ss.find("object"))
+
+
+        # merged_object = cast(Tag, self.cura_create_object(merged_index, "MergedMesh"))
+
+        # components_element = Tag(name="components", attrs={})
+
+        # if has_legend:
+        #     components_element.append(self.create_component(legend_index))
+
+        # components_element.append(self.create_component(keycap_index))
+
+        # merged_object.append(components_element)
+        # resources.append(merged_object)
+
+        # item_element = Tag(name="item", attrs={"objectid": merged_index})
+        # build.append(item_element)
+
+        # Update the ZIP file
+        with ZipFile(twocolor_file_name, "a") as zip_out:
+            # Copy all files from the existing ZIP archive
+            with ZipFile(template_file_name, "r") as zip_in:
+                for item in zip_in.infolist():
+                    if item.filename != model_file_name:  # Skip the file being replaced
+                        with zip_in.open(item) as source:
+                            zip_out.writestr(item, source.read())
+
+            # Write the updated 3D model file
+            with zip_out.open(model_file_name, "w") as model_file:
+                updated_content = bytes(Bs_twocolor_data.prettify(), "utf-8")
+                model_file.write(updated_content)
 
     def cura_convert_to_two_color(
         self,
@@ -116,17 +232,17 @@ class ThreeMfTool:
         build = cast(Tag, Bs_twocolor_data.find("build"))
 
         if has_legend:
-            mesh_object1 = self.make_mesh_object(
+            mesh_object1 = self.cura_make_mesh_object(
                 legend_file_name, Bs_legend_data, legend_index, 1
             )
             resources.append(mesh_object1)
 
-        mesh_object2 = self.make_mesh_object(
+        mesh_object2 = self.cura_make_mesh_object(
             keycap_file_name, Bs_keycap_data, keycap_index, 0
         )
         resources.append(mesh_object2)
 
-        merged_object = cast(Tag, self.create_object(merged_index, "MergedMesh"))
+        merged_object = cast(Tag, self.cura_create_object(merged_index, "MergedMesh"))
 
         components_element = Tag(name="components", attrs={})
 

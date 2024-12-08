@@ -4,7 +4,7 @@ keymode = "1";
 
 $part_mode = keymode;
 
-  key = "key_gt";
+  key = "key_o";
   print_one();
 
  //  prepKey() key_o();

@@ -2,7 +2,7 @@
 
 print_target = "fdm"; // "fdm"; // "resin"
 print_sideways = false;
-atari_front_graphic_outset = true;
+atari_front_graphic_outset = false;
 $stem_support_type = "disable";
 
 // How far to rotate the keys when they are generated

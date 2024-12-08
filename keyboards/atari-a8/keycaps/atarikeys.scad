@@ -188,7 +188,7 @@ module frontGraphicCutout()
         ALL_THE_WAY_THROUGH = 3;
         PART_WAY_THROUGH = 2;
 
-        THROUGH_SIZE = PART_WAY_THROUGH; 
+        THROUGH_SIZE = ALL_THE_WAY_THROUGH; 
  
         maybe_sideways()
         rotate([ atari_rotation, 0, 0 ]) front_of_key() translate([ 0, inset, 0 ]) scale([ 0.75, ALL_THE_WAY_THROUGH, 0.75 ])

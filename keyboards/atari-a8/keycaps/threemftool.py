@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup, Tag
 from zipfile import ZipFile
 from pathlib import Path
 
+from make_3d import HAS_LEGEND
+
 
 class ThreeMfTool:
     def set_contents(self, xml_data: Tag, contents: Tag | str) -> None:
@@ -48,14 +50,12 @@ class ThreeMfTool:
             name="object",
             attrs={
                 "id": id,
-              #  "name": name,
+                #  "name": name,
                 "type": "model",
             },
         )
 
         return new_element
-
-
 
     def cura_add_extruder(self, extruder: int, object: Tag) -> None:
         """Method to add an extruder metadata to an object. Extruder determines which material is used."""
@@ -122,15 +122,15 @@ class ThreeMfTool:
         keycap_file_name: Path,
         twocolor_file_name: Path,
         template_file_name: Path,
-        has_legend: bool,
+        has_legend: HAS_LEGEND,
     ) -> None:
         legend_index = str((idx * 1) + 1)
         keycap_index = str((idx * 1) + 2)
         merged_index = str((idx * 1) + 3)
 
-        legend_index = 1
-        keycap_index = 2
-        merged_index = 3
+        legend_index = str(1)
+        keycap_index = str(2)
+        merged_index = str(3)
 
         model_file_name = "3D/3dmodel.model"
 
@@ -159,16 +159,18 @@ class ThreeMfTool:
         )
         resources.append(mesh_object2)
 
-        ss = BeautifulSoup(f"""
+        ss = BeautifulSoup(
+            f"""
                 <object id="{merged_index}" type="model">
                     <components>
                         <component objectid="1" transform="1 0 0 0 1 0 0 0 1 0 0 0" />
                         <component objectid="2" transform="1 0 0 0 1 0 0 0 1 0 0 0" />
                   </components>
                 </object>
-                """, features="lxml")
-        resources.append(ss.find("object"))
-
+                """,
+            features="lxml",
+        )
+        resources.append(cast(Tag, ss.find("object")))
 
         # merged_object = cast(Tag, self.cura_create_object(merged_index, "MergedMesh"))
 
@@ -206,7 +208,7 @@ class ThreeMfTool:
         keycap_file_name: Path,
         twocolor_file_name: Path,
         template_file_name: Path,
-        has_legend: bool,
+        has_legend: HAS_LEGEND,
     ) -> None:
 
         """

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+  <title>QMK - How to flash Arduino Pro Micro or Elite-C &mdash; airton.dev &mdash; </title>
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="robots" content="index, follow">
+  <link rel="stylesheet" href="https://airton.dev/assets/app.css">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@airtonzanon">
+  <meta name="twitter:title" content="QMK - How to flash Arduino Pro Micro or Elite-C">
+  <meta property="og:url" content="https://airton.dev/til/qmk-how-to-flash-arduino-pro-micro-or-elite-c/">
+  <meta property="og:title" content="QMK - How to flash Arduino Pro Micro or Elite-C">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+    integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+  <link rel="alternate" type="application/atom+xml" href="https://airton.dev/atom.xml"
+    title="airton.dev activity feed" />
+  <link rel="apple-touch-icon" sizes="57x57" href="https://airton.dev/favicon/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="https://airton.dev/favicon/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="https://airton.dev/favicon/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://airton.dev/favicon/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="https://airton.dev/favicon/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="https://airton.dev/favicon/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="https://airton.dev/favicon/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="https://airton.dev/favicon/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://airton.dev/favicon/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="https://airton.dev/favicon/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://airton.dev/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="https://airton.dev/favicon/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://airton.dev/favicon/favicon-16x16.png">
+  <link rel="manifest" href="https://airton.dev/favicon/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="https://airton.dev/favicon//ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+        </head>
+
+<body>
+  <div class="container">
+    <div class="header-section">
+      <div class="header-frame">
+        <h1>Airton Zanon</h1>
+        <h2>Software Developer in Amsterdam</h2>
+      </div>
+    </div>
+    <main role="main">
+      <div>
+        <div>
+          <a href="https://airton.dev/til" class='go-home'>back to Today I Learned page</a>
+<article>
+    <header>
+        <h3><i class="fas fa-angle-double-right"></i> QMK - How to flash Arduino Pro Micro or Elite-C</h3>
+        <p>
+            <small>posted at 09-08-2022</small>
+        </p>
+    </header>
+    <div>
+        <p>If you want to flash a microcontroller to be your keyboard you can use <strong>QMK</strong> for that. You can even use the <strong>QMK toolbox</strong> to do it, which is a UI that helps you to flash/compile your keyboard mapping and even to already select the kind of bootloader that you use to flash your microcontroller.</p>
+
+<p>If you want to flash a recently edited or something that you changed recently on the configuration file, you might need to use the command line for that. There was when I questioned <em>"How will I do it for the Elite-C?"</em>.</p>
+
+<p>I use <strong>Arduino Pro Micro</strong> for almost all <strong>keyboards</strong> that I built, but because of micro usb not being the best when it comes to durability, I choose <strong>Elite-C</strong> to be the microcontroller for one of the keyboards that I created.</p>
+
+<p>So here's how you <strong>flash</strong> it:</p>
+
+<h3 id="arduino-pro-micro%3A">Arduino Pro Micro:</h3>
+
+<p><img src="//images.ctfassets.net/4cjvqtuc6fhd/2WIR3VxqtV8pLK4LOcQSs4/03d2c0cfb2505244df3740f59355089e/Screenshot_2022-08-09_at_18.59.22.png" alt="Arduino Pro Micro" style="display: block; margin-left: auto; margin-right: auto; width: 50%;"/></p>
+
+<pre><code>qmk flash -kb sofle -km default -bl avrdude
+</code></pre>
+
+<p><em>or stay in the root of qmk_firmware folder and run the command below</em></p>
+
+<pre><code>make sofle:default:avrdude
+</code></pre>
+
+<p>With that, the keymap will compile and it will ask flash the Arduino, if you connect reset to ground, it will accept the flash.</p>
+
+<p><img src="//images.ctfassets.net/4cjvqtuc6fhd/1soiGFJ4ckJWokzhZEZx5Y/86102e9134d7fabf3a3b6efdd60c569a/Screenshot_2022-08-09_at_18.54.23.png" alt="Arduino Pro Micro - Reset" style="display: block; margin-left: auto; margin-right: auto; width: 30%;"/></p>
+
+<h3 id="elite-c%3A">Elite-C:</h3>
+
+<p><img src="//images.ctfassets.net/4cjvqtuc6fhd/6Ql87PwhCyOQ9QbVQP7nu4/c8619b36d3253b82bbb850e66060d302/Screenshot_2022-08-09_at_19.02.06.png" alt="Elite C" style="display: block; margin-left: auto; margin-right: auto; width: 50%;"/></p>
+
+<pre><code>qmk flash -kb sofle -km default -bl dfu
+</code></pre>
+
+<p><em>or stay in the root of qmk_firmware folder and run the command below</em></p>
+
+<pre><code>make sofle:default:dfu
+</code></pre>
+
+<p>With that, the bootloader used will be DFU instead of avrdudes (used for Arduino Pro Micro). You don't need to do anything in the board to flash it.</p>
+
+<hr />
+
+<p>This is simple and easy, but I took a while to find this info, so here it is :D</p>
+
+<p>For more info about QMK and flashing, go to their wiki page <a href="https://github.com/qmk/qmk_firmware/blob/master/docs/flashing.md">https://github.com/qmk/qmk_firmware/blob/master/docs/flashing.md</a></p>
+
+    </div>
+</article>
+
+        </div>
+      </div>
+    </main>
+    <center>
+        <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="airtonzanon" data-color="#5F7FFF" data-emoji=""  data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#ffffff" data-coffee-color="#FFDD00" ></script>
+    </center>
+    <hr>
+    <footer>
+      <span class="text-muted">&copy; 2023 airton.dev</span> -
+      <span class="text-muted">Proudly not using cookies <i class="fas fa-cookie-bite"></i> to track you</span> </br>
+      <center>
+          <span class="text-muted"><a href='https://airton.dev/atom.xml'>Posts Feed</a></span> -
+          <span class="text-muted"><a href='https://airton.dev/til-feed.xml'>TIL Feed</a></span>
+      </center>
+    </footer>
+  </div>
+  <script src="https://getinsights.io/js/insights.js"></script>
+  <script>
+      insights.init('vn9hIwPZ6JF7BIA2');
+      insights.trackPages();
+  </script>
+  <script data-goatcounter="https://airtonzanon.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+    </body>
+
+</html>

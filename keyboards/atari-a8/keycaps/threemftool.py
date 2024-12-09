@@ -1,10 +1,11 @@
 from datetime import datetime
+from enum import Enum
 from typing import cast
 from bs4 import BeautifulSoup, Tag
 from zipfile import ZipFile
 from pathlib import Path
 
-from make_3d import HAS_LEGEND
+from key_info import COLOR_SCHEME, HAS_LEGEND, KeyInfo
 
 
 class ThreeMfTool:
@@ -122,7 +123,7 @@ class ThreeMfTool:
         keycap_file_name: Path,
         twocolor_file_name: Path,
         template_file_name: Path,
-        has_legend: HAS_LEGEND,
+        keyinfo: KeyInfo,
     ) -> None:
         legend_index = str((idx * 1) + 1)
         keycap_index = str((idx * 1) + 2)
@@ -136,7 +137,7 @@ class ThreeMfTool:
 
         Bs_legend_data = (
             self.read_xml_from_zip(legend_file_name, model_file_name)
-            if has_legend
+            if keyinfo.has_legend
             else BeautifulSoup("")
         )
         Bs_keycap_data = self.read_xml_from_zip(keycap_file_name, model_file_name)
@@ -148,7 +149,7 @@ class ThreeMfTool:
         for child in resources.findChildren():
             child.extract()
 
-        if has_legend:
+        if keyinfo.has_legend:
             mesh_object1 = self.bambu_make_mesh_object(
                 legend_file_name, Bs_legend_data, legend_index, 1
             )
@@ -159,7 +160,7 @@ class ThreeMfTool:
         )
         resources.append(mesh_object2)
 
-        ss = BeautifulSoup(
+        mergedComponent = BeautifulSoup(
             f"""
                 <object id="{merged_index}" type="model">
                     <components>
@@ -170,28 +171,81 @@ class ThreeMfTool:
                 """,
             features="lxml",
         )
-        resources.append(cast(Tag, ss.find("object")))
+        resources.append(cast(Tag, mergedComponent.find("object")))
 
-        # merged_object = cast(Tag, self.cura_create_object(merged_index, "MergedMesh"))
+        extruder1: str = "1"
+        extruder2: str = "2"
 
-        # components_element = Tag(name="components", attrs={})
+        if keyinfo.color_scheme == COLOR_SCHEME.REVERSED:
+            extruder1 = "2"
+            extruder2 = "1"
 
-        # if has_legend:
-        #     components_element.append(self.create_component(legend_index))
+        model_setting_config = BeautifulSoup(
+            f"""
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <object id="3">
+    <metadata key="name" value="key_1_legend"/>
+    <metadata key="extruder" value="1"/>
+    <part id="1" subtype="normal_part">
+      <metadata key="name" value="key_1_legend.stl"/>
+      <metadata key="matrix" value="1 0 0 -2.1554796099662781 0 1 0 1.796262264251709 0 0 1 3.2037577629089355 0 0 0 1"/>
+      <metadata key="source_file" value="key_1_legend.stl"/>
+      <metadata key="source_object_id" value="0"/>
+      <metadata key="source_volume_id" value="0"/>
+      <metadata key="source_offset_x" value="-2.1554796099662781"/>
+      <metadata key="source_offset_y" value="1.796262264251709"/>
+      <metadata key="source_offset_z" value="7.9809274673461914"/>
+      <metadata key="extruder" value="{extruder1}"/>
+      <mesh_stat edges_fixed="0" degenerate_facets="0" facets_removed="0" facets_reversed="0" backwards_edges="0"/>
+    </part>
+    <part id="2" subtype="normal_part">
+      <metadata key="name" value="key_1_cap.stl"/>
+      <metadata key="matrix" value="1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"/>
+      <metadata key="source_file" value="key_1_cap.stl"/>
+      <metadata key="source_object_id" value="0"/>
+      <metadata key="source_volume_id" value="0"/>
+      <metadata key="source_offset_x" value="0"/>
+      <metadata key="source_offset_y" value="0"/>
+      <metadata key="source_offset_z" value="4.7771697044372559"/>
+      <metadata key="extruder" value="{extruder2}"/>
+      <mesh_stat edges_fixed="0" degenerate_facets="0" facets_removed="0" facets_reversed="0" backwards_edges="0"/>
+    </part>
+  </object>
+  <plate>
+    <metadata key="plater_id" value="1"/>
+    <metadata key="plater_name" value=""/>
+    <metadata key="locked" value="false"/>
+    <metadata key="thumbnail_file" value="Metadata/plate_1.png"/>
+    <metadata key="thumbnail_no_light_file" value="Metadata/plate_no_light_1.png"/>
+    <metadata key="top_file" value="Metadata/top_1.png"/>
+    <metadata key="pick_file" value="Metadata/pick_1.png"/>
+    <model_instance>
+      <metadata key="object_id" value="3"/>
+      <metadata key="instance_id" value="0"/>
+      <metadata key="identify_id" value="116"/>
+    </model_instance>
+  </plate>
+  <assemble>
+   <assemble_item object_id="3" instance_id="0" transform="1 0 0 0 1 0 0 0 1 21.659985351562501 0 9.5543394088745117" offset="0 0 0" />
+  </assemble>
+</config>
 
-        # components_element.append(self.create_component(keycap_index))
-
-        # merged_object.append(components_element)
-        # resources.append(merged_object)
-
-        # item_element = Tag(name="item", attrs={"objectid": merged_index})
-        # build.append(item_element)
+            """,
+            features="lxml",
+        )
 
         # Update the ZIP file
         with ZipFile(twocolor_file_name, "a") as zip_out:
             # Copy all files from the existing ZIP archive
             with ZipFile(template_file_name, "r") as zip_in:
                 for item in zip_in.infolist():
+                    if item.filename == "Metadata/model_settings.config":
+                        continue
+
+                    if item.filename == model_file_name:
+                        continue
+
                     if item.filename != model_file_name:  # Skip the file being replaced
                         with zip_in.open(item) as source:
                             zip_out.writestr(item, source.read())
@@ -201,6 +255,12 @@ class ThreeMfTool:
                 updated_content = bytes(Bs_twocolor_data.prettify(), "utf-8")
                 model_file.write(updated_content)
 
+            with zip_out.open(
+                "Metadata/model_settings.config", "w"
+            ) as model_config_file:
+                updated_content = bytes(model_setting_config.prettify(), "utf-8")
+                model_config_file.write(updated_content)
+
     def cura_convert_to_two_color(
         self,
         idx: int,
@@ -208,7 +268,7 @@ class ThreeMfTool:
         keycap_file_name: Path,
         twocolor_file_name: Path,
         template_file_name: Path,
-        has_legend: HAS_LEGEND,
+        keyinfo: KeyInfo,
     ) -> None:
 
         """
@@ -224,7 +284,7 @@ class ThreeMfTool:
 
         Bs_legend_data = (
             self.read_xml_from_zip(legend_file_name, model_file_name)
-            if has_legend
+            if keyinfo.has_legend == HAS_LEGEND.LEGEND_TRUE
             else BeautifulSoup("")
         )
         Bs_keycap_data = self.read_xml_from_zip(keycap_file_name, model_file_name)
@@ -233,7 +293,7 @@ class ThreeMfTool:
         resources = cast(Tag, Bs_twocolor_data.find("resources"))
         build = cast(Tag, Bs_twocolor_data.find("build"))
 
-        if has_legend:
+        if keyinfo.has_legend:
             mesh_object1 = self.cura_make_mesh_object(
                 legend_file_name, Bs_legend_data, legend_index, 1
             )
@@ -248,7 +308,7 @@ class ThreeMfTool:
 
         components_element = Tag(name="components", attrs={})
 
-        if has_legend:
+        if keyinfo.has_legend:
             components_element.append(self.create_component(legend_index))
 
         components_element.append(self.create_component(keycap_index))

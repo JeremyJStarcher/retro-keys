@@ -12,6 +12,7 @@ import time
 
 # type: ignore
 import trimesh
+from key_info import COLOR_SCHEME, HAS_LEGEND, KeyInfo, KeyType, SlicerTarget, StlMode
 from threemftool import ThreeMfTool
 
 THREE_D_ROOT = "keycap-models"
@@ -34,37 +35,6 @@ class SingleInstanceLock:
         if self.lockfd:
             os.close(self.lockfd)
             os.unlink(self.lockfile)
-
-
-class StlMode(Enum):
-    KEY_CAP = 1
-    LEGEND = 2
-    TWO_COLOR = 3
-
-
-class SlicerTarget(Enum):
-    CURA = 1
-    BAMBU = 2
-
-
-class KeyType(Enum):
-    STD = 1
-    SPECIAL = 2
-    X2 = 3
-    CURSOR = 4
-    LAYOUT = 5
-
-
-class HAS_LEGEND(Enum):
-    LEGEND_TRUE = True
-    LEGEND_FALSE = False
-
-
-@dataclass
-class KeyInfo:
-    key_name: str
-    key_type: KeyType
-    has_legend: HAS_LEGEND
 
 
 class KeyConverter:
@@ -95,7 +65,7 @@ class KeyConverter:
             KeyType.LAYOUT: "layout",
         }.get(key_type, "unknown")
 
-    def getColorForKeyType(self, key_type: KeyType) -> Tuple[str, str]:
+    def getVmrlColorForKeyType(self, key_type: KeyType) -> Tuple[str, str]:
 
         match key_type:
             case KeyType.CURSOR:
@@ -222,7 +192,7 @@ class KeyConverter:
                     keycap_file_name,
                     twocolor_file_name,
                     Path("empty-cura.3mf"),
-                    keyInfo.has_legend,
+                    keyInfo,
                 )
 
             if slicerTarget == SlicerTarget.BAMBU:
@@ -232,7 +202,7 @@ class KeyConverter:
                     keycap_file_name,
                     twocolor_file_name,
                     Path("empty-bambu.3mf"),
-                    keyInfo.has_legend,
+                    keyInfo,
                 )
 
     def openscad_to_model(self, keyInfo: KeyInfo) -> None:
@@ -309,7 +279,7 @@ class KeyConverter:
 
             exe = "python ../../../py/stl_to_wrl.py"
 
-            colors = self.getColorForKeyType(keyInfo.key_type)
+            colors = self.getVmrlColorForKeyType(keyInfo.key_type)
             cap_color = colors[0]
             legend_color = colors[1]
 
@@ -336,77 +306,85 @@ class KeyConverter:
 
 
 key_list = [
-    KeyInfo("key_0", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_1", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_2", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_3", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_4", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_5", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_6", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_7", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_8", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_9", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_a", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_astrix", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_b", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_break", KeyType.X2, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_bs", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_c", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_c_down", KeyType.CURSOR, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_c_left", KeyType.CURSOR, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_c_right", KeyType.CURSOR, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_c_up", KeyType.CURSOR, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_caps", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_comma", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_control", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_d", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_dash", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_e", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_equal", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_esc", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_f", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_fn", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_g", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_gt", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_h", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_help", KeyType.X2, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_i", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_inv", KeyType.X2, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_j", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_k", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_l", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_lshift", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_lt", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_m", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_menu", KeyType.X2, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_n", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_o", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_option", KeyType.X2, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_p", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_period", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_plus", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_power", KeyType.X2, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_q", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_r", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_reset", KeyType.X2, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_return", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_rshift", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_s", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_select", KeyType.X2, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_semi", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_slash", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_space", KeyType.STD, HAS_LEGEND.LEGEND_FALSE),
-    KeyInfo("key_start", KeyType.X2, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_t", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_tab", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_turbo", KeyType.X2, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_u", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_v", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_w", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_x", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_y", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("key_z", KeyType.STD, HAS_LEGEND.LEGEND_TRUE),
-    KeyInfo("layout", KeyType.LAYOUT, HAS_LEGEND.LEGEND_TRUE),
+    KeyInfo("key_0", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_1", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_2", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_3", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_4", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_5", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_6", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_7", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_8", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_9", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_a", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_astrix", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_b", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_break", KeyType.X2, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_bs", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.REVERSED),
+    KeyInfo("key_c", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_c_down", KeyType.CURSOR, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_c_left", KeyType.CURSOR, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_c_right", KeyType.CURSOR, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_c_up", KeyType.CURSOR, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_caps", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.REVERSED),
+    KeyInfo("key_comma", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo(
+        "key_control", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.REVERSED
+    ),
+    KeyInfo("key_d", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_dash", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_e", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_equal", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_esc", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.REVERSED),
+    KeyInfo("key_f", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_fn", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.REVERSED),
+    KeyInfo("key_g", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_gt", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_h", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_help", KeyType.X2, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_i", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_inv", KeyType.X2, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_j", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_k", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_l", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo(
+        "key_lshift", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.REVERSED
+    ),
+    KeyInfo("key_lt", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_m", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_menu", KeyType.X2, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_n", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_o", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_option", KeyType.X2, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_p", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_period", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_plus", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_power", KeyType.X2, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_q", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_r", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_reset", KeyType.X2, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo(
+        "key_return", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.REVERSED
+    ),
+    KeyInfo(
+        "key_rshift", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.REVERSED
+    ),
+    KeyInfo("key_s", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_select", KeyType.X2, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_semi", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_slash", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_space", KeyType.STD, HAS_LEGEND.LEGEND_FALSE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_start", KeyType.X2, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_t", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_tab", KeyType.SPECIAL, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.REVERSED),
+    KeyInfo("key_turbo", KeyType.X2, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_u", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_v", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_w", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_x", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_y", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("key_z", KeyType.STD, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    # KeyInfo("layout", KeyType.LAYOUT, HAS_LEGEND.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
 ]
 
 

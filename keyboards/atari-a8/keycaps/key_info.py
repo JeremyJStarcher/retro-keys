@@ -7,7 +7,7 @@ class COLOR_SCHEME(Enum):
     REVERSED = 2
 
 
-class HAS_LEGEND(Enum):
+class LEGEND_STATUS(Enum):
     LEGEND_TRUE = True
     LEGEND_FALSE = False
 
@@ -35,5 +35,5 @@ class KeyType(Enum):
 class KeyInfo:
     key_name: str
     key_type: KeyType
-    has_legend: HAS_LEGEND
+    legend_status: LEGEND_STATUS
     color_scheme: COLOR_SCHEME

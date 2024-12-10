@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup, Tag
 from zipfile import ZipFile
 from pathlib import Path
 
-from key_info import COLOR_SCHEME, HAS_LEGEND, KeyInfo
+from key_info import COLOR_SCHEME, LEGEND_STATUS, KeyInfo
 
 
 class ThreeMfTool:
@@ -112,6 +112,9 @@ class ThreeMfTool:
         """
         Read the XML file from a zip file
         """
+
+        print(f"!!!!!!!!!!!!!!!!!!!!!!!!!!Loading: {file_name}")
+
         with ZipFile(file_name, "r") as zip:
             data = zip.read(model_file_name)
             return BeautifulSoup(data, "xml")
@@ -135,11 +138,6 @@ class ThreeMfTool:
 
         model_file_name = "3D/3dmodel.model"
 
-        Bs_legend_data = (
-            self.read_xml_from_zip(legend_file_name, model_file_name)
-            if keyinfo.has_legend
-            else BeautifulSoup("")
-        )
         Bs_keycap_data = self.read_xml_from_zip(keycap_file_name, model_file_name)
         Bs_twocolor_data = self.read_xml_from_zip(template_file_name, model_file_name)
 
@@ -149,7 +147,9 @@ class ThreeMfTool:
         for child in resources.findChildren():
             child.extract()
 
-        if keyinfo.has_legend:
+        if keyinfo.legend_status == LEGEND_STATUS.LEGEND_TRUE:
+            Bs_legend_data = self.read_xml_from_zip(legend_file_name, model_file_name)
+
             mesh_object1 = self.bambu_make_mesh_object(
                 legend_file_name, Bs_legend_data, legend_index, 1
             )
@@ -282,25 +282,28 @@ class ThreeMfTool:
 
         model_file_name = "3D/3dmodel.model"
 
-        Bs_legend_data = (
-            self.read_xml_from_zip(legend_file_name, model_file_name)
-            if keyinfo.has_legend == HAS_LEGEND.LEGEND_TRUE
-            else BeautifulSoup("")
-        )
         Bs_keycap_data = self.read_xml_from_zip(keycap_file_name, model_file_name)
         Bs_twocolor_data = self.read_xml_from_zip(template_file_name, model_file_name)
 
         resources = cast(Tag, Bs_twocolor_data.find("resources"))
         build = cast(Tag, Bs_twocolor_data.find("build"))
 
-        if keyinfo.has_legend:
+        extruder0: int = 0
+        extruder1: int = 1
+        if keyinfo.color_scheme == COLOR_SCHEME.REVERSED:
+            extruder0 = 1
+            extruder1 = 0
+
+        if keyinfo.legend_status == LEGEND_STATUS.LEGEND_TRUE:
+            Bs_legend_data = self.read_xml_from_zip(legend_file_name, model_file_name)
+
             mesh_object1 = self.cura_make_mesh_object(
-                legend_file_name, Bs_legend_data, legend_index, 1
+                legend_file_name, Bs_legend_data, legend_index, extruder1
             )
             resources.append(mesh_object1)
 
         mesh_object2 = self.cura_make_mesh_object(
-            keycap_file_name, Bs_keycap_data, keycap_index, 0
+            keycap_file_name, Bs_keycap_data, keycap_index, extruder0
         )
         resources.append(mesh_object2)
 
@@ -308,7 +311,7 @@ class ThreeMfTool:
 
         components_element = Tag(name="components", attrs={})
 
-        if keyinfo.has_legend:
+        if keyinfo.legend_status == LEGEND_STATUS.LEGEND_TRUE:
             components_element.append(self.create_component(legend_index))
 
         components_element.append(self.create_component(keycap_index))

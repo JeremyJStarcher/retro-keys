@@ -534,7 +534,6 @@ module key_break() {
     graphicsKey(1, "BRK", "ctrl-p") {
         gCharacter("");
     }
-
 }
 
 

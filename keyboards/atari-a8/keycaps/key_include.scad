@@ -97,27 +97,26 @@ module local_row(row=3, column = 0) {
   //also,
   $rounded_key = true;
 
-
-  //$top_tilt_y = side_tilt(column);
+  $top_tilt_y = side_tilt(column);
   //extra_height =  $double_sculpted ? extra_side_tilt_height(column) : 0;
   extra_height =  3;
 
   $total_depth = 6 + abs((row-3) * 0.5) + extra_height;
 
   if (row == 5 || row == 0) {
-    //$top_tilt =  -18.55;
+    $top_tilt =  -18.55;
     children();
   } else if (row == 1) {
-    //$top_tilt = (row-3) * 7 + 2.5;
+    $top_tilt = (row-3) * 7 + 2.5;
     children();
   } else if (row == 2) {
-    //$top_tilt = (row-3) * 7 + 2.5;
+    $top_tilt = (row-3) * 7 + 2.5;
     children();
   } else if (row == 3) {
-    //$top_tilt = (row-3) * 7 + 2.5;
+    $top_tilt = (row-3) * 7 + 2.5;
     children();
   } else if (row == 4) {
-    //$top_tilt = (row-3) * 7 + 2.5;
+    $top_tilt = (row-3) * 7 + 2.5;
     children();
   } else {
     children();
@@ -126,7 +125,7 @@ module local_row(row=3, column = 0) {
 
 
 module atari_row(row) {
-    //oem_row(row) children();
+    oem_row(row) children();
     //asa_row(row) children();
     //cherry_row(row) children();
     //dcs_row(row) children();
@@ -139,6 +138,6 @@ module atari_row(row) {
     //regular_polygon_row(row) children();
     //sa_row(row) children();
     //typewriter_row(row) children();
-    local_row(row) children();
+    //local_row(row) children();
 }
 //

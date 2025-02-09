@@ -175,27 +175,27 @@ class KeyConverter:
             threeFm = ThreeMfTool()
 
             legend_file_name = self.buildFileName(
-                self.SRC_DIR,
-                self.pocket_src,
-                keyInfo,
-                self.openscad_model_output,
-                StlMode.LEGEND,
+                dir=self.SRC_DIR,
+                pocket=self.pocket_src,
+                keyInfo=keyInfo,
+                extension=self.openscad_model_output,
+                keycap_mode=StlMode.LEGEND,
             )
 
             keycap_file_name = self.buildFileName(
-                self.SRC_DIR,
-                self.pocket_src,
-                keyInfo,
-                self.openscad_model_output,
-                StlMode.KEY_CAP,
+                dir=self.SRC_DIR,
+                pocket=self.pocket_src,
+                keyInfo=keyInfo,
+                extension=self.openscad_model_output,
+                keycap_mode=StlMode.KEY_CAP,
             )
 
             twocolor_file_name = self.buildFileName(
-                self.DEST_DIR,
-                self.pocket_src,
-                keyInfo,
-                self.openscad_model_output,
-                StlMode.TWO_COLOR,
+                dir=self.DEST_DIR,
+                pocket=self.pocket_dest,
+                keyInfo=keyInfo,
+                extension=self.openscad_model_output,
+                keycap_mode=StlMode.TWO_COLOR,
             )
 
             if slicerTarget == SlicerTarget.CURA:
@@ -413,7 +413,7 @@ key_list = [
     KeyInfo("key_x", KeyType.STD, LEGEND_STATUS.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
     KeyInfo("key_y", KeyType.STD, LEGEND_STATUS.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
     KeyInfo("key_z", KeyType.STD, LEGEND_STATUS.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
-    KeyInfo("layout", KeyType.LAYOUT, LEGEND_STATUS.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    # KeyInfo("layout", KeyType.LAYOUT, LEGEND_STATUS.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
 ]
 
 
@@ -438,7 +438,7 @@ def run_main():
 
     converter.reset()
     converter.openscad_model_output = "3mf"
-    converter.openscad_model_sideways = False #aTrue
+    converter.openscad_model_sideways = False  # aTrue
     converter.DEST_DIR = SIDEWAYS_3MF_PATH
     converter.pocket_dest = True
     converter.make_openscad_models()
@@ -458,32 +458,33 @@ def run_main():
     converter.make_two_color(SlicerTarget.BAMBU)
 
     converter.reset()
+    converter.openscad_model_output = "3mf"
     converter.DEST_DIR = BAMBU_SIDEWAYS_2COLOR_3MF_PATH_ALL
     converter.pocket_dest = False
     converter.SRC_DIR = SIDEWAYS_3MF_PATH
     converter.pocket_src = True
     converter.make_two_color(SlicerTarget.BAMBU)
 
-    converter.reset()
-    converter.openscad_model_output = "3mf"
-    converter.openscad_model_sideways = False
-    converter.DEST_DIR = FLAT_3MF_PATH
-    converter.pocket_dest = True
-    converter.make_openscad_models()
+    # converter.reset()
+    # converter.openscad_model_output = "3mf"
+    # converter.openscad_model_sideways = False
+    # converter.DEST_DIR = FLAT_3MF_PATH
+    # converter.pocket_dest = True
+    # converter.make_openscad_models()
 
-    converter.reset()
-    converter.SRC_DIR = FLAT_3MF_PATH
-    converter.pocket_src = True
-    converter.DEST_DIR = FLAT_STL_PATH
-    converter.pocket_dest = False
-    converter.convert_3mfs_to_stls()
+    # converter.reset()
+    # converter.SRC_DIR = FLAT_3MF_PATH
+    # converter.pocket_src = True
+    # converter.DEST_DIR = FLAT_STL_PATH
+    # converter.pocket_dest = False
+    # converter.convert_3mfs_to_stls()
 
-    converter.reset()
-    converter.SRC_DIR = FLAT_STL_PATH
-    converter.pocket_src = False
-    converter.DEST_DIR = VMRL_PATH
-    converter.pocket_dest = False
-    converter.make_vrml()
+    # converter.reset()
+    # converter.SRC_DIR = FLAT_STL_PATH
+    # converter.pocket_src = False
+    # converter.DEST_DIR = VMRL_PATH
+    # converter.pocket_dest = False
+    # converter.make_vrml()
 
     lock.release()
 

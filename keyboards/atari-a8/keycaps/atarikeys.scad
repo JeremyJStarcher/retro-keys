@@ -6,7 +6,7 @@ supportThicknes = 2;
 
 module maybe_sideways() {
     if (print_sideways) {
-        sideways() children();
+        backside() children();
     } else {
         children();
     }
@@ -184,6 +184,7 @@ module frontGraphicCutout()
         // this value by trial and error
         inset = -0.2;
 
+        GRAPHICS_SIZE = 0.66;
 
         ALL_THE_WAY_THROUGH = 3;
         PART_WAY_THROUGH = 2;
@@ -191,7 +192,10 @@ module frontGraphicCutout()
         THROUGH_SIZE = ALL_THE_WAY_THROUGH; 
  
         maybe_sideways()
-        rotate([ atari_rotation, 0, 0 ]) front_of_key() translate([ 0, inset, 0 ]) scale([ 0.75, ALL_THE_WAY_THROUGH, 0.75 ])
+        rotate([ atari_rotation, 0, 0 ]) //
+        front_of_key() //
+        translate([ 0, inset, 0 ]) //
+        scale([ GRAPHICS_SIZE, ALL_THE_WAY_THROUGH, GRAPHICS_SIZE ])
         {
             boundBox();
             color("white") children();
@@ -203,7 +207,7 @@ module arrowKey(row, legend, svg)
 {
     difference()
     {
-        u(1) flegend(legend, POS_1_OF_1, arrow_size) oem_row(row) preKey() key();
+        u(1) flegend(legend, POS_1_OF_1, arrow_size) atari_row(row) preKey() key();
 
         frontGraphicCutout() children();
     }
@@ -215,7 +219,7 @@ module graphicsKey(row, legend, svg)
 {
     difference()
     {
-        u(1) flegend(legend, POS_1_OF_1, full_size) oem_row(row) preKey() key();
+        u(1) flegend(legend, POS_1_OF_1, full_size) atari_row(row) preKey() key();
 
         frontGraphicCutout() children();
     }
@@ -228,7 +232,7 @@ module graphicsKey2(row, legendBottom, legendTop, svg)
     difference()
     {
         u(1) flegend(legendBottom, POS_1_OF_2, half_size) 
-        flegend(legendTop, POS_N, half_size) oem_row(row) preKey()
+        flegend(legendTop, POS_N, half_size) atari_row(row) preKey()
             key();
 
         frontGraphicCutout() children();
@@ -242,7 +246,7 @@ module graphicsKey3(row, legendBottom, legendTop, legendLeft, svg)
     {
         u(1) flegend(legendBottom, POS_1_OF_3, half_size)
          flegend(legendTop, POS_2_OF_3, half_size)
-            flegend(legendLeft, POS_3_OF_3, arrow_size) oem_row(row) preKey() key();
+            flegend(legendLeft, POS_3_OF_3, arrow_size) atari_row(row) preKey() key();
 
         frontGraphicCutout() children();
     }

@@ -39,7 +39,7 @@ if [ -d "$venv_dir" ]; then
   # Check if requirements have already been installed
   if [ ! -f "$requirements_installed_flag" ] && [ -f "$requirements_file" ]; then
     echo "Installing requirements from $requirements_file..."
-    pip install -r "$requirements_file"
+    # pip install -r "$requirements_file"
     if [ $? -eq 0 ]; then
       touch "$requirements_installed_flag"
       echo "Requirements installed successfully."

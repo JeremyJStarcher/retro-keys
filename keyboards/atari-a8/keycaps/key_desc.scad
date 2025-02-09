@@ -29,7 +29,7 @@ module key_lshift() {
     u(2.25)
     stabilized()
     flegend("SHIFT", POS_1_OF_1, long_size)
-    oem_row(4)
+    atari_row(4)
     preKey()
     key();
 }
@@ -113,7 +113,7 @@ module key_rshift() {
     tu(KEY_RSHIFT)
     u(1.75)
     flegend("SHIFT", POS_1_OF_1, long_size)
-    oem_row(4)
+    atari_row(4)
     preKey()
     key();
 }
@@ -127,7 +127,7 @@ module key_control() {
     u(2)
     stabilized()
     flegend("CONTROL", POS_1_OF_1, long_size)
-    oem_row(3)
+    atari_row(3)
     preKey()
     key();
 }
@@ -262,7 +262,7 @@ module key_caps() {
     tu(KEY_CAPS)
     u(1.25)
     flegend("CAPS", POS_1_OF_1, long_size)
-    oem_row(3)
+    atari_row(3)
     preKey()
     key();
 }
@@ -277,7 +277,7 @@ module key_tab() {
     flegend("TAB", POS_S, long_size)
     flegend("CLR", POS_NW, long_size)
     flegend("SET", POS_NE, long_size)
-    oem_row(2)
+    atari_row(2)
     preKey()
     key();
 }
@@ -380,7 +380,7 @@ module key_return() {
     tu(KEY_RETURN)
     u(1.5)
     flegend("RETURN", POS_1_OF_1, long_size)
-    oem_row(2)
+    atari_row(2)
     preKey()
     key();
 }
@@ -391,7 +391,7 @@ module key_esc() {
     tu(KEY_ESC)
     u(1.25)
     flegend("ESC", POS_1_OF_1, long_size)
-    oem_row(1)
+    atari_row(1)
     preKey()
     key();
 }
@@ -453,7 +453,7 @@ module key_lt() {
     stabilized()
     flegend("<", POS_TEXT_1_OF_2, half_size)
     flegend("CLR", POS_N, half_size)
-    oem_row(1)
+    atari_row(1)
     preKey()
     key();
 }
@@ -465,7 +465,7 @@ module key_gt() {
     stabilized()
     flegend(">", POS_TEXT_1_OF_2, half_size)
     flegend("INS", POS_N, half_size)
-    oem_row(1)
+    atari_row(1)
     preKey()
     key();
 }
@@ -476,7 +476,7 @@ module key_bs() {
     stabilized()
     flegend("BS", POS_TEXT_1_OF_2, half_size)
     flegend("DEL", POS_N, half_size)
-    oem_row(1)
+    atari_row(1)
     preKey()
     key();
 }
@@ -531,7 +531,7 @@ module key_break() {
     tu(KEY_BREAK)
 //    gridKey("BREAK");
 
-    graphicsKey(2, "BRK", "ctrl-p") {
+    graphicsKey(1, "BRK", "ctrl-p") {
         gCharacter("");
     }
 

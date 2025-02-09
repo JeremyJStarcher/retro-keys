@@ -413,7 +413,7 @@ key_list = [
     KeyInfo("key_x", KeyType.STD, LEGEND_STATUS.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
     KeyInfo("key_y", KeyType.STD, LEGEND_STATUS.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
     KeyInfo("key_z", KeyType.STD, LEGEND_STATUS.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
-    # KeyInfo("layout", KeyType.LAYOUT, LEGEND_STATUS.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
+    KeyInfo("layout", KeyType.LAYOUT, LEGEND_STATUS.LEGEND_TRUE, COLOR_SCHEME.NORMAL),
 ]
 
 
@@ -429,6 +429,7 @@ def run_main():
     SIDEWAYS_3MF_PATH = Path(f"{THREE_D_ROOT}/3mfs-openscad")
     CURA_SIDEWAYS_2COLOR_3MF_PATH = Path(f"{THREE_D_ROOT}/two-color-cura")
     BAMBU_SIDEWAYS_2COLOR_3MF_PATH = Path(f"{THREE_D_ROOT}/two-color-bambu")
+    BAMBU_SIDEWAYS_2COLOR_3MF_PATH_ALL = Path(f"{THREE_D_ROOT}/bambu-all")
 
     FLAT_3MF_PATH = Path(f"{THREE_D_ROOT}/3mfs-flat-openscad")
     FLAT_2COLOR_3MF_PATH = Path(f"{THREE_D_ROOT}/two-color-flat")
@@ -437,7 +438,7 @@ def run_main():
 
     converter.reset()
     converter.openscad_model_output = "3mf"
-    converter.openscad_model_sideways = True
+    converter.openscad_model_sideways = False #aTrue
     converter.DEST_DIR = SIDEWAYS_3MF_PATH
     converter.pocket_dest = True
     converter.make_openscad_models()
@@ -452,6 +453,13 @@ def run_main():
     converter.reset()
     converter.DEST_DIR = BAMBU_SIDEWAYS_2COLOR_3MF_PATH
     converter.pocket_dest = True
+    converter.SRC_DIR = SIDEWAYS_3MF_PATH
+    converter.pocket_src = True
+    converter.make_two_color(SlicerTarget.BAMBU)
+
+    converter.reset()
+    converter.DEST_DIR = BAMBU_SIDEWAYS_2COLOR_3MF_PATH_ALL
+    converter.pocket_dest = False
     converter.SRC_DIR = SIDEWAYS_3MF_PATH
     converter.pocket_src = True
     converter.make_two_color(SlicerTarget.BAMBU)

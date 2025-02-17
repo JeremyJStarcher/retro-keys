@@ -4,7 +4,8 @@ keymode = "1";
 
 $part_mode = keymode;
 
-  key = "key_s";
+  //key = "layout";
+  key = "key_rshift";
   print_one();
 
  //  prepKey() key_o();
@@ -36,7 +37,33 @@ module prepKey() {
     }
 }
 
+
 module print_one() {
+    stp = 1.2;
+
+    module project_at(h) {
+        linear_extrude(height =0.1)
+        # projection(cut = true)
+        translate([0, 0, -h])
+        print_one_inner();
+    }
+
+    echo("#### KEY: ");
+    echo(key);
+
+    union() {
+        translate([0, 0, -0.0])
+        print_one_inner();
+
+        hull() {
+            project_at(0.1);
+            translate([0, 0, stp])
+            project_at(stp);
+       {}
+    }
+}
+
+module print_one_inner() {
     if (key == "key_lshift" || key == "layout") {
         prepKey() key_lshift();
     }

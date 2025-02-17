@@ -6,7 +6,9 @@ supportThicknes = 2;
 
 module maybe_sideways() {
     if (print_sideways) {
+        // sideways() children();
         backside() children();
+        // $stem_inner_slop = 0; upside_down() children();
     } else {
         children();
     }
@@ -53,8 +55,7 @@ module preKey(size, w2, h2)
     // Shorthand values for easy of use.
     rr1 = support_r1 / 2;
     rr2 = support_r2 / 2;
-
-    
+ 
     module supportHeight(a, offset)
     {
         hull()
@@ -207,11 +208,11 @@ module arrowKey(row, legend, svg)
 {
     difference()
     {
-        u(1) flegend(legend, POS_1_OF_1, arrow_size) atari_row(row) preKey() key();
+        u(1) flegend(legend, POS_1_OF_1, arrow_size) preKey() atari_row(row)  key();
 
         frontGraphicCutout() children();
     }
-
+ 
     frontGraphicOutset() children();
 }
 
@@ -219,7 +220,7 @@ module graphicsKey(row, legend, svg)
 {
     difference()
     {
-        u(1) flegend(legend, POS_1_OF_1, full_size) atari_row(row) preKey() key();
+        u(1) flegend(legend, POS_1_OF_1, full_size) preKey() atari_row(row)  key();
 
         frontGraphicCutout() children();
     }
@@ -232,7 +233,7 @@ module graphicsKey2(row, legendBottom, legendTop, svg)
     difference()
     {
         u(1) flegend(legendBottom, POS_1_OF_2, half_size) 
-        flegend(legendTop, POS_N, half_size) atari_row(row) preKey()
+        flegend(legendTop, POS_N, half_size) preKey() atari_row(row) 
             key();
 
         frontGraphicCutout() children();
@@ -246,7 +247,7 @@ module graphicsKey3(row, legendBottom, legendTop, legendLeft, svg)
     {
         u(1) flegend(legendBottom, POS_1_OF_3, half_size)
          flegend(legendTop, POS_2_OF_3, half_size)
-            flegend(legendLeft, POS_3_OF_3, arrow_size) atari_row(row) preKey() key();
+            flegend(legendLeft, POS_3_OF_3, arrow_size) preKey() atari_row(row)  key();
 
         frontGraphicCutout() children();
     }
@@ -319,6 +320,10 @@ module gCharacter(t)
 
 module gridKey(legend)
 {
+    // Trial and error.  The idea here is to raise the key so they all sit
+    // on the same plane.  Makes making the back edge of all keys straight easier.
+    //
+    translate([0, 0, 2.4])
     preKey(size = 1.75, w2 = 19.5 + 3, h2 = 19.5 + 3) gridKeyRender(legend);
 }
 
@@ -351,7 +356,8 @@ module gridKeyRender(legend)
             translate([ -50, -50, 0 ]) cube([ 100, 100, hh ]);
         }
 
-        cube([ w, h, hh * 5 ], center = true);
+        cylinder(h = hh*2, r = w/2, center=true);
+        //cube([ w, h, hh * 5 ], center = true);
     }
 
     // Then draw the button itself (which will redraw the thin walls)

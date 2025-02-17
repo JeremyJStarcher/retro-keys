@@ -1,9 +1,11 @@
 
 
 print_target = "fdm"; // "fdm"; // "resin"
-print_sideways = true;
+print_sideways =true;
 atari_front_graphic_outset = false;
-$stem_support_type = "disable";
+$stem_support_type = "tines"; // "disable";
+// $stem_type = "rounded_cherry";
+
 
 // How far to rotate the keys when they are generated
 atari_rotation = print_target == "fdm" ? 0 : 0;
@@ -125,7 +127,8 @@ module local_row(row=3, column = 0) {
 
 
 module atari_row(row) {
-    oem_row(row) children();
+    //oem_row(row) children();
+
     //asa_row(row) children();
     //cherry_row(row) children();
     //dcs_row(row) children();
@@ -138,6 +141,6 @@ module atari_row(row) {
     //regular_polygon_row(row) children();
     //sa_row(row) children();
     //typewriter_row(row) children();
-    //local_row(row) children();
+     local_row(row) children();
 }
 //

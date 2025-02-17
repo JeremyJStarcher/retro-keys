@@ -166,7 +166,7 @@ class KeyConverter:
     ) -> None:
 
         print(
-            "##########################################################################"
+            f"!{self.openscad_model_output} ##########################################################################"
         )
         print(f"Key Name: {keyInfo.key_name}")
 
@@ -207,6 +207,12 @@ class KeyConverter:
                     Path("empty-cura.3mf"),
                     keyInfo,
                 )
+
+            print(
+                legend_file_name,
+                keycap_file_name,
+                twocolor_file_name,
+            )
 
             if slicerTarget == SlicerTarget.BAMBU:
                 threeFm.bambu_convert_to_two_color(
@@ -438,7 +444,7 @@ def run_main():
 
     converter.reset()
     converter.openscad_model_output = "3mf"
-    converter.openscad_model_sideways = False  # aTrue
+    converter.openscad_model_sideways = True  # True
     converter.DEST_DIR = SIDEWAYS_3MF_PATH
     converter.pocket_dest = True
     converter.make_openscad_models()
